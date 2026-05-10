@@ -4,7 +4,7 @@
    Todo lo demás (lote, progreso, número de lote) se calcula solo.
    ============================================================ */
 window.TE_STATS = {
-  camisetas: 152,
+  camisetas: 150,
   anos: 5,
   locales: 2,
   sorteo: {
