@@ -31,7 +31,17 @@ export default async function handler(req, res) {
       .select('*')
       .order('created_at', { ascending: false });
 
-    return res.status(200).json({ inscripciones, testimonios });
+    const { data: ventas } = await supabase
+      .from('codigos')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    const { data: leads } = await supabase
+      .from('leads')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    return res.status(200).json({ inscripciones, testimonios, ventas, leads });
   }
 
   if (req.method === 'POST') {

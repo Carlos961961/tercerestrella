@@ -36,6 +36,15 @@
   .badge-pendiente { background: #fef3c7; color: #92400e; }
   .badge-aprobado { background: #dcfce7; color: #166534; }
   .badge-codigo { background: #e0f2fe; color: #0369a1; }
+  .badge-venta { background: #dcfce7; color: #166534; }
+  .badge-usado { background: #f3f4f6; color: #6b7280; }
+  .venta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 24px; font-size: 13px; color: #555; margin-top: 8px; }
+  .venta-grid strong { color: #1A1A2E; }
+  .producto-tag { display: inline-block; padding: 2px 10px; border-radius: 6px; background: #1A1A2E; color: #C0A24A; font-size: 12px; font-weight: 700; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .tabla-resumen { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tabla-resumen th { background: #1A1A2E; color: #C0A24A; padding: 10px 12px; text-align: left; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
+  .tabla-resumen td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .tabla-resumen tr:hover td { background: #fafafa; }
   .actions { display: flex; gap: 8px; margin-top: 12px; }
   .foto-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
   .empty { text-align: center; color: #999; padding: 48px; font-size: 15px; }
@@ -64,11 +73,16 @@
     <div class="stats" id="stats-row"></div>
 
     <div class="tabs">
-      <button class="tab active" onclick="showTab('inscripciones')">Inscripciones</button>
+      <button class="tab active" onclick="showTab('ventas')">Ventas</button>
+      <button class="tab" onclick="showTab('inscripciones')">Inscripciones sorteo</button>
       <button class="tab" onclick="showTab('testimonios')">Reseñas pendientes</button>
     </div>
 
-    <div class="section active" id="tab-inscripciones">
+    <div class="section active" id="tab-ventas">
+      <div id="lista-ventas"><div class="empty">Cargando...</div></div>
+    </div>
+
+    <div class="section" id="tab-inscripciones">
       <div id="lista-inscripciones"><div class="empty">Cargando...</div></div>
     </div>
 
@@ -107,20 +121,69 @@
     document.getElementById('admin-screen').style.display = 'block';
 
     renderStats(data);
+    renderVentas(data.ventas || []);
     renderInscripciones(data.inscripciones || []);
     renderTestimonios(data.testimonios || []);
   }
 
+  const NOMBRES_PRODUCTO = {
+    'tailandesa-premium': 'Tailandesa Premium',
+    'nacional-adulto': 'Nacional Adulto',
+    'nacional-nino': 'Nacional Niño'
+  };
+
   function renderStats(data) {
     const insc = data.inscripciones || [];
+    const ventas = data.ventas || [];
     const test = data.testimonios || [];
     const pendientes = test.filter(t => !t.aprobado).length;
+    const totalRecaudado = ventas.reduce((s, v) => s + (v.monto_total || 0), 0);
 
     document.getElementById('stats-row').innerHTML = `
+      <div class="stat-card"><div class="stat-num">${ventas.length}</div><div class="stat-label">Ventas totales</div></div>
+      <div class="stat-card"><div class="stat-num">$${totalRecaudado.toLocaleString('es-AR', {maximumFractionDigits:0})}</div><div class="stat-label">Recaudado (bruto)</div></div>
       <div class="stat-card"><div class="stat-num">${insc.length}</div><div class="stat-label">Inscriptos al sorteo</div></div>
-      <div class="stat-card"><div class="stat-num">${test.filter(t => t.aprobado).length}</div><div class="stat-label">Reseñas publicadas</div></div>
       <div class="stat-card"><div class="stat-num">${pendientes}</div><div class="stat-label">Reseñas pendientes</div></div>
       <div class="stat-card"><div class="stat-num">${30 - insc.length > 0 ? 30 - insc.length : 0}</div><div class="stat-label">Lugares restantes lote</div></div>
+    `;
+  }
+
+  function renderVentas(items) {
+    const el = document.getElementById('lista-ventas');
+    if (!items.length) { el.innerHTML = '<div class="empty">No hay ventas todavía.</div>'; return; }
+    el.innerHTML = `
+      <div class="card" style="overflow-x:auto;">
+        <table class="tabla-resumen">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Comprador</th>
+              <th>Contacto</th>
+              <th>Producto</th>
+              <th>Talle</th>
+              <th>Cuotas</th>
+              <th>Monto</th>
+              <th>Código</th>
+              <th>Inscripto</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(v => `
+              <tr>
+                <td style="white-space:nowrap;">${new Date(v.created_at).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
+                <td><strong>${v.nombre || '-'}</strong><br><span style="color:#999;font-size:12px;">${v.email || ''}</span></td>
+                <td><a href="https://wa.me/${(v.whatsapp||'').replace(/\D/g,'')}54" target="_blank" style="color:#25D366;text-decoration:none;">📱 ${v.whatsapp || '-'}</a></td>
+                <td><span class="producto-tag">${NOMBRES_PRODUCTO[v.producto] || v.producto}</span></td>
+                <td style="text-align:center;font-weight:700;">${v.talle || '-'}</td>
+                <td style="text-align:center;">${v.cuotas ? v.cuotas + 'x' : '1x'}</td>
+                <td style="text-align:right;font-weight:600;">$${(v.monto_total||0).toLocaleString('es-AR', {maximumFractionDigits:0})}</td>
+                <td><span class="badge badge-codigo">${v.codigo}</span></td>
+                <td style="text-align:center;">${v.usado ? '✅' : '⏳'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     `;
   }
 

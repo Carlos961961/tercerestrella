@@ -59,8 +59,12 @@ export default async function handler(req, res) {
     intentos++;
   } while (intentos < 10);
 
+  const cuotas = payment.installments || 1;
+  const monto_total = payment.transaction_amount || 0;
+
   await supabase.from('codigos').insert([{
-    codigo, nombre, email, whatsapp, producto, talle, usado: false, payment_id: String(paymentId)
+    codigo, nombre, email, whatsapp, producto, talle, usado: false,
+    payment_id: String(paymentId), cuotas, monto_total
   }]);
 
   // Email al comprador
