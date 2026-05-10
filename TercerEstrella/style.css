@@ -2,6 +2,13 @@
    TercerEstrella — style.css
    ========================================================== */
 
+/* Focus visible para navegación por teclado */
+:focus-visible {
+  outline: 3px solid #C0A24A;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 :root {
   --celeste: #74ACDF;
   --blanco: #FFFFFF;
@@ -351,7 +358,7 @@ section {
 .hero-sub {
   margin-top: 28px;
   font-size: 17px;
-  color: rgba(255,255,255,0.72);
+  color: rgba(255,255,255,0.88);
   max-width: 520px;
 }
 .hero-ctas { display: flex; gap: 14px; margin-top: 36px; flex-wrap: wrap; }
@@ -950,7 +957,7 @@ section {
   font-size: clamp(40px, 6vw, 72px);
 }
 .cta-final .sub {
-  color: rgba(255,255,255,0.72);
+  color: rgba(255,255,255,0.88);
   margin-top: 22px;
   max-width: 600px; margin-inline: auto;
   font-size: 17px;

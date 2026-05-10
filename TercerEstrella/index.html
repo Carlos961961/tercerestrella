@@ -12,6 +12,20 @@
 <meta property="og:url" content="https://tercerestrella.vercel.app/" />
 <meta name="theme-color" content="#1A1A2E" />
 <link rel="canonical" href="https://tercerestrella.vercel.app/" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "TercerEstrella",
+  "url": "https://tercerestrella.vercel.app/",
+  "description": "Camisetas réplica de la Selección Argentina. Calidad premium, precio real.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://tercerestrella.vercel.app/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 <!-- Google Analytics — reemplazá G-14850774100 con tu ID cuando crees la cuenta -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-14850774100"></script>
 <script>
@@ -468,12 +482,12 @@
 </section>
 
 <!-- =========================== MODAL SORTEO =========================== -->
-<div class="sorteo-modal-overlay" id="sorteo-modal-overlay" onclick="cerrarSorteoForm()">
+<div class="sorteo-modal-overlay" id="sorteo-modal-overlay" onclick="cerrarSorteoForm()" role="dialog" aria-modal="true" aria-labelledby="sorteo-modal-title">
   <div class="sorteo-modal-box" onclick="event.stopPropagation()">
     <button class="sorteo-modal-close" onclick="cerrarSorteoForm()" aria-label="Cerrar">✕</button>
     <div class="sorteo-modal-header">
       <div style="font-size:40px">🎁</div>
-      <h3>Inscribite al sorteo</h3>
+      <h3 id="sorteo-modal-title">Inscribite al sorteo</h3>
       <p>Ingresá el código que recibiste al comprar para participar del <strong>Lote #6</strong>.<br>Sorteo el <strong>30 de mayo de 2026</strong>.</p>
     </div>
     <form id="sorteo-inscripcion-form" onsubmit="inscribirAlSorteo(event)">

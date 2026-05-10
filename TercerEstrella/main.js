@@ -28,7 +28,10 @@
   const mobileMenu = document.querySelector('.mobile-menu');
   burger && burger.addEventListener('click', () => {
     mobileMenu.classList.toggle('is-open');
-    document.body.style.overflow = mobileMenu.classList.contains('is-open') ? 'hidden' : '';
+    const isOpen = mobileMenu.classList.contains('is-open');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    mobileMenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
   });
   document.querySelectorAll('.mobile-menu a').forEach(a => {
     a.addEventListener('click', () => {
