@@ -11,19 +11,28 @@
   body { font-family: 'Inter', sans-serif; background: #F5F5F5; color: #1A1A2E; min-height: 100vh; }
   header { background: #1A1A2E; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
   header h1 { font-family: 'Oswald', sans-serif; color: #C0A24A; font-size: 20px; letter-spacing: 0.08em; }
-  header span { color: rgba(255,255,255,0.5); font-size: 13px; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-right span { color: rgba(255,255,255,0.5); font-size: 13px; }
+  .refresh-indicator { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.4); font-size: 12px; }
+  .refresh-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
   .login-wrap { max-width: 360px; margin: 80px auto; background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
   .login-wrap h2 { font-family: 'Oswald', sans-serif; font-size: 24px; margin-bottom: 24px; color: #1A1A2E; }
-  input[type=password], input[type=text] { width: 100%; padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 16px; outline: none; }
+  input[type=password], input[type=text], input[type=search], select { width: 100%; padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 16px; outline: none; font-family: 'Inter', sans-serif; }
+  input[type=search], select { margin-bottom: 0; width: auto; font-size: 13px; padding: 8px 12px; }
   .btn { width: 100%; padding: 13px; background: #C0A24A; color: #1A1A2E; border: none; border-radius: 8px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.08em; cursor: pointer; }
   .btn:hover { background: #b09140; }
   .btn-sm { padding: 6px 14px; font-size: 13px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
   .btn-aprobar { background: #22c55e; color: #fff; }
   .btn-rechazar { background: #ef4444; color: #fff; }
-  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
-  .tab { padding: 10px 24px; border-radius: 8px; border: none; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; color: #666; }
+  .btn-export { background: #1A1A2E; color: #C0A24A; padding: 8px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .btn-export:hover { background: #0A3D7C; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .tab { padding: 10px 20px; border-radius: 8px; border: none; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; color: #666; display: flex; align-items: center; gap: 8px; }
   .tab.active { background: #1A1A2E; color: #fff; }
+  .tab-badge { background: #C0A24A; color: #1A1A2E; border-radius: 999px; font-size: 11px; font-weight: 700; padding: 1px 7px; }
+  .tab.active .tab-badge { background: rgba(255,255,255,0.2); color: #fff; }
   .section { display: none; }
   .section.active { display: block; }
   .card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
@@ -36,25 +45,45 @@
   .badge-pendiente { background: #fef3c7; color: #92400e; }
   .badge-aprobado { background: #dcfce7; color: #166534; }
   .badge-codigo { background: #e0f2fe; color: #0369a1; }
-  .badge-venta { background: #dcfce7; color: #166534; }
-  .badge-usado { background: #f3f4f6; color: #6b7280; }
-  .venta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 24px; font-size: 13px; color: #555; margin-top: 8px; }
-  .venta-grid strong { color: #1A1A2E; }
-  .producto-tag { display: inline-block; padding: 2px 10px; border-radius: 6px; background: #1A1A2E; color: #C0A24A; font-size: 12px; font-weight: 700; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .badge-lead { background: #fef3c7; color: #92400e; }
+  .badge-convertido { background: #dcfce7; color: #166534; }
+  .producto-tag { display: inline-block; padding: 2px 10px; border-radius: 6px; background: #1A1A2E; color: #C0A24A; font-size: 12px; font-weight: 700; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
   .tabla-resumen { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .tabla-resumen th { background: #1A1A2E; color: #C0A24A; padding: 10px 12px; text-align: left; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
-  .tabla-resumen td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .tabla-resumen th { background: #1A1A2E; color: #C0A24A; padding: 10px 12px; text-align: left; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; white-space: nowrap; }
+  .tabla-resumen td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
   .tabla-resumen tr:hover td { background: #fafafa; }
+  .tabla-resumen tr.hidden-row { display: none; }
+  .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toolbar-left { display: flex; gap: 10px; flex: 1; flex-wrap: wrap; }
+  .search-input { padding: 9px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; min-width: 220px; flex: 1; }
+  .search-input:focus { border-color: #C0A24A; }
+  .filter-select { padding: 9px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; background: #fff; }
+  .filter-select:focus { border-color: #C0A24A; }
   .actions { display: flex; gap: 8px; margin-top: 12px; }
   .foto-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
   .empty { text-align: center; color: #999; padding: 48px; font-size: 15px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
   .stat-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .stat-num { font-family: 'Oswald', sans-serif; font-size: 36px; color: #C0A24A; }
-  .stat-label { font-size: 13px; color: #666; margin-top: 4px; }
+  .stat-num { font-family: 'Oswald', sans-serif; font-size: 32px; color: #C0A24A; }
+  .stat-label { font-size: 12px; color: #666; margin-top: 4px; }
+  .sorteo-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 32px; }
+  .sorteo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .sorteo-title { font-family: 'Oswald', sans-serif; font-size: 16px; color: #1A1A2E; letter-spacing: 0.05em; }
+  .sorteo-nums { font-size: 13px; color: #666; }
+  .progress-bar { background: #f0f0f0; border-radius: 999px; height: 12px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #74ACDF, #C0A24A); transition: width 0.8s ease; }
+  .sorteo-lotes { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .lote-item { font-size: 12px; color: #666; }
+  .lote-item strong { color: #1A1A2E; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1A1A2E; color: #fff; padding: 14px 20px; border-radius: 10px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 999; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 20px; }
+  .no-results { text-align: center; color: #999; padding: 24px; font-size: 13px; display: none; }
 </style>
 </head>
 <body>
+
+<div id="toast" class="toast"><span class="toast-icon">🔔</span><span id="toast-msg"></span></div>
 
 <div id="login-screen">
   <header><h1>★ TERCERESTRELLA</h1><span>Panel Admin</span></header>
@@ -67,23 +96,72 @@
 </div>
 
 <div id="admin-screen" style="display:none;">
-  <header><h1>★ TERCERESTRELLA</h1><span id="admin-user">Panel Admin</span></header>
+  <header>
+    <h1>★ TERCERESTRELLA</h1>
+    <div class="header-right">
+      <div class="refresh-indicator"><div class="refresh-dot"></div><span id="last-update">actualizando...</span></div>
+      <span>Panel Admin</span>
+    </div>
+  </header>
   <div class="container">
 
     <div class="stats" id="stats-row"></div>
+    <div class="sorteo-card" id="sorteo-card"></div>
 
     <div class="tabs">
-      <button class="tab active" onclick="showTab('ventas')">Ventas</button>
-      <button class="tab" onclick="showTab('inscripciones')">Inscripciones sorteo</button>
-      <button class="tab" onclick="showTab('testimonios')">Reseñas pendientes</button>
+      <button class="tab active" onclick="showTab('ventas', this)">Ventas <span class="tab-badge" id="badge-ventas">0</span></button>
+      <button class="tab" onclick="showTab('leads', this)">Leads <span class="tab-badge" id="badge-leads">0</span></button>
+      <button class="tab" onclick="showTab('inscripciones', this)">Sorteo <span class="tab-badge" id="badge-inscripciones">0</span></button>
+      <button class="tab" onclick="showTab('testimonios', this)">Reseñas <span class="tab-badge" id="badge-testimonios">0</span></button>
     </div>
 
     <div class="section active" id="tab-ventas">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input type="search" class="search-input" id="search-ventas" placeholder="Buscar por nombre, email o código..." oninput="filtrarTabla('ventas')">
+          <select class="filter-select" id="filter-ventas" onchange="filtrarTabla('ventas')">
+            <option value="">Todos los productos</option>
+            <option value="tailandesa-premium">Tailandesa Premium</option>
+            <option value="nacional-adulto">Nacional Adulto</option>
+            <option value="nacional-nino">Nacional Niño</option>
+          </select>
+        </div>
+        <button class="btn-export" onclick="exportarCSV('ventas')">⬇ Exportar CSV</button>
+      </div>
       <div id="lista-ventas"><div class="empty">Cargando...</div></div>
+      <div class="no-results" id="no-results-ventas">No se encontraron resultados.</div>
+    </div>
+
+    <div class="section" id="tab-leads">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input type="search" class="search-input" id="search-leads" placeholder="Buscar por nombre o email..." oninput="filtrarTabla('leads')">
+          <select class="filter-select" id="filter-leads" onchange="filtrarTabla('leads')">
+            <option value="">Todos los productos</option>
+            <option value="tailandesa-premium">Tailandesa Premium</option>
+            <option value="nacional-adulto">Nacional Adulto</option>
+            <option value="nacional-nino">Nacional Niño</option>
+          </select>
+          <select class="filter-select" id="filter-leads-estado" onchange="filtrarTabla('leads')">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Sin convertir</option>
+            <option value="convertido">Convertidos</option>
+          </select>
+        </div>
+        <button class="btn-export" onclick="exportarCSV('leads')">⬇ Exportar CSV</button>
+      </div>
+      <div id="lista-leads"><div class="empty">Cargando...</div></div>
+      <div class="no-results" id="no-results-leads">No se encontraron resultados.</div>
     </div>
 
     <div class="section" id="tab-inscripciones">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input type="search" class="search-input" id="search-inscripciones" placeholder="Buscar por nombre o código..." oninput="filtrarCards('inscripciones')">
+        </div>
+      </div>
       <div id="lista-inscripciones"><div class="empty">Cargando...</div></div>
+      <div class="no-results" id="no-results-inscripciones">No se encontraron resultados.</div>
     </div>
 
     <div class="section" id="tab-testimonios">
@@ -94,19 +172,27 @@
 </div>
 
 <script>
+  const NOMBRES_PRODUCTO = {
+    'tailandesa-premium': 'Tailandesa Premium',
+    'nacional-adulto': 'Nacional Adulto',
+    'nacional-nino': 'Nacional Niño'
+  };
+
   let adminKey = '';
+  let ultimaData = null;
+  let ultimoCountVentas = 0;
 
   function login() {
     adminKey = document.getElementById('admin-key').value.trim();
     if (!adminKey) return;
-    cargarDatos();
+    cargarDatos(true);
   }
 
   document.getElementById('admin-key').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') login();
   });
 
-  async function cargarDatos() {
+  async function cargarDatos(esLogin = false) {
     const res = await fetch('/api/admin', {
       headers: { 'Authorization': `Bearer ${adminKey}` }
     });
@@ -117,34 +203,76 @@
     }
 
     const data = await res.json();
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-screen').style.display = 'block';
+
+    if (esLogin) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-screen').style.display = 'block';
+      ultimoCountVentas = (data.ventas || []).length;
+    } else {
+      const nuevoCount = (data.ventas || []).length;
+      if (nuevoCount > ultimoCountVentas) {
+        mostrarToast(`¡Nueva venta! Total: ${nuevoCount}`);
+        ultimoCountVentas = nuevoCount;
+      }
+    }
+
+    ultimaData = data;
+    document.getElementById('last-update').textContent = 'hace 0 min';
 
     renderStats(data);
+    renderSorteo(data);
     renderVentas(data.ventas || []);
+    renderLeads(data.leads || []);
     renderInscripciones(data.inscripciones || []);
     renderTestimonios(data.testimonios || []);
+    actualizarBadges(data);
   }
 
-  const NOMBRES_PRODUCTO = {
-    'tailandesa-premium': 'Tailandesa Premium',
-    'nacional-adulto': 'Nacional Adulto',
-    'nacional-nino': 'Nacional Niño'
-  };
+  function actualizarBadges(data) {
+    document.getElementById('badge-ventas').textContent = (data.ventas || []).length;
+    document.getElementById('badge-leads').textContent = (data.leads || []).filter(l => !l.convertido).length;
+    document.getElementById('badge-inscripciones').textContent = (data.inscripciones || []).length;
+    const pendientes = (data.testimonios || []).filter(t => !t.aprobado).length;
+    document.getElementById('badge-testimonios').textContent = pendientes;
+  }
 
   function renderStats(data) {
     const insc = data.inscripciones || [];
     const ventas = data.ventas || [];
+    const leads = data.leads || [];
     const test = data.testimonios || [];
     const pendientes = test.filter(t => !t.aprobado).length;
     const totalRecaudado = ventas.reduce((s, v) => s + (v.monto_total || 0), 0);
+    const leadsNoCon = leads.filter(l => !l.convertido).length;
 
     document.getElementById('stats-row').innerHTML = `
       <div class="stat-card"><div class="stat-num">${ventas.length}</div><div class="stat-label">Ventas totales</div></div>
       <div class="stat-card"><div class="stat-num">$${totalRecaudado.toLocaleString('es-AR', {maximumFractionDigits:0})}</div><div class="stat-label">Recaudado (bruto)</div></div>
       <div class="stat-card"><div class="stat-num">${insc.length}</div><div class="stat-label">Inscriptos al sorteo</div></div>
+      <div class="stat-card"><div class="stat-num">${leadsNoCon}</div><div class="stat-label">Carritos abandonados</div></div>
       <div class="stat-card"><div class="stat-num">${pendientes}</div><div class="stat-label">Reseñas pendientes</div></div>
-      <div class="stat-card"><div class="stat-num">${30 - insc.length > 0 ? 30 - insc.length : 0}</div><div class="stat-label">Lugares restantes lote</div></div>
+    `;
+  }
+
+  function renderSorteo(data) {
+    const insc = data.inscripciones || [];
+    const LOTE = 30;
+    const enLote = insc.length % LOTE;
+    const loteNum = Math.floor(insc.length / LOTE) + 1;
+    const pct = Math.round((enLote / LOTE) * 100);
+    const restantes = LOTE - enLote;
+
+    document.getElementById('sorteo-card').innerHTML = `
+      <div class="sorteo-header">
+        <span class="sorteo-title">PROGRESO DEL SORTEO — LOTE #${loteNum}</span>
+        <span class="sorteo-nums">${enLote} / ${LOTE} inscriptos · ${restantes} lugares restantes</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="sorteo-lotes">
+        <div class="lote-item"><strong>Lote actual:</strong> #${loteNum} — ${enLote}/${LOTE}</div>
+        <div class="lote-item"><strong>Total inscriptos:</strong> ${insc.length}</div>
+        <div class="lote-item"><strong>Progreso:</strong> ${pct}%</div>
+      </div>
     `;
   }
 
@@ -153,7 +281,7 @@
     if (!items.length) { el.innerHTML = '<div class="empty">No hay ventas todavía.</div>'; return; }
     el.innerHTML = `
       <div class="card" style="overflow-x:auto;">
-        <table class="tabla-resumen">
+        <table class="tabla-resumen" id="tabla-ventas">
           <thead>
             <tr>
               <th>Fecha</th>
@@ -164,15 +292,15 @@
               <th>Cuotas</th>
               <th>Monto</th>
               <th>Código</th>
-              <th>Inscripto</th>
+              <th>Sorteo</th>
             </tr>
           </thead>
           <tbody>
             ${items.map(v => `
-              <tr>
+              <tr data-nombre="${(v.nombre||'').toLowerCase()}" data-email="${(v.email||'').toLowerCase()}" data-codigo="${(v.codigo||'').toLowerCase()}" data-producto="${v.producto||''}">
                 <td style="white-space:nowrap;">${new Date(v.created_at).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
                 <td><strong>${v.nombre || '-'}</strong><br><span style="color:#999;font-size:12px;">${v.email || ''}</span></td>
-                <td><a href="https://wa.me/${(v.whatsapp||'').replace(/\D/g,'')}54" target="_blank" style="color:#25D366;text-decoration:none;">📱 ${v.whatsapp || '-'}</a></td>
+                <td><a href="https://wa.me/54${(v.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${v.whatsapp || '-'}</a></td>
                 <td><span class="producto-tag">${NOMBRES_PRODUCTO[v.producto] || v.producto}</span></td>
                 <td style="text-align:center;font-weight:700;">${v.talle || '-'}</td>
                 <td style="text-align:center;">${v.cuotas ? v.cuotas + 'x' : '1x'}</td>
@@ -187,10 +315,45 @@
     `;
   }
 
+  function renderLeads(items) {
+    const el = document.getElementById('lista-leads');
+    if (!items.length) { el.innerHTML = '<div class="empty">No hay leads todavía.</div>'; return; }
+    el.innerHTML = `
+      <div class="card" style="overflow-x:auto;">
+        <table class="tabla-resumen" id="tabla-leads">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Nombre</th>
+              <th>Contacto</th>
+              <th>Producto</th>
+              <th>Talle</th>
+              <th>Estado</th>
+              <th>Recordatorio</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(l => `
+              <tr data-nombre="${(l.nombre||'').toLowerCase()}" data-email="${(l.email||'').toLowerCase()}" data-producto="${l.producto||''}" data-estado="${l.convertido ? 'convertido' : 'pendiente'}">
+                <td style="white-space:nowrap;">${new Date(l.created_at).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
+                <td><strong>${l.nombre || '-'}</strong><br><span style="color:#999;font-size:12px;">${l.email || ''}</span></td>
+                <td><a href="https://wa.me/54${(l.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${l.whatsapp || '-'}</a></td>
+                <td><span class="producto-tag">${NOMBRES_PRODUCTO[l.producto] || l.producto}</span></td>
+                <td style="text-align:center;font-weight:700;">${l.talle || '-'}</td>
+                <td style="text-align:center;">${l.convertido ? '<span class="badge badge-convertido">Compró</span>' : '<span class="badge badge-lead">Pendiente</span>'}</td>
+                <td style="text-align:center;">${l.email_recordatorio_enviado ? '✅ Enviado' : '—'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
   function renderInscripciones(items) {
     if (!items.length) { document.getElementById('lista-inscripciones').innerHTML = '<div class="empty">No hay inscripciones todavía.</div>'; return; }
     document.getElementById('lista-inscripciones').innerHTML = items.map(i => `
-      <div class="card">
+      <div class="card" data-nombre="${(i.nombre||'').toLowerCase()}" data-codigo="${(i.codigo||'').toLowerCase()}">
         <div class="card-header">
           <div>
             <div class="card-name">${i.nombre}</div>
@@ -199,8 +362,8 @@
           <span class="badge badge-codigo">${i.codigo || 'sin código'}</span>
         </div>
         <div class="card-body">
-          <strong>Producto:</strong> ${i.producto} — Talle ${i.talle}<br>
-          <strong>WhatsApp:</strong> ${i.whatsapp}<br>
+          <strong>Producto:</strong> ${NOMBRES_PRODUCTO[i.producto] || i.producto} — Talle ${i.talle}<br>
+          <strong>WhatsApp:</strong> <a href="https://wa.me/54${(i.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;">📱 ${i.whatsapp}</a><br>
           ${i.email ? `<strong>Email:</strong> ${i.email}<br>` : ''}
           ${i.resena ? `<strong>Reseña:</strong> ${i.resena}` : ''}
         </div>
@@ -222,7 +385,7 @@
           <span class="badge badge-pendiente">Pendiente</span>
         </div>
         <div class="card-body">
-          ${t.producto ? `<strong>Producto:</strong> ${t.producto}<br>` : ''}
+          ${t.producto ? `<strong>Producto:</strong> ${NOMBRES_PRODUCTO[t.producto] || t.producto}<br>` : ''}
           <strong>Reseña:</strong> ${t.texto}
         </div>
         ${t.foto_url ? `<img src="${t.foto_url}" class="foto-thumb" />` : ''}
@@ -232,6 +395,80 @@
         </div>
       </div>
     `).join('');
+  }
+
+  function filtrarTabla(tipo) {
+    const busqueda = document.getElementById(`search-${tipo}`).value.toLowerCase();
+    const filtroProducto = document.getElementById(`filter-${tipo}`)?.value || '';
+    const filtroEstado = document.getElementById(`filter-${tipo}-estado`)?.value || '';
+    const tabla = document.getElementById(`tabla-${tipo}`);
+    if (!tabla) return;
+    const filas = tabla.querySelectorAll('tbody tr');
+    let visibles = 0;
+    filas.forEach(fila => {
+      const nombre = fila.dataset.nombre || '';
+      const email = fila.dataset.email || '';
+      const codigo = fila.dataset.codigo || '';
+      const producto = fila.dataset.producto || '';
+      const estado = fila.dataset.estado || '';
+      const matchBusqueda = !busqueda || nombre.includes(busqueda) || email.includes(busqueda) || codigo.includes(busqueda);
+      const matchProducto = !filtroProducto || producto === filtroProducto;
+      const matchEstado = !filtroEstado || estado === filtroEstado;
+      if (matchBusqueda && matchProducto && matchEstado) { fila.style.display = ''; visibles++; }
+      else fila.style.display = 'none';
+    });
+    document.getElementById(`no-results-${tipo}`).style.display = visibles === 0 ? 'block' : 'none';
+  }
+
+  function filtrarCards(tipo) {
+    const busqueda = document.getElementById(`search-${tipo}`).value.toLowerCase();
+    const cards = document.getElementById(`lista-${tipo}`).querySelectorAll('.card');
+    let visibles = 0;
+    cards.forEach(card => {
+      const nombre = card.dataset.nombre || '';
+      const codigo = card.dataset.codigo || '';
+      const match = !busqueda || nombre.includes(busqueda) || codigo.includes(busqueda);
+      card.style.display = match ? '' : 'none';
+      if (match) visibles++;
+    });
+    document.getElementById(`no-results-${tipo}`).style.display = visibles === 0 ? 'block' : 'none';
+  }
+
+  function exportarCSV(tipo) {
+    if (!ultimaData) return;
+    let items, headers, row;
+
+    if (tipo === 'ventas') {
+      items = ultimaData.ventas || [];
+      headers = ['Fecha','Nombre','Email','WhatsApp','Producto','Talle','Cuotas','Monto','Codigo','Inscripto'];
+      row = v => [
+        new Date(v.created_at).toLocaleString('es-AR'),
+        v.nombre, v.email, v.whatsapp,
+        NOMBRES_PRODUCTO[v.producto] || v.producto,
+        v.talle, v.cuotas || 1, v.monto_total || 0, v.codigo,
+        v.usado ? 'Si' : 'No'
+      ];
+    } else {
+      items = ultimaData.leads || [];
+      headers = ['Fecha','Nombre','Email','WhatsApp','Producto','Talle','Estado','Recordatorio'];
+      row = l => [
+        new Date(l.created_at).toLocaleString('es-AR'),
+        l.nombre, l.email, l.whatsapp,
+        NOMBRES_PRODUCTO[l.producto] || l.producto,
+        l.talle,
+        l.convertido ? 'Compro' : 'Pendiente',
+        l.email_recordatorio_enviado ? 'Si' : 'No'
+      ];
+    }
+
+    const csv = [headers, ...items.map(row)].map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tercerestrella-${tipo}-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async function accion(action, id) {
@@ -246,12 +483,28 @@
     }
   }
 
-  function showTab(tab) {
+  function showTab(tab, btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    event.target.classList.add('active');
+    btn.classList.add('active');
     document.getElementById(`tab-${tab}`).classList.add('active');
   }
+
+  function mostrarToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  // Auto-refresh cada 30 segundos
+  let minutos = 0;
+  setInterval(() => {
+    if (!adminKey) return;
+    minutos++;
+    document.getElementById('last-update').textContent = `hace ${minutos} min`;
+    if (minutos % 1 === 0) cargarDatos(false);
+  }, 30000);
 </script>
 </body>
 </html>
