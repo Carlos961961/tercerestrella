@@ -21,6 +21,17 @@
   gtag('config', 'G-XXXXXXXXXX');
 </script>
 <script>if (history.scrollRestoration) history.scrollRestoration = 'manual';</script>
+<script>
+  fetch('/api/stats').then(r => r.json()).then(data => {
+    document.getElementById('sorteo-count').textContent = data.inscriptos + '/30';
+    document.getElementById('sorteo-bar-fill').style.width = data.porcentaje + '%';
+    document.getElementById('sorteo-texto').textContent = data.inscriptos + ' de 30 camisetas del lote actual';
+  }).catch(() => {
+    document.getElementById('sorteo-count').textContent = '0/30';
+    document.getElementById('sorteo-bar-fill').style.width = '0%';
+    document.getElementById('sorteo-texto').textContent = '0 de 30 camisetas del lote actual';
+  });
+</script>
 
 <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="%231A1A2E"/><path fill="%23C0A24A" d="M16 4l3.09 9.51H29l-7.95 5.78L24.18 28 16 22.22 7.82 28l3.13-8.71L3 13.51h9.91z"/></svg>' />
 
@@ -289,12 +300,12 @@
         <div class="sorteo-card">
           <div class="sorteo-card-label" id="sorteo-lote-num">Lote #6</div>
           <div class="sorteo-fecha">📅 Sorteo al completar las 30 camisetas</div>
-          <div class="sorteo-card-num" id="sorteo-count">2/30</div>
+          <div class="sorteo-card-num" id="sorteo-count">—/30</div>
           <div class="sorteo-bar-wrap">
-            <div class="sorteo-bar-fill" id="sorteo-bar-fill" style="width:7%"></div>
+            <div class="sorteo-bar-fill" id="sorteo-bar-fill" style="width:0%"></div>
           </div>
           <div class="sorteo-urgencia">★ Una Tailandesa Premium gratis para uno de los 30 compradores</div>
-          <div class="sorteo-bar-texto" id="sorteo-texto">2 de 30 camisetas del lote actual</div>
+          <div class="sorteo-bar-texto" id="sorteo-texto">Cargando...</div>
           <button class="sorteo-inscribite-btn" onclick="abrirSorteoForm()">Inscribirme al sorteo →</button>
           <div class="sorteo-ganador">
             <div class="sorteo-ganador-label">🏆 Ganador lote anterior</div>
