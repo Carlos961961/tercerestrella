@@ -976,8 +976,7 @@
   };
 
   // ===== MODAL SORTEO =====
-  // Pegá la URL de tu Google Apps Script acá cuando la tengas
-  var SORTEO_API_URL = 'https://script.google.com/macros/s/AKfycbyaSJhOpt9H3YUFDEtCNVIGk1Tby-sfz4L5_1XcE5glZ95osuYOY9ZQleRgO0o4Dhl4vw/exec';
+  var SORTEO_API_URL = '/api/inscribir';
 
   window.abrirSorteoForm = function() {
     document.getElementById('sorteo-modal-overlay').classList.add('open');
@@ -1014,47 +1013,56 @@
     var errorEl = document.getElementById('si-error');
     errorEl.style.display = 'none';
 
-    if (!SORTEO_API_URL) {
-      errorEl.innerHTML = 'El sistema de inscripción está en configuración. <a href="https://wa.me/5491134652868" target="_blank" style="color:#c62828;font-weight:600">Escribinos por WhatsApp</a> para inscribirte.';
-      errorEl.style.display = 'block';
-      return;
-    }
-
     var fotoInput = document.getElementById('si-foto');
-    var data = {
-      nombre:     document.getElementById('si-nombre').value.trim(),
-      email:      document.getElementById('si-email').value.trim(),
-      telefono:   document.getElementById('si-telefono').value.trim(),
-      modelo:     document.getElementById('si-modelo').value,
-      talle:      document.getElementById('si-talle').value,
-      codigo:     document.getElementById('si-codigo').value.trim().toUpperCase(),
-      comentario: document.getElementById('si-comentario').value.trim() || '',
-      autoriza:   document.getElementById('si-autoriza').checked ? 'Sí' : 'No',
-      tieneFoto:  fotoInput.files && fotoInput.files.length > 0 ? 'Sí — ' + fotoInput.files[0].name : 'No'
-    };
+    var fotoFile = fotoInput.files && fotoInput.files[0];
 
     btn.disabled = true;
-    btn.textContent = 'Verificando...';
+    btn.textContent = fotoFile ? 'Subiendo foto...' : 'Enviando...';
+
+    // Convertir foto a base64 si hay una
+    var foto_base64 = null;
+    var foto_tipo = null;
+    if (fotoFile) {
+      try {
+        foto_base64 = await new Promise(function(resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function(ev) { resolve(ev.target.result.split(',')[1]); };
+          reader.onerror = reject;
+          reader.readAsDataURL(fotoFile);
+        });
+        foto_tipo = fotoFile.type;
+      } catch(err) {
+        foto_base64 = null;
+      }
+    }
+
+    btn.textContent = 'Inscribiendo...';
+
+    var payload = {
+      nombre:               document.getElementById('si-nombre').value.trim(),
+      email:                document.getElementById('si-email').value.trim(),
+      whatsapp:             document.getElementById('si-telefono').value.trim(),
+      producto:             document.getElementById('si-modelo').value,
+      talle:                document.getElementById('si-talle').value,
+      codigo:               document.getElementById('si-codigo').value.trim().toUpperCase(),
+      resena:               document.getElementById('si-comentario').value.trim() || null,
+      foto_base64:          foto_base64,
+      foto_tipo:            foto_tipo,
+      autoriza_publicacion: document.getElementById('si-autoriza').checked
+    };
 
     try {
       var res = await fetch(SORTEO_API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(data),
-        redirect: 'follow'
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
       var result = await res.json();
-      if (result.success) {
+      if (result.ok) {
         document.getElementById('sorteo-inscripcion-form').style.display = 'none';
         document.getElementById('si-success').style.display = 'block';
       } else {
-        var msgs = {
-          'codigo_invalido': 'El código no es válido. Verificá que lo hayas escrito correctamente (Ej: TE-047).',
-          'codigo_usado':    'Este código ya fue utilizado. Cada código es de un solo uso.',
-          'config_error':    'Error de configuración. Contactanos por WhatsApp.',
-          'server_error':    'Error del servidor. Intentá de nuevo o escribinos por WhatsApp.'
-        };
-        errorEl.textContent = msgs[result.error] || 'Error inesperado. Intentá de nuevo.';
+        errorEl.textContent = result.error || 'Error inesperado. Intentá de nuevo.';
         errorEl.style.display = 'block';
         btn.disabled = false;
         btn.textContent = 'Inscribirme al sorteo';

@@ -1,0 +1,107 @@
+import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SECRET_KEY
+);
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
+
+  const {
+    nombre, email, whatsapp, producto, talle,
+    codigo, resena, foto_base64, foto_tipo, autoriza_publicacion
+  } = req.body;
+
+  if (!nombre || !whatsapp || !producto || !talle) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  // Subir foto a Supabase Storage si viene una
+  let foto_url = null;
+  if (foto_base64 && foto_tipo) {
+    const buffer = Buffer.from(foto_base64, 'base64');
+    const ext = foto_tipo.split('/')[1] || 'jpg';
+    const filename = `${Date.now()}-${nombre.replace(/\s+/g, '-').toLowerCase()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('fotos')
+      .upload(filename, buffer, { contentType: foto_tipo });
+
+    if (!uploadError) {
+      const { data: { publicUrl } } = supabase.storage.from('fotos').getPublicUrl(filename);
+      foto_url = publicUrl;
+    }
+  }
+
+  // Guardar inscripción en la base de datos
+  const { error: dbError } = await supabase.from('inscripciones').insert([{
+    nombre,
+    email: email || null,
+    whatsapp,
+    producto,
+    talle,
+    codigo: codigo || null,
+    resena: resena || null,
+    foto_url,
+    autoriza_publicacion: autoriza_publicacion || false
+  }]);
+
+  if (dbError) return res.status(500).json({ error: 'Error al guardar' });
+
+  // Email de confirmación al cliente
+  if (email && process.env.RESEND_API_KEY) {
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.dev>',
+      to: [email],
+      subject: '¡Estás inscripto al sorteo! 🎁',
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1A1A2E;color:#fff;padding:40px;border-radius:12px;">
+          <h1 style="color:#C0A24A;font-size:28px;margin-bottom:8px;">¡Estás inscripto, ${nombre}!</h1>
+          <p style="color:#ccc;font-size:16px;">Tu inscripción al sorteo de TercerEstrella fue registrada correctamente.</p>
+          <div style="background:#0A3D7C;border-radius:8px;padding:20px;margin:24px 0;">
+            <p style="margin:0 0 8px;color:#74ACDF;font-size:13px;text-transform:uppercase;letter-spacing:0.1em;">Tu inscripción</p>
+            <p style="margin:4px 0;color:#fff;"><strong>Producto:</strong> ${producto} — Talle ${talle}</p>
+            ${codigo ? `<p style="margin:4px 0;color:#fff;"><strong>Código:</strong> ${codigo}</p>` : ''}
+          </div>
+          <p style="color:#ccc;font-size:14px;">El sorteo se realiza cuando se completan las 30 camisetas del lote. Si ganás, te contactamos por WhatsApp al <strong>${whatsapp}</strong>.</p>
+          <hr style="border:none;border-top:1px solid #333;margin:24px 0;" />
+          <p style="color:#666;font-size:12px;">TercerEstrella · WhatsApp: +54 9 11 3465-2868</p>
+        </div>
+      `
+    }).catch(() => {});
+  }
+
+  // Notificación al admin
+  if (process.env.RESEND_API_KEY && process.env.ADMIN_EMAIL) {
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.dev>',
+      to: [process.env.ADMIN_EMAIL],
+      subject: `Nueva inscripción: ${nombre} — ${producto}`,
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:500px;padding:20px;">
+          <h2>Nueva inscripción al sorteo</h2>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr><td style="padding:6px 0;color:#666;">Nombre</td><td style="padding:6px 0;"><strong>${nombre}</strong></td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;">${email || '—'}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">WhatsApp</td><td style="padding:6px 0;">${whatsapp}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Producto</td><td style="padding:6px 0;">${producto} — Talle ${talle}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Código</td><td style="padding:6px 0;">${codigo || '—'}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Reseña</td><td style="padding:6px 0;">${resena || '—'}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Autoriza publicación</td><td style="padding:6px 0;">${autoriza_publicacion ? 'Sí' : 'No'}</td></tr>
+            ${foto_url ? `<tr><td style="padding:6px 0;color:#666;">Foto</td><td style="padding:6px 0;"><a href="${foto_url}">Ver foto</a></td></tr>` : ''}
+          </table>
+        </div>
+      `
+    }).catch(() => {});
+  }
+
+  return res.status(200).json({ ok: true });
+}
