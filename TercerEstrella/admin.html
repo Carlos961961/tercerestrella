@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panel Admin — TercerEstrella</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #F5F5F5; color: #1A1A2E; min-height: 100vh; }
+  header { background: #1A1A2E; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-family: 'Oswald', sans-serif; color: #C0A24A; font-size: 20px; letter-spacing: 0.08em; }
+  header span { color: rgba(255,255,255,0.5); font-size: 13px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  .login-wrap { max-width: 360px; margin: 80px auto; background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  .login-wrap h2 { font-family: 'Oswald', sans-serif; font-size: 24px; margin-bottom: 24px; color: #1A1A2E; }
+  input[type=password], input[type=text] { width: 100%; padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 16px; outline: none; }
+  .btn { width: 100%; padding: 13px; background: #C0A24A; color: #1A1A2E; border: none; border-radius: 8px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.08em; cursor: pointer; }
+  .btn:hover { background: #b09140; }
+  .btn-sm { padding: 6px 14px; font-size: 13px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .btn-aprobar { background: #22c55e; color: #fff; }
+  .btn-rechazar { background: #ef4444; color: #fff; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .tab { padding: 10px 24px; border-radius: 8px; border: none; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; color: #666; }
+  .tab.active { background: #1A1A2E; color: #fff; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .card-name { font-weight: 700; font-size: 16px; }
+  .card-date { font-size: 12px; color: #999; }
+  .card-body { font-size: 14px; color: #555; line-height: 1.6; }
+  .card-body strong { color: #1A1A2E; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; }
+  .badge-pendiente { background: #fef3c7; color: #92400e; }
+  .badge-aprobado { background: #dcfce7; color: #166534; }
+  .badge-codigo { background: #e0f2fe; color: #0369a1; }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
+  .foto-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
+  .empty { text-align: center; color: #999; padding: 48px; font-size: 15px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .stat-num { font-family: 'Oswald', sans-serif; font-size: 36px; color: #C0A24A; }
+  .stat-label { font-size: 13px; color: #666; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <header><h1>★ TERCERESTRELLA</h1><span>Panel Admin</span></header>
+  <div class="login-wrap">
+    <h2>Acceso Admin</h2>
+    <input type="password" id="admin-key" placeholder="Contraseña de admin" />
+    <button class="btn" onclick="login()">Entrar</button>
+    <p id="login-error" style="color:#ef4444;font-size:13px;margin-top:12px;display:none;">Contraseña incorrecta.</p>
+  </div>
+</div>
+
+<div id="admin-screen" style="display:none;">
+  <header><h1>★ TERCERESTRELLA</h1><span id="admin-user">Panel Admin</span></header>
+  <div class="container">
+
+    <div class="stats" id="stats-row"></div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('inscripciones')">Inscripciones</button>
+      <button class="tab" onclick="showTab('testimonios')">Reseñas pendientes</button>
+    </div>
+
+    <div class="section active" id="tab-inscripciones">
+      <div id="lista-inscripciones"><div class="empty">Cargando...</div></div>
+    </div>
+
+    <div class="section" id="tab-testimonios">
+      <div id="lista-testimonios"><div class="empty">Cargando...</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let adminKey = '';
+
+  function login() {
+    adminKey = document.getElementById('admin-key').value.trim();
+    if (!adminKey) return;
+    cargarDatos();
+  }
+
+  document.getElementById('admin-key').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') login();
+  });
+
+  async function cargarDatos() {
+    const res = await fetch('/api/admin', {
+      headers: { 'Authorization': `Bearer ${adminKey}` }
+    });
+
+    if (res.status === 401) {
+      document.getElementById('login-error').style.display = 'block';
+      return;
+    }
+
+    const data = await res.json();
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+
+    renderStats(data);
+    renderInscripciones(data.inscripciones || []);
+    renderTestimonios(data.testimonios || []);
+  }
+
+  function renderStats(data) {
+    const insc = data.inscripciones || [];
+    const test = data.testimonios || [];
+    const pendientes = test.filter(t => !t.aprobado).length;
+
+    document.getElementById('stats-row').innerHTML = `
+      <div class="stat-card"><div class="stat-num">${insc.length}</div><div class="stat-label">Inscriptos al sorteo</div></div>
+      <div class="stat-card"><div class="stat-num">${test.filter(t => t.aprobado).length}</div><div class="stat-label">Reseñas publicadas</div></div>
+      <div class="stat-card"><div class="stat-num">${pendientes}</div><div class="stat-label">Reseñas pendientes</div></div>
+      <div class="stat-card"><div class="stat-num">${30 - insc.length > 0 ? 30 - insc.length : 0}</div><div class="stat-label">Lugares restantes lote</div></div>
+    `;
+  }
+
+  function renderInscripciones(items) {
+    if (!items.length) { document.getElementById('lista-inscripciones').innerHTML = '<div class="empty">No hay inscripciones todavía.</div>'; return; }
+    document.getElementById('lista-inscripciones').innerHTML = items.map(i => `
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-name">${i.nombre}</div>
+            <div class="card-date">${new Date(i.created_at).toLocaleString('es-AR')}</div>
+          </div>
+          <span class="badge badge-codigo">${i.codigo || 'sin código'}</span>
+        </div>
+        <div class="card-body">
+          <strong>Producto:</strong> ${i.producto} — Talle ${i.talle}<br>
+          <strong>WhatsApp:</strong> ${i.whatsapp}<br>
+          ${i.email ? `<strong>Email:</strong> ${i.email}<br>` : ''}
+          ${i.resena ? `<strong>Reseña:</strong> ${i.resena}` : ''}
+        </div>
+        ${i.foto_url ? `<img src="${i.foto_url}" class="foto-thumb" />` : ''}
+      </div>
+    `).join('');
+  }
+
+  function renderTestimonios(items) {
+    const pendientes = items.filter(t => !t.aprobado);
+    if (!pendientes.length) { document.getElementById('lista-testimonios').innerHTML = '<div class="empty">No hay reseñas pendientes.</div>'; return; }
+    document.getElementById('lista-testimonios').innerHTML = pendientes.map(t => `
+      <div class="card" id="test-${t.id}">
+        <div class="card-header">
+          <div>
+            <div class="card-name">${t.nombre}</div>
+            <div class="card-date">${new Date(t.created_at).toLocaleString('es-AR')}</div>
+          </div>
+          <span class="badge badge-pendiente">Pendiente</span>
+        </div>
+        <div class="card-body">
+          ${t.producto ? `<strong>Producto:</strong> ${t.producto}<br>` : ''}
+          <strong>Reseña:</strong> ${t.texto}
+        </div>
+        ${t.foto_url ? `<img src="${t.foto_url}" class="foto-thumb" />` : ''}
+        <div class="actions">
+          <button class="btn-sm btn-aprobar" onclick="accion('aprobar', ${t.id})">✓ Aprobar</button>
+          <button class="btn-sm btn-rechazar" onclick="accion('rechazar', ${t.id})">✕ Rechazar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function accion(action, id) {
+    const res = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, id })
+    });
+    if (res.ok) {
+      document.getElementById(`test-${id}`).remove();
+      cargarDatos();
+    }
+  }
+
+  function showTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+  }
+</script>
+</body>
+</html>
