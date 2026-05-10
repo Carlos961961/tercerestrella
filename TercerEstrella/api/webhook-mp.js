@@ -31,8 +31,20 @@ export default async function handler(req, res) {
 
   if (payment.status !== 'approved') return res.status(200).json({ ok: true });
 
+  // Evitar procesar el mismo pago dos veces
+  const { data: yaProcessado } = await supabase
+    .from('codigos')
+    .select('id')
+    .eq('payment_id', String(paymentId))
+    .single();
+  if (yaProcessado) return res.status(200).json({ ok: true });
+
   const { nombre, email, whatsapp, producto, talle } = payment.metadata || {};
   if (!email) return res.status(200).json({ ok: true });
+
+  // Validar que el producto sea legítimo
+  const productosValidos = ['tailandesa-premium', 'nacional-adulto', 'nacional-nino'];
+  if (!productosValidos.includes(producto)) return res.status(200).json({ ok: true });
 
   // Marcar lead como convertido
   await supabase.from('leads').update({ convertido: true }).eq('email', email).eq('producto', producto);

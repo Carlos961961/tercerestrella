@@ -16,9 +16,12 @@ const PRODUCTOS = {
 };
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '';
+  const allowed = ['https://tercerestrella.vercel.app', 'https://tercerestrella.com.ar', 'https://www.tercerestrella.com.ar'];
+  if (allowed.includes(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Vary', 'Origin');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
@@ -27,6 +30,16 @@ export default async function handler(req, res) {
 
   if (!producto || !talle || !nombre || !email || !whatsapp) {
     return res.status(400).json({ error: 'Faltan datos' });
+  }
+
+  // Validar formato de email
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Email inválido' });
+  }
+
+  // Limitar longitud de campos para prevenir abuso
+  if (nombre.length > 100 || whatsapp.length > 20 || email.length > 200) {
+    return res.status(400).json({ error: 'Datos inválidos' });
   }
 
   const item = PRODUCTOS[producto];
