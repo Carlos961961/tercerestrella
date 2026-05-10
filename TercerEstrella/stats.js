@@ -20,7 +20,19 @@ document.addEventListener('DOMContentLoaded', function () {
   var loteAnterior = loteNum - 1;
   var pct       = Math.round((loteActual / loteSize) * 100);
 
-  /* Contador animado de camisetas — data-count ya viene seteado en el HTML */
+  /* Contador de hinchas: base 150 + inscriptos reales de Supabase */
+  var BASE_HINCHAS = 150;
+  var contadorEl = document.querySelector('.stat-num span');
+  if (contadorEl) {
+    fetch('/api/stats')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        contadorEl.textContent = (BASE_HINCHAS + (data.inscriptos || 0)).toLocaleString('es-AR');
+      })
+      .catch(function() {
+        contadorEl.textContent = BASE_HINCHAS.toLocaleString('es-AR');
+      });
+  }
 
   /* Barra de progreso del sorteo */
   var barFill  = document.getElementById('sorteo-bar-fill');
