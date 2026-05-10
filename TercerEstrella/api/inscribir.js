@@ -20,8 +20,23 @@ export default async function handler(req, res) {
     codigo, resena, foto_base64, foto_tipo, autoriza_publicacion
   } = req.body;
 
-  if (!nombre || !whatsapp || !producto || !talle) {
+  if (!nombre || !whatsapp || !producto || !talle || !codigo) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  // Validar código de compra
+  const { data: codigoData, error: codigoError } = await supabase
+    .from('codigos')
+    .select('*')
+    .eq('codigo', codigo.toUpperCase())
+    .single();
+
+  if (codigoError || !codigoData) {
+    return res.status(400).json({ error: 'Código inválido. Verificá que lo hayas escrito correctamente.' });
+  }
+
+  if (codigoData.usado) {
+    return res.status(400).json({ error: 'Este código ya fue utilizado. Cada código es de un solo uso.' });
   }
 
   // Subir foto a Supabase Storage si viene una
@@ -55,6 +70,9 @@ export default async function handler(req, res) {
   }]);
 
   if (dbError) return res.status(500).json({ error: 'Error al guardar' });
+
+  // Marcar código como usado
+  await supabase.from('codigos').update({ usado: true }).eq('codigo', codigo.toUpperCase());
 
   // Email de confirmación al cliente
   if (email && process.env.RESEND_API_KEY) {
