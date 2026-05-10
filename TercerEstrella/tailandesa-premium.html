@@ -330,13 +330,13 @@
         </div>
 
         <div class="cta-block">
-          <button class="btn-comprar" onclick="comprarWsp()">
+          <button class="btn-comprar" onclick="abrirModalMP()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            COMPRAR AHORA
+            PAGAR CON MERCADOPAGO
           </button>
-          <button class="btn-wsp" onclick="consultarWsp()">
+          <button class="btn-wsp" onclick="comprarWsp()">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.6 17.6L2 22l4.5-1.5A11 11 0 1 0 20.5 3.5z"/></svg>
-            CONSULTAR POR WHATSAPP
+            COMPRAR POR WHATSAPP
           </button>
         </div>
 
@@ -562,6 +562,56 @@
     window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
   }
 
+  function abrirModalMP() {
+    const talleBtn = document.querySelector('.size-btn.selected');
+    if (!talleBtn) { alert('Por favor elegí un talle antes de continuar.'); return; }
+    document.getElementById('mp-modal-overlay').style.display = 'flex';
+  }
+
+  function cerrarModalMP() {
+    document.getElementById('mp-modal-overlay').style.display = 'none';
+  }
+
+  document.getElementById('mp-modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalMP();
+  });
+
+  document.getElementById('mp-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const talleBtn = document.querySelector('.size-btn.selected');
+    const btn = document.getElementById('mp-btn');
+    btn.disabled = true;
+    btn.textContent = 'Procesando...';
+
+    const payload = {
+      producto: 'tailandesa-premium',
+      talle: talleBtn.textContent.trim(),
+      nombre: document.getElementById('mp-nombre').value.trim(),
+      email: document.getElementById('mp-email').value.trim(),
+      whatsapp: document.getElementById('mp-wsp').value.trim()
+    };
+
+    try {
+      const res = await fetch('/api/crear-preferencia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert('Error al procesar el pago. Intentá por WhatsApp.');
+        btn.disabled = false;
+        btn.textContent = 'Ir a pagar';
+      }
+    } catch(err) {
+      alert('Error de conexión. Intentá por WhatsApp.');
+      btn.disabled = false;
+      btn.textContent = 'Ir a pagar';
+    }
+  });
+
   document.querySelectorAll('.nav-dropdown').forEach(function(el) {
     el.addEventListener('mouseenter', function() { el.classList.add('is-open'); });
     el.addEventListener('mouseleave', function() { el.classList.remove('is-open'); });
@@ -583,5 +633,29 @@
   }
 </script>
 <script src="stats.js"></script>
+
+<!-- Modal MercadoPago -->
+<div id="mp-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:100%;position:relative;">
+    <button onclick="cerrarModalMP()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#666;">✕</button>
+    <h3 style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:6px;">Completá tus datos</h3>
+    <p style="font-size:14px;color:#666;margin-bottom:20px;">Para procesar tu pago y enviarte el código del sorteo.</p>
+    <form id="mp-form">
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Nombre completo</label>
+        <input id="mp-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Email</label>
+        <input id="mp-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label>
+        <input id="mp-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
+      </div>
+      <button id="mp-btn" type="submit" style="width:100%;padding:14px;background:#009EE3;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;letter-spacing:0.08em;cursor:pointer;">Ir a pagar con MercadoPago</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>
