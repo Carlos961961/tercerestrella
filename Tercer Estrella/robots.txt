@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tercerestrella.com/sitemap.xml
+Sitemap: https://tercerestrella.vercel.app/sitemap.xml
