@@ -572,10 +572,13 @@
     document.getElementById('mp-modal-overlay').style.display = 'none';
   }
 
-  document.getElementById('mp-modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModalMP();
+  window.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('mp-modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) cerrarModalMP();
+    });
   });
 
+  document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('mp-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const talleBtn = document.querySelector('.size-btn.selected');
@@ -611,6 +614,7 @@
       btn.textContent = 'Ir a pagar';
     }
   });
+  }); // end DOMContentLoaded
 
   document.querySelectorAll('.nav-dropdown').forEach(function(el) {
     el.addEventListener('mouseenter', function() { el.classList.add('is-open'); });

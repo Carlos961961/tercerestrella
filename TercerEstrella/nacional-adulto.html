@@ -817,29 +817,30 @@
     document.getElementById('mp-modal-overlay').style.display = 'none';
   }
 
-  document.getElementById('mp-modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModalMP();
-  });
-
-  document.getElementById('mp-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const talleBtn = document.querySelector('.size-btn.selected');
-    const btn = document.getElementById('mp-btn');
-    btn.disabled = true;
-    btn.textContent = 'Procesando...';
-    const payload = {
-      producto: 'nacional-adulto',
-      talle: talleBtn.textContent.trim(),
-      nombre: document.getElementById('mp-nombre').value.trim(),
-      email: document.getElementById('mp-email').value.trim(),
-      whatsapp: document.getElementById('mp-wsp').value.trim()
-    };
-    try {
-      const res = await fetch('/api/crear-preferencia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      const data = await res.json();
-      if (data.init_point) { window.location.href = data.init_point; }
-      else { alert('Error al procesar el pago. Intentá por WhatsApp.'); btn.disabled = false; btn.textContent = 'Ir a pagar'; }
-    } catch(err) { alert('Error de conexión. Intentá por WhatsApp.'); btn.disabled = false; btn.textContent = 'Ir a pagar'; }
+  window.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('mp-modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) cerrarModalMP();
+    });
+    document.getElementById('mp-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const talleBtn = document.querySelector('.size-btn.selected');
+      const btn = document.getElementById('mp-btn');
+      btn.disabled = true;
+      btn.textContent = 'Procesando...';
+      const payload = {
+        producto: 'nacional-adulto',
+        talle: talleBtn.textContent.trim(),
+        nombre: document.getElementById('mp-nombre').value.trim(),
+        email: document.getElementById('mp-email').value.trim(),
+        whatsapp: document.getElementById('mp-wsp').value.trim()
+      };
+      try {
+        const res = await fetch('/api/crear-preferencia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.init_point) { window.location.href = data.init_point; }
+        else { alert('Error al procesar el pago. Intentá por WhatsApp.'); btn.disabled = false; btn.textContent = 'Ir a pagar'; }
+      } catch(err) { alert('Error de conexión. Intentá por WhatsApp.'); btn.disabled = false; btn.textContent = 'Ir a pagar'; }
+    });
   });
 
   document.querySelectorAll('.nav-dropdown').forEach(function(el) {
