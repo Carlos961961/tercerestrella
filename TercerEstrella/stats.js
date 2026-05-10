@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* Contador de hinchas: base 150 + inscriptos reales de Supabase */
   var BASE_HINCHAS = 150;
-  var contadorEl = document.querySelector('.stat-num span');
+  var contadorEl = document.querySelector('.stat-live')?.closest('.stat')?.querySelector('.stat-num span');
   if (contadorEl) {
     fetch('/api/stats')
       .then(function(r) { return r.json(); })
