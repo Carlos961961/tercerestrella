@@ -20,10 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var loteAnterior = loteNum - 1;
   var pct       = Math.round((loteActual / loteSize) * 100);
 
-  /* Contador animado de camisetas */
-  document.querySelectorAll('[data-live-count]').forEach(function (el) {
-    el.setAttribute('data-count', total);
-  });
+  /* Contador animado de camisetas — data-count ya viene seteado en el HTML */
 
   /* Barra de progreso del sorteo */
   var barFill  = document.getElementById('sorteo-bar-fill');
