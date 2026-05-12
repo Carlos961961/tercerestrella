@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.futbolemotion.com)",
+      "WebFetch(domain:www.adidas.com)",
+      "WebFetch(domain:www.trustpilot.com)",
+      "WebFetch(domain:www.youtube.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.youtube-transcript.io)",
+      "WebFetch(domain:antigravity.codes)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:motionsites.ai)",
+      "WebFetch(domain:spline.design)",
+      "Bash(unzip -o \"Tercer Estrella.zip\" -d \"Tercer Estrella\")",
+      "Bash(start \"\" \"c:\\\\Users\\\\Carlos\\\\OneDrive - Grupo Portland\\\\Escritorio\\\\WEB 3d\\\\Tercer Estrella\\\\index.html\")",
+      "Bash(python -m http.server 8080)",
+      "Bash(start \"\" \"http://localhost:8080/index.html\")",
+      "Bash(start \"\" \"http://localhost:8080/productos.html\")",
+      "WebFetch(domain:localhost)",
+      "Bash(start \"\" \"http://localhost:8080/nacional-adulto.html\")",
+      "Bash(start \"\" \"http://localhost:8080/tailandesa-premium.html\")",
+      "WebFetch(domain:www.mercadopago.com.ar)",
+      "WebFetch(domain:gestionup.com.ar)",
+      "WebFetch(domain:vendedores.mercadolibre.com.ar)",
+      "Bash(ffprobe -v quiet -print_format json -show_format -show_streams \"c:/Users/Carlos/OneDrive - Grupo Portland/Escritorio/WEB 3d/TAILANDESA/Advertising_video_of_person_202605031547.mp4\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); f=d['format']; print\\('Duracion:', f['duration'],'s'\\); print\\('Tamaño:', round\\(int\\(f['size']\\)/1024/1024,1\\),'MB'\\)\")",
+      "Bash(ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 \"c:/Users/Carlos/OneDrive - Grupo Portland/Escritorio/WEB 3d/TAILANDESA/Advertising_video_of_person_202605031547.mp4\")",
+      "Bash(ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 \"c:/Users/Carlos/OneDrive - Grupo Portland/Escritorio/WEB 3d/TAILANDESA/Advertising_video_of_person_202605031548.mp4\")",
+      "Read(//c/Users/Carlos/**)",
+      "Bash(ffprobe -v quiet -print_format json -show_format \"c:/Users/Carlos/OneDrive - Grupo Portland/Escritorio/WEB 3d/Tercer Estrella/assets/tailandesa/video.mp4\")",
+      "Bash(ffprobe -version)",
+      "PowerShell(Get-Command ffmpeg -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command ffprobe -ErrorAction SilentlyContinue)",
+      "Read(//c//**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Carlos\\OneDrive - Grupo Portland\\Escritorio\\WEB 3d\\NACIONAL ADULTO"
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+﻿import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -6,7 +6,7 @@ const supabase = createClient(
 );
 
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN_PROD || process.env.MP_ACCESS_TOKEN_TEST;
-const BASE_URL = 'https://tercerestrella.vercel.app';
+const BASE_URL = 'https://www.tercerestrella.com.ar';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tercerestrella.ar@gmail.com';
 
 const PRODUCTOS = {
@@ -17,7 +17,7 @@ const PRODUCTOS = {
 
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
-  const allowed = ['https://tercerestrella.vercel.app', 'https://tercerestrella.com.ar', 'https://www.tercerestrella.com.ar'];
+  const allowed = ['https://www.tercerestrella.com.ar', 'https://tercerestrella.com.ar', 'https://www.tercerestrella.com.ar'];
   if (allowed.includes(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

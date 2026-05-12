@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+﻿import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 const supabase = createClient(
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
             <p style="color:#ccc;font-size:16px;">Vimos que estabas por comprar la <strong>${lead.producto === 'tailandesa-premium' ? 'Tailandesa Premium' : lead.producto === 'nacional-adulto' ? 'Nacional Adulto' : 'Nacional Niño'}</strong> en talle <strong>${lead.talle}</strong> pero no completaste el pago.</p>
             <p style="color:#ccc;font-size:15px;margin-top:16px;">El stock es limitado — no dejes que se agote.</p>
             <div style="margin-top:28px;text-align:center;">
-              <a href="https://tercerestrella.vercel.app/${lead.producto}.html" style="background:#C0A24A;color:#1A1A2E;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">COMPLETAR MI COMPRA</a>
+              <a href="https://www.tercerestrella.com.ar/${lead.producto}.html" style="background:#C0A24A;color:#1A1A2E;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">COMPLETAR MI COMPRA</a>
             </div>
             <hr style="border:none;border-top:1px solid #333;margin:32px 0;" />
             <p style="color:#555;font-size:12px;text-align:center;">Si ya compraste ignorá este mensaje. Consultas: <a href="https://wa.me/5491134652868" style="color:#74ACDF;">WhatsApp</a></p>

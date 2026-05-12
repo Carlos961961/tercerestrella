@@ -1,4 +1,4 @@
-User-agent: *
+﻿User-agent: *
 Allow: /
 
-Sitemap: https://tercerestrella.vercel.app/sitemap.xml
+Sitemap: https://www.tercerestrella.com.ar/sitemap.xml

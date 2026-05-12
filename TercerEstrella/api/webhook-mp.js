@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+﻿import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 const supabase = createClient(
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
           </div>
           <p style="color:#ccc;font-size:15px;">Con este código podés inscribirte al sorteo y dejar tu opinión.</p>
           <div style="margin-top:24px;text-align:center;">
-            <a href="https://tercerestrella.vercel.app/#sorteo" style="background:#C0A24A;color:#1A1A2E;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">INSCRIBIRME AL SORTEO</a>
+            <a href="https://www.tercerestrella.com.ar/#sorteo" style="background:#C0A24A;color:#1A1A2E;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">INSCRIBIRME AL SORTEO</a>
           </div>
           <hr style="border:none;border-top:1px solid #333;margin:32px 0;" />
           <p style="color:#666;font-size:12px;text-align:center;">TercerEstrella · <a href="mailto:${ADMIN_EMAIL}" style="color:#666;">${ADMIN_EMAIL}</a></p>
