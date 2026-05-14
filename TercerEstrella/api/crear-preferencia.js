@@ -1,13 +1,16 @@
 ﻿import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SECRET_KEY
 );
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN_PROD || process.env.MP_ACCESS_TOKEN_TEST;
 const BASE_URL = 'https://www.tercerestrella.com.ar';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tercerestrella.ar@gmail.com';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.dev>';
 
 const PRODUCTOS = {
   'tailandesa-premium': { title: 'Camiseta Tailandesa Premium', unit_price: 56000 },
@@ -49,6 +52,26 @@ export default async function handler(req, res) {
   await supabase.from('leads').insert([{
     nombre, email, whatsapp, producto, talle, convertido: false
   }]).select();
+
+  // Notificación inmediata al admin
+  if (process.env.RESEND_API_KEY) {
+    resend.emails.send({
+      from: EMAIL_FROM,
+      to: [ADMIN_EMAIL],
+      subject: `🛒 Nuevo lead: ${nombre} — ${producto} T${talle}`,
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:500px;padding:20px;">
+          <h2 style="color:#0A3D7C;">Nuevo lead en TercerEstrella</h2>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr><td style="padding:6px 0;color:#666;">Nombre</td><td style="padding:6px 0;"><strong>${nombre}</strong></td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;">${email}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">WhatsApp</td><td style="padding:6px 0;"><a href="https://wa.me/${whatsapp.replace(/\D/g,'')}">+${whatsapp}</a></td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Producto</td><td style="padding:6px 0;">${producto} — Talle ${talle}</td></tr>
+          </table>
+        </div>
+      `
+    }).catch(() => {});
+  }
 
   const externalRef = `${producto}-${Date.now()}`;
 
