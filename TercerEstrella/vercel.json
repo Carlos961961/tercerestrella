@@ -3,6 +3,10 @@
     {
       "path": "/api/carrito-abandonado",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/backup",
+      "schedule": "0 6 * * *"
     }
   ]
 }
