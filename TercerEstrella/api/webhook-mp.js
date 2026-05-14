@@ -73,21 +73,35 @@ export default async function handler(req, res) {
       from: EMAIL_FROM,
       reply_to: ADMIN_EMAIL,
       to: [email],
-      subject: '¡Tu compra fue confirmada! Aquí está tu código del sorteo 🎁',
+      subject: `¡Listo, ${nombre || 'hincha'}! Tu camiseta está en camino 🔵⚪`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1A1A2E;color:#fff;padding:40px;border-radius:12px;">
-          <h1 style="color:#C0A24A;font-size:28px;margin-bottom:8px;">¡Gracias por tu compra, ${nombre || 'hincha'}!</h1>
-          <p style="color:#ccc;font-size:16px;">Tu pago fue confirmado. En breve recibís tu camiseta.</p>
-          <div style="background:#0A3D7C;border-radius:8px;padding:24px;margin:24px 0;text-align:center;">
-            <p style="margin:0 0 8px;color:#74ACDF;font-size:13px;text-transform:uppercase;letter-spacing:0.1em;">Tu código del sorteo</p>
-            <p style="font-size:36px;font-weight:bold;letter-spacing:0.15em;color:#C0A24A;margin:0;">${codigo}</p>
+          <h1 style="color:#C0A24A;font-size:28px;margin-bottom:16px;">La tercera estrella ya es tuya.</h1>
+          <p style="color:#ccc;font-size:16px;line-height:1.6;">Tu pago se confirmó y tu camiseta está siendo preparada para vos.</p>
+
+          <div style="background:#0A3D7C;border-radius:8px;padding:24px;margin:28px 0;text-align:center;">
+            <p style="margin:0 0 8px;color:#74ACDF;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;">Tu código del sorteo</p>
+            <p style="font-size:38px;font-weight:bold;letter-spacing:0.18em;color:#C0A24A;margin:0;">${codigo}</p>
+            <p style="margin:12px 0 0;color:#aaa;font-size:13px;">Guardalo — con este código te inscribís al sorteo y podés dejar tu opinión.</p>
           </div>
-          <p style="color:#ccc;font-size:15px;">Con este código podés inscribirte al sorteo y dejar tu opinión.</p>
-          <div style="margin-top:24px;text-align:center;">
-            <a href="https://www.tercerestrella.com.ar/#sorteo" style="background:#C0A24A;color:#1A1A2E;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">INSCRIBIRME AL SORTEO</a>
+
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="https://www.tercerestrella.com.ar/#sorteo" style="background:#C0A24A;color:#1A1A2E;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px;letter-spacing:0.05em;">INSCRIBIRME AL SORTEO</a>
           </div>
-          <hr style="border:none;border-top:1px solid #333;margin:32px 0;" />
-          <p style="color:#666;font-size:12px;text-align:center;">TercerEstrella · <a href="mailto:${ADMIN_EMAIL}" style="color:#666;">${ADMIN_EMAIL}</a></p>
+
+          <div style="background:#0f2a50;border-radius:8px;padding:20px;margin-bottom:28px;text-align:center;">
+            <p style="margin:0 0 6px;color:#74ACDF;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;">Tu regalo por ser cliente</p>
+            <p style="font-size:26px;font-weight:bold;letter-spacing:0.15em;color:#C0A24A;margin:0 0 8px;">HINCHA10</p>
+            <p style="margin:0;color:#aaa;font-size:13px;">10% de descuento en tu próxima compra. Usá este código al finalizar tu pedido.</p>
+          </div>
+
+          <div style="text-align:center;margin-bottom:28px;">
+            <a href="https://www.tercerestrella.com.ar" style="background:#fff;color:#1A1A2E;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;">VOLVER A LA TIENDA</a>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #333;margin:24px 0;" />
+          <p style="color:#555;font-size:13px;text-align:center;">Cualquier consulta respondemos por WhatsApp. Gracias por confiar en nosotros.</p>
+          <p style="color:#444;font-size:12px;text-align:center;margin-top:4px;">TercerEstrella</p>
         </div>
       `
     }).catch(() => {});

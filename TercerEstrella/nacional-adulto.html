@@ -832,7 +832,8 @@
         talle: talleBtn.textContent.trim(),
         nombre: document.getElementById('mp-nombre').value.trim(),
         email: document.getElementById('mp-email').value.trim(),
-        whatsapp: document.getElementById('mp-wsp').value.trim()
+        whatsapp: document.getElementById('mp-wsp').value.trim(),
+        cupon: document.getElementById('mp-cupon').value.trim().toUpperCase() || null
       };
       try {
         const res = await fetch('/api/crear-preferencia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -874,10 +875,34 @@
     <form id="mp-form">
       <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Nombre completo</label><input id="mp-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" /></div>
       <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Email</label><input id="mp-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" /></div>
-      <div style="margin-bottom:20px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label><input id="mp-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" /></div>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label><input id="mp-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" /></div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Código de descuento <span style="font-weight:400;color:#999;">(opcional)</span></label>
+        <div style="display:flex;gap:8px;">
+          <input id="mp-cupon" type="text" placeholder="Ej: HINCHA10" style="flex:1;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()" />
+          <button type="button" onclick="aplicarCupon()" style="padding:10px 16px;background:#f0f0f0;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;color:#1A1A2E;">Aplicar</button>
+        </div>
+        <div id="mp-cupon-msg" style="margin-top:6px;font-size:13px;display:none;"></div>
+      </div>
       <button id="mp-btn" type="submit" style="width:100%;padding:14px;background:#009EE3;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;letter-spacing:0.08em;cursor:pointer;">Ir a pagar con MercadoPago</button>
     </form>
   </div>
 </div>
+<script>
+function aplicarCupon() {
+  const val = document.getElementById('mp-cupon').value.trim().toUpperCase();
+  const msg = document.getElementById('mp-cupon-msg');
+  msg.style.display = 'block';
+  if (val === 'HINCHA10') {
+    msg.style.color = '#1a7a3a';
+    msg.textContent = '✓ 10% de descuento aplicado';
+  } else if (val === '') {
+    msg.style.display = 'none';
+  } else {
+    msg.style.color = '#c0392b';
+    msg.textContent = '✗ Código inválido';
+  }
+}
+</script>
 </body>
 </html>

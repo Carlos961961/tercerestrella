@@ -29,11 +29,14 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
-  const { producto, talle, nombre, email, whatsapp } = req.body;
+  const { producto, talle, nombre, email, whatsapp, cupon } = req.body;
 
   if (!producto || !talle || !nombre || !email || !whatsapp) {
     return res.status(400).json({ error: 'Faltan datos' });
   }
+
+  const CUPONES = { 'HINCHA10': 0.10 };
+  const descuento = cupon && CUPONES[cupon.toUpperCase()] ? CUPONES[cupon.toUpperCase()] : 0;
 
   // Validar formato de email
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -83,9 +86,9 @@ export default async function handler(req, res) {
     },
     body: JSON.stringify({
       items: [{
-        title: `${item.title} — Talle ${talle}`,
+        title: `${item.title} — Talle ${talle}${descuento ? ` (${descuento*100}% OFF)` : ''}`,
         quantity: 1,
-        unit_price: item.unit_price,
+        unit_price: Math.round(item.unit_price * (1 - descuento)),
         currency_id: 'ARS'
       }],
       payer: { name: nombre, email },
