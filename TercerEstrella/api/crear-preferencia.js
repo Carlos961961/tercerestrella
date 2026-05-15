@@ -36,7 +36,28 @@ export default async function handler(req, res) {
   }
 
   const CUPONES = { 'HINCHA10': 0.10 };
-  const descuento = cupon && CUPONES[cupon.toUpperCase()] ? CUPONES[cupon.toUpperCase()] : 0;
+  let descuento = 0;
+
+  if (cupon && CUPONES[cupon.toUpperCase()]) {
+    const cuponKey = cupon.toUpperCase();
+
+    // Verificar que es cliente que ya compró
+    const { data: compras } = await supabase
+      .from('codigos')
+      .select('cupon_descuento')
+      .eq('email', email);
+
+    if (!compras || compras.length === 0) {
+      return res.status(400).json({ error: 'El código de descuento es exclusivo para clientes que ya compraron.' });
+    }
+
+    // Verificar que no usó este cupón antes
+    if (compras.some(c => c.cupon_descuento === cuponKey)) {
+      return res.status(400).json({ error: 'Este código de descuento ya fue utilizado.' });
+    }
+
+    descuento = CUPONES[cuponKey];
+  }
 
   // Validar formato de email
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -93,7 +114,7 @@ export default async function handler(req, res) {
       }],
       payer: { name: nombre, email },
       external_reference: externalRef,
-      metadata: { nombre, email, whatsapp, producto, talle },
+      metadata: { nombre, email, whatsapp, producto, talle, cupon: cupon ? cupon.toUpperCase() : null },
       back_urls: {
         success: `${BASE_URL}/gracias.html`,
         failure: `${BASE_URL}/${producto}.html`,

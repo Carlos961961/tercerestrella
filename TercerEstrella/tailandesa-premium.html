@@ -605,7 +605,7 @@
       if (data.init_point) {
         window.location.href = data.init_point;
       } else {
-        alert('Error al procesar el pago. Intentá por WhatsApp.');
+        alert(data.error || 'Error al procesar el pago. Intentá por WhatsApp.');
         btn.disabled = false;
         btn.textContent = 'Ir a pagar';
       }

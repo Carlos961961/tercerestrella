@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     .single();
   if (yaProcessado) return res.status(200).json({ ok: true });
 
-  const { nombre, email, whatsapp, producto, talle } = payment.metadata || {};
+  const { nombre, email, whatsapp, producto, talle, cupon } = payment.metadata || {};
   if (!email) return res.status(200).json({ ok: true });
 
   // Validar que el producto sea legítimo
@@ -64,7 +64,8 @@ export default async function handler(req, res) {
 
   await supabase.from('codigos').insert([{
     codigo, nombre, email, whatsapp, producto, talle, usado: false,
-    payment_id: String(paymentId), cuotas, monto_total
+    payment_id: String(paymentId), cuotas, monto_total,
+    cupon_descuento: cupon || null
   }]);
 
   // Email al comprador
