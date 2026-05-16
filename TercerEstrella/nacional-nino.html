@@ -101,6 +101,11 @@
   .btn-wsp { width: 100%; height: 52px; border: none; background: #25D366; color: #fff; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: background 180ms, transform 150ms; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn-wsp:hover { background: #1da851; transform: scale(1.01); }
   .btn-wsp svg, .btn-comprar svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .btn-transferencia { width: 100%; height: 52px; border: 2px solid #15803d; background: #fff; color: #15803d; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: background 180ms, transform 150ms; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-transferencia:hover { background: #f0fdf4; transform: scale(1.01); }
+  .transfer-badge { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .transfer-badge-precio { font-size:15px; font-weight:700; color:#15803d; }
+  .transfer-badge-desc { font-size:12px; color:#166534; }
   .trust-row { display: flex; gap: 16px; flex-wrap: wrap; padding: 16px 0; border-top: 1px solid var(--gris-borde); border-bottom: 1px solid var(--gris-borde); margin-bottom: 28px; }
   .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--texto-tenue); }
   .trust-item svg { width: 18px; height: 18px; color: var(--celeste); flex-shrink: 0; }
@@ -284,6 +289,13 @@
           <div class="prod-price">$23.000</div>
           <span class="prod-shipping">✓ Envío gratis CABA/GBA</span>
         </div>
+        <div class="transfer-badge">
+          <span style="font-size:20px;">💸</span>
+          <div>
+            <span class="transfer-badge-precio">$20.000 pagando por transferencia</span>
+            <span class="transfer-badge-desc"> — 10% OFF, sin comisiones</span>
+          </div>
+        </div>
         <div style="font-size:13px;color:#aaa;margin-top:6px;margin-bottom:16px;">
           ó <strong style="color:#74ACDF">6 cuotas con interés</strong> vía MercadoPago &nbsp;·&nbsp; Interior: <a href="https://wa.me/5491134652868" style="color:#74ACDF;text-decoration:none;">consultar envío →</a>
         </div>
@@ -319,6 +331,9 @@
           <button class="btn-comprar" onclick="abrirModalMP()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             PAGAR CON MERCADOPAGO
+          </button>
+          <button class="btn-transferencia" onclick="abrirModalTransferencia()">
+            💸 PAGAR POR TRANSFERENCIA — $20.000
           </button>
           <button class="btn-wsp" onclick="comprarWsp()">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.6 17.6L2 22l4.5-1.5A11 11 0 1 0 20.5 3.5z"/></svg>
@@ -575,6 +590,70 @@ function aplicarCupon() {
     msg.textContent = '✗ Código inválido';
   }
 }
+</script>
+<div id="transfer-modal-overlay" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:16px;padding:32px;max-width:440px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="cerrarModalTransferencia()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#666;">✕</button>
+    <h3 style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:4px;">Pagar por transferencia</h3>
+    <p style="font-size:13px;color:#15803d;font-weight:600;margin-bottom:20px;">10% de descuento — sin comisiones</p>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px;margin-bottom:20px;text-align:center;">
+      <p style="font-size:11px;color:#166534;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Alias de destino</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;">
+        <span style="font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#15803d;letter-spacing:0.04em;">tercerestrella.mp</span>
+        <button onclick="copiarAlias()" style="background:#15803d;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">COPIAR</button>
+      </div>
+      <p id="tr-alias-copiado" style="display:none;color:#15803d;font-size:12px;font-weight:600;">✓ ¡Alias copiado!</p>
+      <p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong style="font-size:18px;">$20.000</strong></p>
+    </div>
+    <p style="font-size:13px;color:#666;margin-bottom:16px;">Completá tus datos y hacé la transferencia. Después te abrimos WhatsApp para que nos mandes el comprobante.</p>
+    <form id="transfer-form">
+      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Nombre completo</label><input id="tr-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" /></div>
+      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Email</label><input id="tr-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" /></div>
+      <div style="margin-bottom:20px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label><input id="tr-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" /></div>
+      <button id="transfer-btn" type="submit" style="width:100%;padding:14px;background:#15803d;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.08em;cursor:pointer;">YA TRANSFERÍ — ENVIAR COMPROBANTE</button>
+    </form>
+  </div>
+</div>
+<script>
+function copiarAlias() {
+  navigator.clipboard.writeText('tercerestrella.mp').then(() => {
+    const el = document.getElementById('tr-alias-copiado');
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 2000);
+  });
+}
+function abrirModalTransferencia() {
+  if (!document.querySelector('.size-btn.selected')) { alert('Por favor seleccioná un talle primero.'); return; }
+  document.getElementById('transfer-modal-overlay').style.display = 'flex';
+}
+function cerrarModalTransferencia() {
+  document.getElementById('transfer-modal-overlay').style.display = 'none';
+}
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('transfer-modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalTransferencia();
+  });
+  document.getElementById('transfer-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('transfer-btn');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+    const talle = document.querySelector('.size-btn.selected')?.textContent?.trim();
+    const nombre = document.getElementById('tr-nombre').value.trim();
+    const email = document.getElementById('tr-email').value.trim();
+    const wsp = document.getElementById('tr-wsp').value.trim();
+    try {
+      await fetch('/api/transferencia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'nacional-nino', talle, monto: 20000 })
+      });
+    } catch(err) {}
+    const msg = encodeURIComponent(`Hola! Acabo de transferir $20.000 al alias tercerestrella.mp.\n\nDatos del pedido:\n• Nombre: ${nombre}\n• Email: ${email}\n• Producto: Nacional Niño\n• Talle: ${talle}\n\nAdjunto el comprobante.`);
+    window.open(`https://wa.me/5491134652868?text=${msg}`, '_blank');
+    cerrarModalTransferencia();
+  });
+});
 </script>
 </body>
 </html>
