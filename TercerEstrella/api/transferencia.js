@@ -19,6 +19,11 @@ export default async function handler(req, res) {
   if (!nombre || !email || !whatsapp || !producto || !talle || !monto) {
     return res.status(400).json({ error: 'Faltan datos' });
   }
+  const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailReg.test(email)) return res.status(400).json({ error: 'Email inválido' });
+  if (nombre.length > 100 || email.length > 200 || whatsapp.length > 30) {
+    return res.status(400).json({ error: 'Datos demasiado largos' });
+  }
 
   const productosValidos = ['tailandesa-premium', 'nacional-adulto', 'nacional-nino'];
   if (!productosValidos.includes(producto)) return res.status(400).json({ error: 'Producto inválido' });

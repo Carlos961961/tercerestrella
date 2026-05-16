@@ -8,7 +8,10 @@ const supabase = createClient(
 const TOTAL_LOTE = 30;
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '';
+  if (['https://www.tercerestrella.com.ar', 'https://tercerestrella.com.ar'].includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Cache-Control', 'public, max-age=60');
 
   const { count } = await supabase

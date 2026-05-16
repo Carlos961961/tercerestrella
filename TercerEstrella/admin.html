@@ -178,6 +178,11 @@
     'nacional-nino': 'Nacional Niño'
   };
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
   let adminKey = '';
   let ultimaData = null;
   let ultimoCountVentas = 0;
@@ -297,15 +302,15 @@
           </thead>
           <tbody>
             ${items.map(v => `
-              <tr data-nombre="${(v.nombre||'').toLowerCase()}" data-email="${(v.email||'').toLowerCase()}" data-codigo="${(v.codigo||'').toLowerCase()}" data-producto="${v.producto||''}">
+              <tr data-nombre="${escapeHtml((v.nombre||'').toLowerCase())}" data-email="${escapeHtml((v.email||'').toLowerCase())}" data-codigo="${escapeHtml((v.codigo||'').toLowerCase())}" data-producto="${escapeHtml(v.producto||'')}">
                 <td style="white-space:nowrap;">${new Date(v.created_at).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
-                <td><strong>${v.nombre || '-'}</strong><br><span style="color:#999;font-size:12px;">${v.email || ''}</span></td>
-                <td><a href="https://wa.me/54${(v.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${v.whatsapp || '-'}</a></td>
-                <td><span class="producto-tag">${NOMBRES_PRODUCTO[v.producto] || v.producto}</span></td>
-                <td style="text-align:center;font-weight:700;">${v.talle || '-'}</td>
+                <td><strong>${escapeHtml(v.nombre || '-')}</strong><br><span style="color:#999;font-size:12px;">${escapeHtml(v.email || '')}</span></td>
+                <td><a href="https://wa.me/54${(v.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${escapeHtml(v.whatsapp || '-')}</a></td>
+                <td><span class="producto-tag">${escapeHtml(NOMBRES_PRODUCTO[v.producto] || v.producto)}</span></td>
+                <td style="text-align:center;font-weight:700;">${escapeHtml(v.talle || '-')}</td>
                 <td style="text-align:center;">${v.cuotas ? v.cuotas + 'x' : '1x'}</td>
                 <td style="text-align:right;font-weight:600;">$${(v.monto_total||0).toLocaleString('es-AR', {maximumFractionDigits:0})}</td>
-                <td><span class="badge badge-codigo">${v.codigo}</span></td>
+                <td><span class="badge badge-codigo">${escapeHtml(v.codigo)}</span></td>
                 <td style="text-align:center;">${v.usado ? '✅' : '⏳'}</td>
               </tr>
             `).join('')}
@@ -334,12 +339,12 @@
           </thead>
           <tbody>
             ${items.map(l => `
-              <tr data-nombre="${(l.nombre||'').toLowerCase()}" data-email="${(l.email||'').toLowerCase()}" data-producto="${l.producto||''}" data-estado="${l.convertido ? 'convertido' : 'pendiente'}">
+              <tr data-nombre="${escapeHtml((l.nombre||'').toLowerCase())}" data-email="${escapeHtml((l.email||'').toLowerCase())}" data-producto="${escapeHtml(l.producto||'')}" data-estado="${l.convertido ? 'convertido' : 'pendiente'}">
                 <td style="white-space:nowrap;">${new Date(l.created_at).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
-                <td><strong>${l.nombre || '-'}</strong><br><span style="color:#999;font-size:12px;">${l.email || ''}</span></td>
-                <td><a href="https://wa.me/54${(l.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${l.whatsapp || '-'}</a></td>
-                <td><span class="producto-tag">${NOMBRES_PRODUCTO[l.producto] || l.producto}</span></td>
-                <td style="text-align:center;font-weight:700;">${l.talle || '-'}</td>
+                <td><strong>${escapeHtml(l.nombre || '-')}</strong><br><span style="color:#999;font-size:12px;">${escapeHtml(l.email || '')}</span></td>
+                <td><a href="https://wa.me/54${(l.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${escapeHtml(l.whatsapp || '-')}</a></td>
+                <td><span class="producto-tag">${escapeHtml(NOMBRES_PRODUCTO[l.producto] || l.producto)}</span></td>
+                <td style="text-align:center;font-weight:700;">${escapeHtml(l.talle || '-')}</td>
                 <td style="text-align:center;">${l.convertido ? '<span class="badge badge-convertido">Compró</span>' : '<span class="badge badge-lead">Pendiente</span>'}</td>
                 <td style="text-align:center;">${l.email_recordatorio_enviado ? '✅ Enviado' : '—'}</td>
               </tr>
@@ -353,21 +358,21 @@
   function renderInscripciones(items) {
     if (!items.length) { document.getElementById('lista-inscripciones').innerHTML = '<div class="empty">No hay inscripciones todavía.</div>'; return; }
     document.getElementById('lista-inscripciones').innerHTML = items.map(i => `
-      <div class="card" data-nombre="${(i.nombre||'').toLowerCase()}" data-codigo="${(i.codigo||'').toLowerCase()}">
+      <div class="card" data-nombre="${escapeHtml((i.nombre||'').toLowerCase())}" data-codigo="${escapeHtml((i.codigo||'').toLowerCase())}">
         <div class="card-header">
           <div>
-            <div class="card-name">${i.nombre}</div>
+            <div class="card-name">${escapeHtml(i.nombre)}</div>
             <div class="card-date">${new Date(i.created_at).toLocaleString('es-AR')}</div>
           </div>
-          <span class="badge badge-codigo">${i.codigo || 'sin código'}</span>
+          <span class="badge badge-codigo">${escapeHtml(i.codigo || 'sin código')}</span>
         </div>
         <div class="card-body">
-          <strong>Producto:</strong> ${NOMBRES_PRODUCTO[i.producto] || i.producto} — Talle ${i.talle}<br>
-          <strong>WhatsApp:</strong> <a href="https://wa.me/54${(i.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;">📱 ${i.whatsapp}</a><br>
-          ${i.email ? `<strong>Email:</strong> ${i.email}<br>` : ''}
-          ${i.resena ? `<strong>Reseña:</strong> ${i.resena}` : ''}
+          <strong>Producto:</strong> ${escapeHtml(NOMBRES_PRODUCTO[i.producto] || i.producto)} — Talle ${escapeHtml(i.talle)}<br>
+          <strong>WhatsApp:</strong> <a href="https://wa.me/54${(i.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;">📱 ${escapeHtml(i.whatsapp)}</a><br>
+          ${i.email ? `<strong>Email:</strong> ${escapeHtml(i.email)}<br>` : ''}
+          ${i.resena ? `<strong>Reseña:</strong> ${escapeHtml(i.resena)}` : ''}
         </div>
-        ${i.foto_url ? `<img src="${i.foto_url}" class="foto-thumb" />` : ''}
+        ${i.foto_url ? `<img src="${escapeHtml(i.foto_url)}" class="foto-thumb" />` : ''}
       </div>
     `).join('');
   }
@@ -379,16 +384,16 @@
       <div class="card" id="test-${t.id}">
         <div class="card-header">
           <div>
-            <div class="card-name">${t.nombre}</div>
+            <div class="card-name">${escapeHtml(t.nombre)}</div>
             <div class="card-date">${new Date(t.created_at).toLocaleString('es-AR')}</div>
           </div>
           <span class="badge badge-pendiente">Pendiente</span>
         </div>
         <div class="card-body">
-          ${t.producto ? `<strong>Producto:</strong> ${NOMBRES_PRODUCTO[t.producto] || t.producto}<br>` : ''}
-          <strong>Reseña:</strong> ${t.texto}
+          ${t.producto ? `<strong>Producto:</strong> ${escapeHtml(NOMBRES_PRODUCTO[t.producto] || t.producto)}<br>` : ''}
+          <strong>Reseña:</strong> ${escapeHtml(t.texto)}
         </div>
-        ${t.foto_url ? `<img src="${t.foto_url}" class="foto-thumb" />` : ''}
+        ${t.foto_url ? `<img src="${escapeHtml(t.foto_url)}" class="foto-thumb" />` : ''}
         <div class="actions">
           <button class="btn-sm btn-aprobar" onclick="accion('aprobar', ${t.id})">✓ Aprobar</button>
           <button class="btn-sm btn-rechazar" onclick="accion('rechazar', ${t.id})">✕ Rechazar</button>

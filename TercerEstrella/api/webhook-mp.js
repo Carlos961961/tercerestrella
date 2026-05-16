@@ -1,4 +1,5 @@
-﻿import { createClient } from '@supabase/supabase-js';
+﻿import crypto from 'crypto';
+import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 const supabase = createClient(
@@ -17,6 +18,18 @@ function generarCodigo() {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+
+  if (process.env.MP_WEBHOOK_SECRET) {
+    const sig = req.headers['x-signature'] || '';
+    const reqId = req.headers['x-request-id'] || '';
+    const dataId = (req.query || {})['data.id'] || req.body?.data?.id || '';
+    const m = sig.match(/ts=(\d+),v1=([a-f0-9]+)/);
+    if (!m) return res.status(400).end();
+    const [, ts, hash] = m;
+    const template = `id:${dataId};request-id:${reqId};ts:${ts};`;
+    const expected = crypto.createHmac('sha256', process.env.MP_WEBHOOK_SECRET).update(template).digest('hex');
+    if (expected !== hash) return res.status(400).end();
+  }
 
   const { type, data } = req.body;
   if (type !== 'payment') return res.status(200).json({ ok: true });
