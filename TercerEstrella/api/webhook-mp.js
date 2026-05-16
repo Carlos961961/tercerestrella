@@ -68,6 +68,11 @@ export default async function handler(req, res) {
     cupon_descuento: cupon || null
   }]);
 
+  await supabase.from('inscripciones').insert([{
+    nombre, email, whatsapp, producto, talle, codigo,
+    resena: null, foto_url: null, autoriza_publicacion: false
+  }]);
+
   // Email al comprador
   if (process.env.RESEND_API_KEY) {
     await resend.emails.send({
@@ -84,10 +89,6 @@ export default async function handler(req, res) {
             <p style="margin:0 0 8px;color:#74ACDF;font-size:12px;text-transform:uppercase;letter-spacing:0.12em;">Tu código del sorteo</p>
             <p style="font-size:38px;font-weight:bold;letter-spacing:0.18em;color:#C0A24A;margin:0;">${codigo}</p>
             <p style="margin:12px 0 0;color:#aaa;font-size:13px;">Guardalo — con este código te inscribís al sorteo y podés dejar tu opinión.</p>
-          </div>
-
-          <div style="text-align:center;margin-bottom:28px;">
-            <a href="https://www.tercerestrella.com.ar/#sorteo" style="background:#C0A24A;color:#1A1A2E;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px;letter-spacing:0.05em;">INSCRIBIRME AL SORTEO</a>
           </div>
 
           <div style="background:#0f2a50;border-radius:8px;padding:20px;margin-bottom:28px;text-align:center;">
