@@ -140,8 +140,8 @@
   .gallery { position: relative; }
   @media (min-width: 769px) {
     .gallery { position: sticky; top: 88px; display: flex; flex-direction: column; max-height: calc(100vh - 200px); }
-    .gallery-main { flex: 1; min-height: 0; aspect-ratio: unset; background: var(--gris-claro); box-shadow: none; }
-    .gallery-main img { object-fit: contain; }
+    .gallery-main { flex: 1; min-height: 0; aspect-ratio: unset; background: var(--gris-claro) !important; box-shadow: none !important; }
+    .gallery-main img { object-fit: cover !important; }
   }
   .gallery-main {
     position: relative;

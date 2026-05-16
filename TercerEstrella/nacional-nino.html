@@ -62,8 +62,8 @@
   .gallery { position: relative; }
   @media (min-width: 769px) {
     .gallery { position: sticky; top: 88px; display: flex; flex-direction: column; max-height: calc(100vh - 200px); }
-    .gallery-main { flex: 1; min-height: 0; aspect-ratio: unset; background: var(--gris-claro); box-shadow: none; }
-    .gallery-main img { object-fit: contain; }
+    .gallery-main { flex: 1; min-height: 0; aspect-ratio: unset; background: var(--gris-claro) !important; box-shadow: none !important; }
+    .gallery-main img { object-fit: cover !important; }
   }
   .gallery-main { position: relative; background: #FFFFFF; border-radius: 16px; overflow: hidden; aspect-ratio: 1/1; margin-bottom: 12px; box-shadow: 0 2px 20px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; }
   .gallery-main img { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 300ms ease; }
