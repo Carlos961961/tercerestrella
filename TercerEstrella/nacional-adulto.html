@@ -139,7 +139,9 @@
   /* GALLERY */
   .gallery { position: relative; }
   @media (min-width: 769px) {
-    .gallery { position: sticky; top: 88px; }
+    .gallery { position: sticky; top: 88px; display: flex; flex-direction: column; max-height: calc(100vh - 120px); }
+    .gallery-main { flex: 1; min-height: 0; aspect-ratio: unset; }
+    .gallery-main img { object-fit: contain; }
   }
   .gallery-main {
     position: relative;
