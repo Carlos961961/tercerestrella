@@ -68,8 +68,7 @@ export default async function handler(req, res) {
       .upload(filename, buffer, { contentType: foto_tipo });
 
     if (!uploadError) {
-      const { data: { publicUrl } } = supabase.storage.from('fotos').getPublicUrl(filename);
-      foto_url = publicUrl;
+      foto_url = filename;
     }
   }
 

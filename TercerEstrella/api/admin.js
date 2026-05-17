@@ -49,10 +49,18 @@ export default async function handler(req, res) {
   try { if (redis) await redis.del(key); } catch (_) {}
 
   if (req.method === 'GET') {
-    const { data: inscripciones } = await supabase
+    const { data: inscripcionesRaw } = await supabase
       .from('inscripciones')
       .select('*')
       .order('created_at', { ascending: false });
+
+    const inscripciones = await Promise.all((inscripcionesRaw || []).map(async i => {
+      if (i.foto_url && !i.foto_url.startsWith('http')) {
+        const { data: signed } = await supabase.storage.from('fotos').createSignedUrl(i.foto_url, 3600);
+        return { ...i, foto_url: signed?.signedUrl || null };
+      }
+      return i;
+    }));
 
     const { data: testimonios } = await supabase
       .from('testimonios')
