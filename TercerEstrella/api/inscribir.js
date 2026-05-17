@@ -33,6 +33,7 @@ export default async function handler(req, res) {
   const tallesValidos = ['S', 'M', 'L', 'XL', 'XXL', '2', '4', '6', '8', '10', '12', '14', '16'];
   if (!tallesValidos.includes(talle)) return res.status(400).json({ error: 'Talle inválido' });
 
+  if (whatsapp.replace(/\D/g, '').length < 10) return res.status(400).json({ error: 'WhatsApp inválido' });
   if (nombre.length > 100 || whatsapp.length > 30 || (resena && resena.length > 2000)) {
     return res.status(400).json({ error: 'Datos demasiado largos' });
   }

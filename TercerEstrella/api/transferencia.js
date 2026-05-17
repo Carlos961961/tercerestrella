@@ -21,6 +21,7 @@ export default async function handler(req, res) {
   }
   const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailReg.test(email)) return res.status(400).json({ error: 'Email inválido' });
+  if (whatsapp.replace(/\D/g, '').length < 10) return res.status(400).json({ error: 'WhatsApp inválido' });
   if (nombre.length > 100 || email.length > 200 || whatsapp.length > 30) {
     return res.status(400).json({ error: 'Datos demasiado largos' });
   }
