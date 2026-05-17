@@ -1,13 +1,21 @@
 ﻿import { createClient } from '@supabase/supabase-js';
+import { Redis } from '@upstash/redis';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SECRET_KEY
 );
 
+const redis = process.env.UPSTASH_REDIS_REST_URL
+  ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN })
+  : null;
+
+const MAX_INTENTOS = 5;
+const VENTANA_SEGUNDOS = 15 * 60;
+
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
-  const allowed = ['https://www.tercerestrella.com.ar', 'https://tercerestrella.com.ar', 'https://www.tercerestrella.com.ar'];
+  const allowed = ['https://www.tercerestrella.com.ar', 'https://tercerestrella.com.ar'];
   if (allowed.includes(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -15,10 +23,26 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  const key = `ratelimit:admin:${ip}`;
+
+  if (redis) {
+    const intentos = await redis.get(key);
+    if (intentos && parseInt(intentos) >= MAX_INTENTOS) {
+      return res.status(429).json({ error: 'Demasiados intentos. Intentá en 15 minutos.' });
+    }
+  }
+
   const auth = req.headers.authorization;
   if (auth !== `Bearer ${process.env.ADMIN_SECRET}`) {
+    if (redis) {
+      await redis.incr(key);
+      await redis.expire(key, VENTANA_SEGUNDOS);
+    }
     return res.status(401).json({ error: 'No autorizado' });
   }
+
+  if (redis) await redis.del(key);
 
   if (req.method === 'GET') {
     const { data: inscripciones } = await supabase
