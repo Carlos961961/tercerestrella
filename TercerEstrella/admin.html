@@ -80,6 +80,12 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast-icon { font-size: 20px; }
   .no-results { text-align: center; color: #999; padding: 24px; font-size: 13px; display: none; }
+  .paginacion { display: flex; align-items: center; justify-content: space-between; padding: 16px 0 8px; flex-wrap: wrap; gap: 8px; }
+  .pag-info { font-size: 13px; color: #666; }
+  .pag-btns { display: flex; gap: 8px; }
+  .pag-btn { padding: 7px 16px; border: 1.5px solid #ddd; border-radius: 8px; background: #fff; font-size: 13px; font-weight: 600; cursor: pointer; color: #1A1A2E; }
+  .pag-btn:hover:not(:disabled) { border-color: #C0A24A; color: #C0A24A; }
+  .pag-btn:disabled { opacity: 0.4; cursor: default; }
 </style>
 </head>
 <body>
@@ -131,6 +137,7 @@
       </div>
       <div id="lista-ventas"><div class="empty">Cargando...</div></div>
       <div class="no-results" id="no-results-ventas">No se encontraron resultados.</div>
+      <div class="paginacion" id="paginacion-ventas"></div>
     </div>
 
     <div class="section" id="tab-leads">
@@ -153,6 +160,7 @@
       </div>
       <div id="lista-leads"><div class="empty">Cargando...</div></div>
       <div class="no-results" id="no-results-leads">No se encontraron resultados.</div>
+      <div class="paginacion" id="paginacion-leads"></div>
     </div>
 
     <div class="section" id="tab-inscripciones">
@@ -163,6 +171,7 @@
       </div>
       <div id="lista-inscripciones"><div class="empty">Cargando...</div></div>
       <div class="no-results" id="no-results-inscripciones">No se encontraron resultados.</div>
+      <div class="paginacion" id="paginacion-inscripciones"></div>
     </div>
 
     <div class="section" id="tab-testimonios">
@@ -187,6 +196,9 @@
   let adminKey = '';
   let ultimaData = null;
   let ultimoCountVentas = 0;
+  const PAGE_SIZE = 50;
+  let paginas = { ventas: 1, leads: 1, inscripciones: 1 };
+  let totales = { ventas: 0, leads: 0, inscripciones: 0 };
 
   function login() {
     adminKey = document.getElementById('admin-key').value.trim();
@@ -199,7 +211,12 @@
   });
 
   async function cargarDatos(esLogin = false) {
-    const res = await fetch('/api/admin', {
+    const params = new URLSearchParams({
+      ventas_page: paginas.ventas,
+      leads_page: paginas.leads,
+      inscripciones_page: paginas.inscripciones
+    });
+    const res = await fetch(`/api/admin?${params}`, {
       headers: { 'Authorization': `Bearer ${adminKey}` }
     });
 
@@ -210,12 +227,16 @@
 
     const data = await res.json();
 
+    totales.ventas = data.ventas_total || 0;
+    totales.leads = data.leads_total || 0;
+    totales.inscripciones = data.inscripciones_total || 0;
+
     if (esLogin) {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-screen').style.display = 'block';
-      ultimoCountVentas = (data.ventas || []).length;
+      ultimoCountVentas = data.stats?.ventas_total || 0;
     } else {
-      const nuevoCount = (data.ventas || []).length;
+      const nuevoCount = data.stats?.ventas_total || 0;
       if (nuevoCount > ultimoCountVentas) {
         mostrarToast(`¡Nueva venta! Total: ${nuevoCount}`);
         ultimoCountVentas = nuevoCount;
@@ -232,39 +253,57 @@
     renderInscripciones(data.inscripciones || []);
     renderTestimonios(data.testimonios || []);
     actualizarBadges(data);
+    renderPaginacion('ventas');
+    renderPaginacion('leads');
+    renderPaginacion('inscripciones');
+  }
+
+  function renderPaginacion(tipo) {
+    const total = totales[tipo];
+    const pagina = paginas[tipo];
+    const totalPaginas = Math.ceil(total / PAGE_SIZE);
+    const el = document.getElementById(`paginacion-${tipo}`);
+    if (!el) return;
+    if (totalPaginas <= 1) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div class="pag-info">Página ${pagina} de ${totalPaginas} · ${total} registros en total</div>
+      <div class="pag-btns">
+        <button class="pag-btn" onclick="cambiarPagina('${tipo}', ${pagina - 1})" ${pagina <= 1 ? 'disabled' : ''}>← Anterior</button>
+        <button class="pag-btn" onclick="cambiarPagina('${tipo}', ${pagina + 1})" ${pagina >= totalPaginas ? 'disabled' : ''}>Siguiente →</button>
+      </div>
+    `;
+  }
+
+  function cambiarPagina(tipo, nuevaPagina) {
+    paginas[tipo] = nuevaPagina;
+    cargarDatos();
+    document.getElementById(`tab-${tipo}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function actualizarBadges(data) {
-    document.getElementById('badge-ventas').textContent = (data.ventas || []).length;
-    document.getElementById('badge-leads').textContent = (data.leads || []).filter(l => !l.convertido).length;
-    document.getElementById('badge-inscripciones').textContent = (data.inscripciones || []).length;
-    const pendientes = (data.testimonios || []).filter(t => !t.aprobado).length;
-    document.getElementById('badge-testimonios').textContent = pendientes;
+    const s = data.stats || {};
+    document.getElementById('badge-ventas').textContent = s.ventas_total || 0;
+    document.getElementById('badge-leads').textContent = s.leads_pendientes || 0;
+    document.getElementById('badge-inscripciones').textContent = s.inscripciones_total || 0;
+    document.getElementById('badge-testimonios').textContent = s.testimonios_pendientes || 0;
   }
 
   function renderStats(data) {
-    const insc = data.inscripciones || [];
-    const ventas = data.ventas || [];
-    const leads = data.leads || [];
-    const test = data.testimonios || [];
-    const pendientes = test.filter(t => !t.aprobado).length;
-    const totalRecaudado = ventas.reduce((s, v) => s + (v.monto_total || 0), 0);
-    const leadsNoCon = leads.filter(l => !l.convertido).length;
-
+    const s = data.stats || {};
     document.getElementById('stats-row').innerHTML = `
-      <div class="stat-card"><div class="stat-num">${ventas.length}</div><div class="stat-label">Ventas totales</div></div>
-      <div class="stat-card"><div class="stat-num">$${totalRecaudado.toLocaleString('es-AR', {maximumFractionDigits:0})}</div><div class="stat-label">Recaudado (bruto)</div></div>
-      <div class="stat-card"><div class="stat-num">${insc.length}</div><div class="stat-label">Inscriptos al sorteo</div></div>
-      <div class="stat-card"><div class="stat-num">${leadsNoCon}</div><div class="stat-label">Carritos abandonados</div></div>
-      <div class="stat-card"><div class="stat-num">${pendientes}</div><div class="stat-label">Reseñas pendientes</div></div>
+      <div class="stat-card"><div class="stat-num">${s.ventas_total || 0}</div><div class="stat-label">Ventas totales</div></div>
+      <div class="stat-card"><div class="stat-num">$${(s.recaudado_total || 0).toLocaleString('es-AR', {maximumFractionDigits:0})}</div><div class="stat-label">Recaudado (bruto)</div></div>
+      <div class="stat-card"><div class="stat-num">${s.inscripciones_total || 0}</div><div class="stat-label">Inscriptos al sorteo</div></div>
+      <div class="stat-card"><div class="stat-num">${s.leads_pendientes || 0}</div><div class="stat-label">Carritos abandonados</div></div>
+      <div class="stat-card"><div class="stat-num">${s.testimonios_pendientes || 0}</div><div class="stat-label">Reseñas pendientes</div></div>
     `;
   }
 
   function renderSorteo(data) {
-    const insc = data.inscripciones || [];
+    const total = (data.stats || {}).inscripciones_total || 0;
     const LOTE = 30;
-    const enLote = insc.length % LOTE;
-    const loteNum = Math.floor(insc.length / LOTE) + 1;
+    const enLote = total % LOTE;
+    const loteNum = Math.floor(total / LOTE) + 1;
     const pct = Math.round((enLote / LOTE) * 100);
     const restantes = LOTE - enLote;
 
@@ -276,7 +315,7 @@
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="sorteo-lotes">
         <div class="lote-item"><strong>Lote actual:</strong> #${loteNum} — ${enLote}/${LOTE}</div>
-        <div class="lote-item"><strong>Total inscriptos:</strong> ${insc.length}</div>
+        <div class="lote-item"><strong>Total inscriptos:</strong> ${total}</div>
         <div class="lote-item"><strong>Progreso:</strong> ${pct}%</div>
       </div>
     `;

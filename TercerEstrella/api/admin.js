@@ -49,10 +49,29 @@ export default async function handler(req, res) {
   try { if (redis) await redis.del(key); } catch (_) {}
 
   if (req.method === 'GET') {
-    const { data: inscripcionesRaw } = await supabase
-      .from('inscripciones')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const PAGE_SIZE = 50;
+    const vp = Math.max(1, parseInt(req.query.ventas_page) || 1);
+    const lp = Math.max(1, parseInt(req.query.leads_page) || 1);
+    const ip = Math.max(1, parseInt(req.query.inscripciones_page) || 1);
+
+    const [
+      { data: ventas, count: ventas_total },
+      { data: leads, count: leads_total },
+      { data: inscripcionesRaw, count: inscripciones_total },
+      { data: testimonios },
+      { data: recaudadoData },
+      { count: leads_pendientes }
+    ] = await Promise.all([
+      supabase.from('codigos').select('*', { count: 'exact' }).order('created_at', { ascending: false }).range((vp-1)*PAGE_SIZE, vp*PAGE_SIZE-1),
+      supabase.from('leads').select('*', { count: 'exact' }).order('created_at', { ascending: false }).range((lp-1)*PAGE_SIZE, lp*PAGE_SIZE-1),
+      supabase.from('inscripciones').select('*', { count: 'exact' }).order('created_at', { ascending: false }).range((ip-1)*PAGE_SIZE, ip*PAGE_SIZE-1),
+      supabase.from('testimonios').select('*').order('created_at', { ascending: false }),
+      supabase.from('codigos').select('monto_total'),
+      supabase.from('leads').select('*', { count: 'exact', head: true }).eq('convertido', false)
+    ]);
+
+    const recaudado_total = (recaudadoData || []).reduce((s, v) => s + (v.monto_total || 0), 0);
+    const testimonios_pendientes = (testimonios || []).filter(t => !t.aprobado).length;
 
     const inscripciones = await Promise.all((inscripcionesRaw || []).map(async i => {
       if (i.foto_url && !i.foto_url.startsWith('http')) {
@@ -62,22 +81,19 @@ export default async function handler(req, res) {
       return i;
     }));
 
-    const { data: testimonios } = await supabase
-      .from('testimonios')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    const { data: ventas } = await supabase
-      .from('codigos')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    const { data: leads } = await supabase
-      .from('leads')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    return res.status(200).json({ inscripciones, testimonios, ventas, leads });
+    return res.status(200).json({
+      ventas: ventas || [], ventas_total: ventas_total || 0,
+      leads: leads || [], leads_total: leads_total || 0,
+      inscripciones, inscripciones_total: inscripciones_total || 0,
+      testimonios: testimonios || [],
+      stats: {
+        ventas_total: ventas_total || 0,
+        recaudado_total,
+        leads_pendientes: leads_pendientes || 0,
+        inscripciones_total: inscripciones_total || 0,
+        testimonios_pendientes
+      }
+    });
   }
 
   if (req.method === 'POST') {
