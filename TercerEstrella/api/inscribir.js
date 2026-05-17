@@ -27,6 +27,16 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
+  const productosValidos = ['tailandesa-premium', 'nacional-adulto', 'nacional-nino'];
+  if (!productosValidos.includes(producto)) return res.status(400).json({ error: 'Producto inválido' });
+
+  const tallesValidos = ['S', 'M', 'L', 'XL', 'XXL', '2', '4', '6', '8', '10', '12', '14', '16'];
+  if (!tallesValidos.includes(talle)) return res.status(400).json({ error: 'Talle inválido' });
+
+  if (nombre.length > 100 || whatsapp.length > 30 || (resena && resena.length > 2000)) {
+    return res.status(400).json({ error: 'Datos demasiado largos' });
+  }
+
   // Validar código de compra
   const { data: codigoData, error: codigoError } = await supabase
     .from('codigos')
@@ -45,6 +55,9 @@ export default async function handler(req, res) {
   // Subir foto a Supabase Storage si viene una
   let foto_url = null;
   if (foto_base64 && foto_tipo) {
+    const TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!TIPOS_PERMITIDOS.includes(foto_tipo)) return res.status(400).json({ error: 'Tipo de imagen no permitido' });
+    if (foto_base64.length > 5_000_000) return res.status(400).json({ error: 'Imagen demasiado grande (máx 5MB)' });
     const buffer = Buffer.from(foto_base64, 'base64');
     const ext = foto_tipo.split('/')[1] || 'jpg';
     const filename = `${Date.now()}-${nombre.replace(/\s+/g, '-').toLowerCase()}.${ext}`;

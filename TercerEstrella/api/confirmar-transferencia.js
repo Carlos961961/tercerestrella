@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   if (adminSecret !== process.env.ADMIN_SECRET) return res.status(403).json({ error: 'No autorizado' });
 
   const { id } = req.body;
-  if (!id) return res.status(400).json({ error: 'Falta id' });
+  if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: 'ID inválido' });
 
   const { data: transfer } = await supabase.from('transferencias').select('*').eq('id', id).single();
   if (!transfer) return res.status(404).json({ error: 'Transferencia no encontrada' });
