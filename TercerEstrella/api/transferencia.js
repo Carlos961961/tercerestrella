@@ -1,10 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
+import { Redis } from '@upstash/redis';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY);
 const resend = new Resend(process.env.RESEND_API_KEY);
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tercerestrella.ar@gmail.com';
 const EMAIL_FROM = process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.dev>';
+
+const redis = process.env.UPSTASH_REDIS_REST_URL
+  ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN })
+  : null;
+
+const PRECIOS_TRANSFERENCIA = {
+  'tailandesa-premium': 50000,
+  'nacional-adulto': 25000,
+  'nacional-nino': 20000
+};
 
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
@@ -15,8 +26,18 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
-  const { nombre, email, whatsapp, producto, talle, monto } = req.body;
-  if (!nombre || !email || !whatsapp || !producto || !talle || !monto) {
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  try {
+    if (redis) {
+      const key = `rl:transferencia:${ip}`;
+      const hits = await redis.incr(key);
+      if (hits === 1) await redis.expire(key, 600);
+      if (hits > 10) return res.status(429).json({ error: 'Demasiadas solicitudes. Intentá en unos minutos.' });
+    }
+  } catch (_) {}
+
+  const { nombre, email, whatsapp, producto, talle } = req.body;
+  if (!nombre || !email || !whatsapp || !producto || !talle) {
     return res.status(400).json({ error: 'Faltan datos' });
   }
   const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,8 +53,7 @@ export default async function handler(req, res) {
   const tallesValidos = ['S', 'M', 'L', 'XL', 'XXL', '2', '4', '6', '8', '10', '12', '14', '16'];
   if (!tallesValidos.includes(talle)) return res.status(400).json({ error: 'Talle inválido' });
 
-  const montoNum = parseFloat(monto);
-  if (isNaN(montoNum) || montoNum < 1000 || montoNum > 500000) return res.status(400).json({ error: 'Monto inválido' });
+  const montoNum = PRECIOS_TRANSFERENCIA[producto];
 
   await supabase.from('transferencias').insert([{ nombre, email, whatsapp, producto, talle, monto: montoNum, estado: 'pendiente' }]);
 

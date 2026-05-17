@@ -1,5 +1,10 @@
 ﻿import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
+import { Redis } from '@upstash/redis';
+
+const redis = process.env.UPSTASH_REDIS_REST_URL
+  ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN })
+  : null;
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -28,6 +33,16 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
+
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  try {
+    if (redis) {
+      const key = `rl:preferencia:${ip}`;
+      const hits = await redis.incr(key);
+      if (hits === 1) await redis.expire(key, 600);
+      if (hits > 10) return res.status(429).json({ error: 'Demasiadas solicitudes. Intentá en unos minutos.' });
+    }
+  } catch (_) {}
 
   const { producto, talle, nombre, email, whatsapp, cupon } = req.body;
 
