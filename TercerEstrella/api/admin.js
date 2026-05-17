@@ -26,23 +26,27 @@ export default async function handler(req, res) {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   const key = `ratelimit:admin:${ip}`;
 
-  if (redis) {
-    const intentos = await redis.get(key);
-    if (intentos && parseInt(intentos) >= MAX_INTENTOS) {
-      return res.status(429).json({ error: 'Demasiados intentos. Intentá en 15 minutos.' });
+  try {
+    if (redis) {
+      const intentos = await redis.get(key);
+      if (intentos && parseInt(intentos) >= MAX_INTENTOS) {
+        return res.status(429).json({ error: 'Demasiados intentos. Intentá en 15 minutos.' });
+      }
     }
-  }
+  } catch (_) {}
 
   const auth = req.headers.authorization;
   if (auth !== `Bearer ${process.env.ADMIN_SECRET}`) {
-    if (redis) {
-      await redis.incr(key);
-      await redis.expire(key, VENTANA_SEGUNDOS);
-    }
+    try {
+      if (redis) {
+        await redis.incr(key);
+        await redis.expire(key, VENTANA_SEGUNDOS);
+      }
+    } catch (_) {}
     return res.status(401).json({ error: 'No autorizado' });
   }
 
-  if (redis) await redis.del(key);
+  try { if (redis) await redis.del(key); } catch (_) {}
 
   if (req.method === 'GET') {
     const { data: inscripciones } = await supabase
