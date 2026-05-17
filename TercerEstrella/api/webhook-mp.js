@@ -55,6 +55,7 @@ export default async function handler(req, res) {
 
   const { nombre, email, whatsapp, producto, talle, cupon } = payment.metadata || {};
   if (!email) return res.status(200).json({ ok: true });
+  if (nombre && nombre.length > 200) return res.status(200).json({ ok: true });
 
   // Validar que el producto y talle sean legítimos
   const productosValidos = ['tailandesa-premium', 'nacional-adulto', 'nacional-nino'];

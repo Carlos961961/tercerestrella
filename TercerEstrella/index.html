@@ -1045,6 +1045,12 @@
     var fotoInput = document.getElementById('si-foto');
     var fotoFile = fotoInput.files && fotoInput.files[0];
 
+    if (fotoFile && !['image/jpeg', 'image/png', 'image/webp'].includes(fotoFile.type)) {
+      errorEl.textContent = 'Solo se aceptan imágenes JPG, PNG o WebP.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = fotoFile ? 'Subiendo foto...' : 'Enviando...';
 

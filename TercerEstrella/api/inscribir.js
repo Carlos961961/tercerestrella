@@ -7,6 +7,11 @@ const supabase = createClient(
 );
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
   const allowed = ['https://www.tercerestrella.com.ar', 'https://tercerestrella.com.ar', 'https://www.tercerestrella.com.ar'];
@@ -123,14 +128,14 @@ export default async function handler(req, res) {
         <div style="font-family:Arial,sans-serif;max-width:500px;padding:20px;">
           <h2>Nueva inscripción al sorteo</h2>
           <table style="width:100%;border-collapse:collapse;">
-            <tr><td style="padding:6px 0;color:#666;">Nombre</td><td style="padding:6px 0;"><strong>${nombre}</strong></td></tr>
-            <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;">${email || '—'}</td></tr>
-            <tr><td style="padding:6px 0;color:#666;">WhatsApp</td><td style="padding:6px 0;">${whatsapp}</td></tr>
-            <tr><td style="padding:6px 0;color:#666;">Producto</td><td style="padding:6px 0;">${producto} — Talle ${talle}</td></tr>
-            <tr><td style="padding:6px 0;color:#666;">Código</td><td style="padding:6px 0;">${codigo || '—'}</td></tr>
-            <tr><td style="padding:6px 0;color:#666;">Reseña</td><td style="padding:6px 0;">${resena || '—'}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Nombre</td><td style="padding:6px 0;"><strong>${esc(nombre)}</strong></td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;">${esc(email || '—')}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">WhatsApp</td><td style="padding:6px 0;">${esc(whatsapp)}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Producto</td><td style="padding:6px 0;">${esc(producto)} — Talle ${esc(talle)}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Código</td><td style="padding:6px 0;">${esc(codigo || '—')}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Reseña</td><td style="padding:6px 0;">${esc(resena || '—')}</td></tr>
             <tr><td style="padding:6px 0;color:#666;">Autoriza publicación</td><td style="padding:6px 0;">${autoriza_publicacion ? 'Sí' : 'No'}</td></tr>
-            ${foto_url ? `<tr><td style="padding:6px 0;color:#666;">Foto</td><td style="padding:6px 0;"><a href="${foto_url}">Ver foto</a></td></tr>` : ''}
+            ${foto_url ? `<tr><td style="padding:6px 0;color:#666;">Foto</td><td style="padding:6px 0;"><a href="${esc(foto_url)}">Ver foto</a></td></tr>` : ''}
           </table>
         </div>
       `
