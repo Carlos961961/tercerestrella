@@ -47,6 +47,8 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { action, id } = req.body;
 
+    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: 'ID inválido' });
+
     if (action === 'aprobar') {
       const { error } = await supabase
         .from('testimonios')

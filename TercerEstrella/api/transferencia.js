@@ -28,7 +28,13 @@ export default async function handler(req, res) {
   const productosValidos = ['tailandesa-premium', 'nacional-adulto', 'nacional-nino'];
   if (!productosValidos.includes(producto)) return res.status(400).json({ error: 'Producto inválido' });
 
-  await supabase.from('transferencias').insert([{ nombre, email, whatsapp, producto, talle, monto, estado: 'pendiente' }]);
+  const tallesValidos = ['S', 'M', 'L', 'XL', 'XXL', '2', '4', '6', '8', '10', '12', '14', '16'];
+  if (!tallesValidos.includes(talle)) return res.status(400).json({ error: 'Talle inválido' });
+
+  const montoNum = parseFloat(monto);
+  if (isNaN(montoNum) || montoNum < 1000 || montoNum > 500000) return res.status(400).json({ error: 'Monto inválido' });
+
+  await supabase.from('transferencias').insert([{ nombre, email, whatsapp, producto, talle, monto: montoNum, estado: 'pendiente' }]);
 
   await supabase.from('leads').insert([{ nombre, email, whatsapp, producto, talle, convertido: false }]).select();
 

@@ -48,12 +48,12 @@ export default async function handler(req, res) {
       .eq('email', email);
 
     if (!compras || compras.length === 0) {
-      return res.status(400).json({ error: 'El código de descuento es exclusivo para clientes que ya compraron.' });
+      return res.status(400).json({ error: 'Código de descuento inválido.' });
     }
 
     // Verificar que no usó este cupón antes
     if (compras.some(c => c.cupon_descuento === cuponKey)) {
-      return res.status(400).json({ error: 'Este código de descuento ya fue utilizado.' });
+      return res.status(400).json({ error: 'Código de descuento inválido.' });
     }
 
     descuento = CUPONES[cuponKey];

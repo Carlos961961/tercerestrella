@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
@@ -8,7 +9,7 @@ const EMAIL_FROM = process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.
 const BASE_URL = 'https://www.tercerestrella.com.ar';
 
 function generarCodigo() {
-  const num = Math.floor(Math.random() * 9000) + 1000;
+  const num = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;
   return `TE-${num}`;
 }
 

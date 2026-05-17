@@ -12,7 +12,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tercerestrella.ar@gmail.com';
 const EMAIL_FROM = process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.dev>';
 
 function generarCodigo() {
-  const num = Math.floor(Math.random() * 9000) + 1000;
+  const num = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;
   return `TE-${num}`;
 }
 
@@ -26,9 +26,10 @@ export default async function handler(req, res) {
     const m = sig.match(/ts=(\d+),v1=([a-f0-9]+)/);
     if (!m) return res.status(400).end();
     const [, ts, hash] = m;
+    if (Math.abs(Date.now() - parseInt(ts, 10) * 1000) > 5 * 60 * 1000) return res.status(400).end();
     const template = `id:${dataId};request-id:${reqId};ts:${ts};`;
     const expected = crypto.createHmac('sha256', process.env.MP_WEBHOOK_SECRET).update(template).digest('hex');
-    if (expected !== hash) return res.status(400).end();
+    if (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(hash))) return res.status(400).end();
   }
 
   const { type, data } = req.body;
