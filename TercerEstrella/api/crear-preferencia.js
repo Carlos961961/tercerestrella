@@ -6,6 +6,11 @@ const redis = process.env.UPSTASH_REDIS_REST_URL
   ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN })
   : null;
 
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SECRET_KEY
@@ -18,9 +23,9 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tercerestrella.ar@gmail.com';
 const EMAIL_FROM = process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.dev>';
 
 const PRODUCTOS = {
-  'tailandesa-premium': { title: 'Camiseta Tailandesa Premium', unit_price: 56000 },
-  'nacional-adulto':    { title: 'Camiseta Nacional Adulto',    unit_price: 28500 },
-  'nacional-nino':      { title: 'Camiseta Nacional Niño',      unit_price: 23000 }
+  'tailandesa-premium': { title: 'Camiseta Tailandesa Premium', unit_price: 65000 },
+  'nacional-adulto':    { title: 'Camiseta Nacional Adulto',    unit_price: 35000 },
+  'nacional-nino':      { title: 'Camiseta Nacional Niño',      unit_price: 30000 }
 };
 
 export default async function handler(req, res) {
@@ -102,10 +107,10 @@ export default async function handler(req, res) {
         <div style="font-family:Arial,sans-serif;max-width:500px;padding:20px;">
           <h2 style="color:#0A3D7C;">Nuevo lead en TercerEstrella</h2>
           <table style="width:100%;border-collapse:collapse;">
-            <tr><td style="padding:6px 0;color:#666;">Nombre</td><td style="padding:6px 0;"><strong>${nombre}</strong></td></tr>
-            <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;">${email}</td></tr>
-            <tr><td style="padding:6px 0;color:#666;">WhatsApp</td><td style="padding:6px 0;"><a href="https://wa.me/${whatsapp.replace(/\D/g,'')}">+${whatsapp}</a></td></tr>
-            <tr><td style="padding:6px 0;color:#666;">Producto</td><td style="padding:6px 0;">${producto} — Talle ${talle}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Nombre</td><td style="padding:6px 0;"><strong>${esc(nombre)}</strong></td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;">${esc(email)}</td></tr>
+            <tr><td style="padding:6px 0;color:#666;">WhatsApp</td><td style="padding:6px 0;"><a href="https://wa.me/${whatsapp.replace(/\D/g,'')}">+${esc(whatsapp)}</a></td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Producto</td><td style="padding:6px 0;">${esc(producto)} — Talle ${esc(talle)}</td></tr>
           </table>
         </div>
       `

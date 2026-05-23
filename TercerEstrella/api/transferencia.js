@@ -12,9 +12,9 @@ const redis = process.env.UPSTASH_REDIS_REST_URL
   : null;
 
 const PRECIOS_TRANSFERENCIA = {
-  'tailandesa-premium': 50000,
-  'nacional-adulto': 25000,
-  'nacional-nino': 20000
+  'tailandesa-premium': 60000,
+  'nacional-adulto': 32000,
+  'nacional-nino': 27000
 };
 
 export default async function handler(req, res) {
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
             <p style="margin:0 0 6px;color:#74ACDF;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;">Resumen de tu pedido</p>
             <p style="margin:4px 0;color:#fff;font-size:14px;"><strong>Producto:</strong> ${producto}</p>
             <p style="margin:4px 0;color:#fff;font-size:14px;"><strong>Talle:</strong> ${talle}</p>
-            <p style="margin:4px 0;color:#fff;font-size:14px;"><strong>Monto transferido:</strong> $${monto.toLocaleString('es-AR')}</p>
+            <p style="margin:4px 0;color:#fff;font-size:14px;"><strong>Monto transferido:</strong> $${montoNum.toLocaleString('es-AR')}</p>
             <p style="margin:4px 0;color:#fff;font-size:14px;"><strong>Alias:</strong> tercerestrella.mp</p>
           </div>
           <p style="color:#aaa;font-size:13px;">Confirmamos en menos de 24 horas. Cualquier consulta respondemos por WhatsApp.</p>
@@ -93,7 +93,7 @@ export default async function handler(req, res) {
             <tr><td style="padding:6px 0;color:#666;">Email</td><td>${email}</td></tr>
             <tr><td style="padding:6px 0;color:#666;">WhatsApp</td><td><a href="https://wa.me/${whatsapp.replace(/\D/g,'')}">+${whatsapp}</a></td></tr>
             <tr><td style="padding:6px 0;color:#666;">Producto</td><td>${producto} — Talle ${talle}</td></tr>
-            <tr><td style="padding:6px 0;color:#666;">Monto</td><td><strong>$${monto.toLocaleString('es-AR')}</strong></td></tr>
+            <tr><td style="padding:6px 0;color:#666;">Monto</td><td><strong>$${montoNum.toLocaleString('es-AR')}</strong></td></tr>
           </table>
           <p style="margin-top:16px;color:#666;font-size:13px;">Verificá que llegó el pago en tu cuenta de MercadoPago y confirmá desde el panel admin.</p>
         </div>
