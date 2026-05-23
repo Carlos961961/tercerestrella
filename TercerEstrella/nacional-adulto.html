@@ -274,17 +274,16 @@
   /* CTA */
   .cta-block { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
   .btn-comprar {
-    width: 100%; height: 56px; border: none;
-    background: var(--azul-profundo); color: #fff;
+    width: 100%; height: 52px; border: 2px solid #d1d5db;
+    background: #fff; color: #374151;
     font-family: 'Oswald', sans-serif; font-weight: 700;
-    font-size: 15px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase;
     border-radius: 10px; cursor: pointer;
-    transition: background 180ms, transform 150ms, box-shadow 180ms;
+    transition: background 180ms, transform 150ms;
     display: flex; align-items: center; justify-content: center; gap: 10px;
   }
   .btn-comprar:hover {
-    background: #082f60; transform: scale(1.01);
-    box-shadow: 0 12px 28px rgba(10,61,124,0.35);
+    background: #f9fafb; transform: scale(1.01);
   }
   .btn-wsp {
     width: 100%; height: 52px; border: none;
@@ -297,8 +296,8 @@
   }
   .btn-wsp:hover { background: #1da851; transform: scale(1.01); }
   .btn-wsp svg, .btn-comprar svg { width: 20px; height: 20px; flex-shrink: 0; }
-  .btn-transferencia { width: 100%; height: 52px; border: 2px solid #15803d; background: #fff; color: #15803d; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: background 180ms, transform 150ms; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .btn-transferencia:hover { background: #f0fdf4; transform: scale(1.01); }
+  .btn-transferencia { width: 100%; height: 56px; border: none; background: var(--azul-profundo); color: #fff; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.16em; text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: background 180ms, transform 150ms, box-shadow 180ms; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-transferencia:hover { background: #082f60; transform: scale(1.01); box-shadow: 0 12px 28px rgba(10,61,124,0.35); }
   .transfer-badge { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
   .transfer-badge-precio { font-size:15px; font-weight:700; color:#15803d; }
   .transfer-badge-desc { font-size:12px; color:#166534; }
