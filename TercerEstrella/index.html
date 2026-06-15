@@ -864,8 +864,12 @@
     var activeListener = null;
     var currentIsAuto = false;
     var isMobile = window.innerWidth <= 768;
+    var transitioning = false;
 
     function showPhoto(idx) {
+      if (transitioning) return;
+      transitioning = true;
+      setTimeout(function() { transitioning = false; }, 650);
       if (videoEl && videoEl.style.display !== 'none') {
         detachVideoListener();
         videoEl.style.opacity = '0';
