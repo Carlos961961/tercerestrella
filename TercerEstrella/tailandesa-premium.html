@@ -101,7 +101,9 @@
   .similarity-fill { height: 100%; width: 96%; background: linear-gradient(90deg, var(--celeste), var(--dorado)); border-radius: 999px; }
   .size-section { margin-bottom: 28px; }
   .size-label { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-tenue); margin-bottom: 12px; display: flex; justify-content: space-between; }
-  .size-label a { color: var(--celeste); text-decoration: none; font-weight: 500; letter-spacing: 0; }
+  .size-label a { display: inline-flex; align-items: center; gap: 5px; color: var(--azul-profundo); text-decoration: none; font-weight: 700; font-size: 12px; letter-spacing: 0.02em; text-transform: none; background: var(--gris-claro); border: 1px solid var(--gris-borde); padding: 6px 12px; border-radius: 20px; transition: all 200ms ease; }
+  .size-label a:hover { background: var(--celeste); color: #fff; border-color: var(--celeste); }
+  .size-label a svg { width: 14px; height: 14px; flex-shrink: 0; }
   .sizes { display: flex; flex-wrap: wrap; gap: 10px; }
   .size-btn { border: 1.5px solid var(--gris-borde); background: #fff; color: var(--texto); font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.04em; min-width: 52px; height: 44px; padding: 0 14px; border-radius: 8px; cursor: pointer; transition: all 200ms ease; }
   .size-btn:hover { border-color: var(--dorado); }
@@ -319,7 +321,7 @@
         </div>
 
         <div class="size-section">
-          <div class="size-label"><span>Talle</span><a href="#" onclick="abrirModalTalles();return false;">Guía de talles</a></div>
+          <div class="size-label"><span>Talle</span><a href="#" onclick="abrirModalTalles();return false;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>Ver guía de talles</a></div>
           <div class="sizes">
             <button class="size-btn" onclick="selectSize(this)">S</button>
             <button class="size-btn" onclick="selectSize(this)">M</button>
