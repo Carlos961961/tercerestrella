@@ -539,6 +539,8 @@ section {
   font-weight: 700; color: var(--azul-profundo);
 }
 .sel-price-prem { color: var(--dorado); }
+.sel-price-old { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: #9a9aa3; text-decoration: line-through; }
+.sel-oferta-badge { background: #15803d; color: #fff; font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 5px; }
 .sel-cta {
   display: block; text-align: center;
   background: var(--azul-profundo); color: #fff;

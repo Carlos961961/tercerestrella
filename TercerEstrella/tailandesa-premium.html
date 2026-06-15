@@ -91,8 +91,11 @@
   .prod-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--dorado); color: var(--azul-noche); font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; margin-bottom: 10px; box-shadow: 0 4px 14px rgba(192,162,74,0.4); }
   .prod-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(26px, 3vw, 36px); text-transform: uppercase; line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 6px; color: var(--azul-noche); }
   .prod-tagline { font-style: italic; font-size: 13px; color: var(--texto-tenue); margin-bottom: 12px; line-height: 1.5; }
-  .prod-price-block { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--gris-borde); }
-  .prod-price { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 40px; color: var(--dorado); letter-spacing: -0.01em; }
+  .prod-price-block { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .prod-price { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(28px, 7vw, 40px); color: var(--dorado); letter-spacing: -0.01em; }
+  .prod-price-old { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 20px; color: #9a9aa3; text-decoration: line-through; }
+  .prod-oferta-badge { background: #15803d; color: #fff; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; }
+  .prod-price-note { font-size: 13px; color: var(--texto-tenue); margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--gris-borde); }
   .prod-shipping { font-size: 13px; color: #22a06b; font-weight: 600; }
   .similarity-bar { margin-bottom: 14px; padding: 12px; background: rgba(192,162,74,0.06); border: 1px solid rgba(192,162,74,0.2); border-radius: 10px; }
   .similarity-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--texto-tenue); margin-bottom: 8px; display: flex; justify-content: space-between; }
@@ -303,6 +306,13 @@
         <span class="prod-badge">★ Importada Premium</span>
         <h1 class="prod-title">Camiseta Tailandesa Premium</h1>
         <p class="prod-tagline">La camiseta de la Selección Argentina más cercana al original. Escudo AFA termosellado dorado, costuras dobles reforzadas y packaging premium. La réplica que no se nota.</p>
+
+        <div class="prod-price-block">
+          <span class="prod-oferta-badge">Oferta</span>
+          <span class="prod-price-old">$60.000</span>
+          <span class="prod-price">$50.000</span>
+        </div>
+        <p class="prod-price-note">Precio por transferencia · con MercadoPago $55.000</p>
 
         <div class="similarity-bar">
           <div class="similarity-label">
