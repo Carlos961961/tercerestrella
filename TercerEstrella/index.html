@@ -937,6 +937,7 @@
       clearTimeout(photoStartTimer);
       photoTimer = null;
       photoStartTimer = null;
+      if (videoEl) videoEl.pause();
     };
     photo._reset = function(isAuto) {
       currentIsAuto = !!isAuto;
