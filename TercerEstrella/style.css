@@ -499,6 +499,20 @@ section {
 .sel-photo-dark.sel-photo-placeholder { background: #1e2235; }
 .sel-ph-icon { width: 64px; height: 64px; color: var(--celeste); opacity: 0.25; }
 .sel-photo-dark .sel-ph-icon { color: var(--dorado); }
+.sel-photo-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px; border-radius: 50%;
+  border: none; background: rgba(255,255,255,0.85);
+  color: var(--azul-profundo); font-size: 20px; line-height: 1; padding: 0;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  opacity: 0; transition: opacity 180ms ease, background 180ms ease;
+  z-index: 2;
+}
+.sel-photo:hover .sel-photo-arrow { opacity: 1; }
+.sel-photo-arrow:hover { background: #fff; }
+.sel-photo-arrow-l { left: 10px; }
+.sel-photo-arrow-r { right: 10px; }
 .sel-badge {
   position: absolute; top: 12px; left: 12px; z-index: 1;
   font-family: var(--font-head); font-size: 11px;
@@ -1359,6 +1373,7 @@ section.is-in, section.hero { opacity: 1; transform: none; }
   .selector { padding: 28px 0; }
   .sel-carousel-wrap { position: relative; margin-top: 12px; }
   .sel-photo { aspect-ratio: 3/2; }
+  .sel-photo-arrow { display: none; }
   .flujo { padding-block: 28px; }
   .flujo-head { margin-bottom: 16px; }
   .stats { padding-block: 36px; }

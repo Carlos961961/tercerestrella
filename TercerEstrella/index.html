@@ -865,11 +865,19 @@
     var currentIsAuto = false;
     var isMobile = window.innerWidth <= 768;
 
-    function nextPhoto() {
+    function showPhoto(idx) {
+      if (videoEl && videoEl.style.display !== 'none') {
+        detachVideoListener();
+        videoEl.style.opacity = '0';
+        videoEl.style.display = 'none';
+      }
       photoEls[photoIdx].style.opacity = '0';
-      photoIdx = (photoIdx + 1) % photoEls.length;
+      photoIdx = ((idx % photoEls.length) + photoEls.length) % photoEls.length;
       photoEls[photoIdx].style.opacity = '1';
     }
+
+    function nextPhoto() { showPhoto(photoIdx + 1); }
+    function prevPhoto() { showPhoto(photoIdx - 1); }
 
     function startPhotoCarousel() {
       clearInterval(photoTimer);
@@ -948,6 +956,33 @@
         }
       }
     };
+
+    // Flechas para navegar manualmente entre fotos (desktop)
+    if (photoEls.length > 1) {
+      var arrL = document.createElement('button');
+      arrL.className = 'sel-photo-arrow sel-photo-arrow-l';
+      arrL.innerHTML = '&#8249;';
+      arrL.setAttribute('aria-label', 'Foto anterior');
+      arrL.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        prevPhoto();
+        startPhotoCarousel();
+      });
+      photo.appendChild(arrL);
+
+      var arrR = document.createElement('button');
+      arrR.className = 'sel-photo-arrow sel-photo-arrow-r';
+      arrR.innerHTML = '&#8250;';
+      arrR.setAttribute('aria-label', 'Foto siguiente');
+      arrR.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        nextPhoto();
+        startPhotoCarousel();
+      });
+      photo.appendChild(arrR);
+    }
 
     // Sin video: fotos directamente
     if (!videoSrc) {
