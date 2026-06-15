@@ -745,15 +745,27 @@
   function startAuto() {
     stopAuto();
     if (videoSrc && current === 0 && videoEl) {
-      onVideoEnd = function() { goTo(1); startAuto(); };
-      videoEl.addEventListener('ended', onVideoEnd, { once: true });
+      onVideoEnd = function() {
+        if (videoEl.duration && videoEl.currentTime < videoEl.duration / 2) return;
+        videoEl.removeEventListener('timeupdate', onVideoEnd);
+        videoEl.removeEventListener('ended', onVideoEnd);
+        onVideoEnd = null;
+        goTo(1);
+        startAuto();
+      };
+      videoEl.addEventListener('timeupdate', onVideoEnd);
+      videoEl.addEventListener('ended', onVideoEnd);
     } else if (total >= 2) {
       autoTimer = setTimeout(function() { goTo(current + 1); startAuto(); }, 4000);
     }
   }
   function stopAuto() {
     if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
-    if (onVideoEnd && videoEl) { videoEl.removeEventListener('ended', onVideoEnd); onVideoEnd = null; }
+    if (onVideoEnd && videoEl) {
+      videoEl.removeEventListener('timeupdate', onVideoEnd);
+      videoEl.removeEventListener('ended', onVideoEnd);
+      onVideoEnd = null;
+    }
   }
   function resetAuto() { stopAuto(); startAuto(); }
 
