@@ -257,6 +257,13 @@
     background: var(--azul-profundo); color: #fff;
     border-color: var(--azul-profundo);
   }
+  .size-hint { font-size: 12px; font-weight: 400; font-style: italic; letter-spacing: normal; text-transform: none; }
+  .size-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .size-medidas { display: none; gap: 16px; padding-left: 18px; border-left: 1px solid var(--gris-borde); }
+  .size-medidas.visible { display: flex; }
+  .size-medidas span { display: flex; flex-direction: column; line-height: 1.3; }
+  .size-medidas strong { font-family: 'Oswald', sans-serif; font-size: 17px; color: var(--azul-noche); }
+  .size-medidas small { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texto-tenue); }
   .pay-opt {
     border: 1.5px solid var(--gris-borde);
     background: #fff; color: var(--texto);
@@ -537,13 +544,16 @@
         </div>
 
         <div class="size-section">
-          <div class="size-label"><span>Talle</span></div>
-          <div class="sizes">
-            <button class="size-btn" onclick="selectSize(this)">S</button>
-            <button class="size-btn" onclick="selectSize(this)">M</button>
-            <button class="size-btn" onclick="selectSize(this)">L</button>
-            <button class="size-btn" onclick="selectSize(this)">XL</button>
-            <button class="size-btn" onclick="selectSize(this)">XXL</button>
+          <div class="size-label"><span>Talle</span><span class="size-hint">Tocá un talle para ver sus medidas</span></div>
+          <div class="size-row">
+            <div class="sizes">
+              <button class="size-btn" onclick="selectSize(this)" data-ancho="48" data-largo="63">S</button>
+              <button class="size-btn" onclick="selectSize(this)" data-ancho="50" data-largo="65">M</button>
+              <button class="size-btn" onclick="selectSize(this)" data-ancho="53" data-largo="68">L</button>
+              <button class="size-btn" onclick="selectSize(this)" data-ancho="54" data-largo="69">XL</button>
+              <button class="size-btn" onclick="selectSize(this)" data-ancho="56" data-largo="71">XXL</button>
+            </div>
+            <div class="size-medidas" id="sizeMedidas"></div>
           </div>
         </div>
 
@@ -785,6 +795,9 @@
   function selectSize(btn) {
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    const medidas = document.getElementById('sizeMedidas');
+    medidas.innerHTML = `<span><strong>${btn.dataset.ancho} cm</strong><small>Ancho</small></span><span><strong>${btn.dataset.largo} cm</strong><small>Largo</small></span>`;
+    medidas.classList.add('visible');
   }
 
   let selectedPago = '1 pago — $28.500';
