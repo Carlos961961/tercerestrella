@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     res.setHeader('Cache-Control', 'no-store');
-    if (!redis) return res.status(200).json(defaultEstado());
+    if (!redis) return res.status(200).json({ ...defaultEstado(), _debug: 'redis=null (env vars not set)' });
     try {
       const vals = await Promise.all(PRODUCTOS.map(p => redis.get(`stock:${p}`)));
       const estado = {};
@@ -25,8 +25,8 @@ export default async function handler(req, res) {
         estado[p] = v === null ? true : v === true || v === 'true';
       });
       return res.status(200).json(estado);
-    } catch (_) {
-      return res.status(200).json(defaultEstado());
+    } catch (err) {
+      return res.status(200).json({ ...defaultEstado(), _debug: `redis GET error: ${err.message}` });
     }
   }
 
