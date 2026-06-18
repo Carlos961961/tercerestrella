@@ -114,6 +114,11 @@
 
     <div class="stats" id="stats-row"></div>
 
+    <div style="background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid #0A3D7C;">
+      <div style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:0.08em;color:#1A1A2E;margin-bottom:14px;">ESTADO DE PRODUCTOS</div>
+      <div id="stock-lista"><span style="font-size:13px;color:#999;">Cargando...</span></div>
+    </div>
+
     <div style="background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid #C0A24A;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:0.08em;color:#1A1A2E;">HISTORIAL DE PRECIOS</span>
@@ -277,6 +282,7 @@
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-screen').style.display = 'block';
       ultimoCountVentas = data.stats?.ventas_total || 0;
+      cargarStock();
     } else {
       const nuevoCount = data.stats?.ventas_total || 0;
       if (nuevoCount > ultimoCountVentas) {
@@ -582,6 +588,45 @@
     document.getElementById('toast-msg').textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  // ===== STOCK DE PRODUCTOS =====
+  const STOCK_NOMBRES = {
+    'tailandesa-premium': 'Tailandesa Premium',
+    'nacional-adulto': 'Nacional Adulto',
+    'nacional-nino': 'Nacional Niño'
+  };
+
+  async function cargarStock() {
+    try {
+      const res = await fetch('/api/stock-productos', {
+        headers: { 'Authorization': `Bearer ${adminKey}` }
+      });
+      if (!res.ok) return;
+      const estado = await res.json();
+      const lista = document.getElementById('stock-lista');
+      lista.innerHTML = Object.entries(STOCK_NOMBRES).map(([key, nombre]) => {
+        const activo = estado[key] !== false;
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f5f5f5;">
+          <span style="font-size:14px;font-weight:600;color:#1A1A2E;">${nombre}</span>
+          <button onclick="toggleStock('${key}',${!activo})" style="padding:7px 20px;border:none;border-radius:7px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;background:${activo ? '#15803d' : '#ef4444'};color:#fff;">
+            ${activo ? '● ACTIVA' : '○ OCULTA'}
+          </button>
+        </div>`;
+      }).join('');
+    } catch (_) {}
+  }
+
+  async function toggleStock(producto, activo) {
+    const res = await fetch('/api/stock-productos', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ producto, activo })
+    });
+    if (res.ok) {
+      mostrarToast(`${STOCK_NOMBRES[producto]}: ${activo ? 'activada ✓' : 'ocultada ✓'}`);
+      cargarStock();
+    }
   }
 
   // Auto-refresh cada 30 segundos
