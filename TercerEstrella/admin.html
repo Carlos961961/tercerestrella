@@ -636,11 +636,6 @@
   };
 
   window.confirmarStock = async function() {
-    const pass = document.getElementById('stock-modal-pass').value.trim();
-    if (pass !== adminKey) {
-      document.getElementById('stock-modal-error').style.display = 'block';
-      return;
-    }
     if (!_stockPending) return;
     const { producto, nuevoActivo } = _stockPending;
     cerrarConfirmStock();
@@ -677,11 +672,7 @@
     <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#999;font-weight:600;margin-bottom:4px;">Cambiar estado</p>
     <h3 id="stock-modal-titulo" style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:10px;"></h3>
     <p id="stock-modal-msg" style="font-size:14px;color:#555;line-height:1.5;margin-bottom:20px;"></p>
-    <input type="password" id="stock-modal-pass" placeholder="Contraseña de admin para confirmar"
-      onkeydown="if(event.key==='Enter')confirmarStock()"
-      style="width:100%;padding:11px 13px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:6px;box-sizing:border-box;outline:none;" />
-    <p id="stock-modal-error" style="color:#ef4444;font-size:12px;margin-bottom:14px;display:none;">Contraseña incorrecta.</p>
-    <div style="display:flex;gap:10px;">
+    <div style="display:flex;gap:10px;margin-top:8px;">
       <button onclick="cerrarConfirmStock()" style="flex:1;padding:11px;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#555;">CANCELAR</button>
       <button onclick="confirmarStock()" id="stock-modal-btn" style="flex:1;padding:11px;border:none;border-radius:8px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#fff;"></button>
     </div>
