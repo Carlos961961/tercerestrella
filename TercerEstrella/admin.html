@@ -628,12 +628,9 @@
     document.getElementById('stock-modal-msg').textContent = nuevoActivo
       ? 'Esta camiseta va a aparecer en el carrusel de la home y podrá ser comprada.'
       : 'Esta camiseta va a desaparecer del carrusel. Los visitantes no podrán verla ni comprarla.';
-    document.getElementById('stock-modal-pass').value = '';
-    document.getElementById('stock-modal-error').style.display = 'none';
     document.getElementById('stock-modal-btn').style.background = nuevoActivo ? '#15803d' : '#ef4444';
     document.getElementById('stock-modal-btn').textContent = nuevoActivo ? 'SÍ, ACTIVAR' : 'SÍ, OCULTAR';
     document.getElementById('stock-modal').style.display = 'flex';
-    setTimeout(() => document.getElementById('stock-modal-pass').focus(), 50);
   };
 
   window.cerrarConfirmStock = function() {
