@@ -250,7 +250,13 @@
   function login() {
     adminKey = document.getElementById('admin-key').value.trim();
     if (!adminKey) return;
-    cargarDatos(true);
+    const btn = document.querySelector('#login-screen .btn');
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+    Promise.resolve(cargarDatos(true)).finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    });
   }
 
   document.getElementById('admin-key').addEventListener('keydown', function(e) {
