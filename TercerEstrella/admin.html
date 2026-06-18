@@ -596,38 +596,66 @@
     'nacional-adulto': 'Nacional Adulto',
     'nacional-nino': 'Nacional Niño'
   };
+  let _stockPending = null;
 
   async function cargarStock() {
     try {
-      const res = await fetch('/api/stock-productos', {
-        headers: { 'Authorization': `Bearer ${adminKey}` }
-      });
+      const res = await fetch('/api/stock-productos');
       if (!res.ok) return;
       const estado = await res.json();
       const lista = document.getElementById('stock-lista');
       lista.innerHTML = Object.entries(STOCK_NOMBRES).map(([key, nombre]) => {
         const activo = estado[key] !== false;
+        const bg = activo ? '#15803d' : '#ef4444';
+        const label = activo ? '● ACTIVA' : '○ OCULTO';
         return `<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f5f5f5;">
           <span style="font-size:14px;font-weight:600;color:#1A1A2E;">${nombre}</span>
-          <button onclick="toggleStock('${key}',${!activo})" style="padding:7px 20px;border:none;border-radius:7px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;background:${activo ? '#15803d' : '#ef4444'};color:#fff;">
-            ${activo ? '● ACTIVA' : '○ OCULTA'}
-          </button>
+          <button onclick="abrirConfirmStock('${key}',${!activo},'${nombre}')" style="padding:7px 20px;border:none;border-radius:7px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;background:${bg};color:#fff;">${label}</button>
         </div>`;
       }).join('');
     } catch (_) {}
   }
 
-  async function toggleStock(producto, activo) {
-    const res = await fetch('/api/stock-productos', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ producto, activo })
-    });
-    if (res.ok) {
-      mostrarToast(`${STOCK_NOMBRES[producto]}: ${activo ? 'activada ✓' : 'ocultada ✓'}`);
-      cargarStock();
+  window.abrirConfirmStock = function(producto, nuevoActivo, nombre) {
+    _stockPending = { producto, nuevoActivo };
+    document.getElementById('stock-modal-titulo').textContent = nombre;
+    document.getElementById('stock-modal-msg').textContent = nuevoActivo
+      ? 'Esta camiseta va a aparecer en el carrusel de la home y podrá ser comprada.'
+      : 'Esta camiseta va a desaparecer del carrusel. Los visitantes no podrán verla ni comprarla.';
+    document.getElementById('stock-modal-pass').value = '';
+    document.getElementById('stock-modal-error').style.display = 'none';
+    document.getElementById('stock-modal-btn').style.background = nuevoActivo ? '#15803d' : '#ef4444';
+    document.getElementById('stock-modal-btn').textContent = nuevoActivo ? 'SÍ, ACTIVAR' : 'SÍ, OCULTAR';
+    document.getElementById('stock-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('stock-modal-pass').focus(), 50);
+  };
+
+  window.cerrarConfirmStock = function() {
+    document.getElementById('stock-modal').style.display = 'none';
+    _stockPending = null;
+  };
+
+  window.confirmarStock = async function() {
+    const pass = document.getElementById('stock-modal-pass').value.trim();
+    if (pass !== adminKey) {
+      document.getElementById('stock-modal-error').style.display = 'block';
+      return;
     }
-  }
+    if (!_stockPending) return;
+    const { producto, nuevoActivo } = _stockPending;
+    cerrarConfirmStock();
+    try {
+      const res = await fetch('/api/stock-productos', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ producto, activo: nuevoActivo })
+      });
+      if (res.ok) {
+        mostrarToast(`${STOCK_NOMBRES[producto]}: ${nuevoActivo ? 'activada ✓' : 'ocultada ✓'}`);
+        cargarStock();
+      }
+    } catch (_) {}
+  };
 
   // Auto-refresh cada 30 segundos
   let minutos = 0;
@@ -638,5 +666,21 @@
     if (minutos % 1 === 0) cargarDatos(false);
   }, 30000);
 </script>
+
+<div id="stock-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:32px;max-width:360px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+    <p style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#999;font-weight:600;margin-bottom:4px;">Cambiar estado</p>
+    <h3 id="stock-modal-titulo" style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:10px;"></h3>
+    <p id="stock-modal-msg" style="font-size:14px;color:#555;line-height:1.5;margin-bottom:20px;"></p>
+    <input type="password" id="stock-modal-pass" placeholder="Contraseña de admin para confirmar"
+      onkeydown="if(event.key==='Enter')confirmarStock()"
+      style="width:100%;padding:11px 13px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:6px;box-sizing:border-box;outline:none;" />
+    <p id="stock-modal-error" style="color:#ef4444;font-size:12px;margin-bottom:14px;display:none;">Contraseña incorrecta.</p>
+    <div style="display:flex;gap:10px;">
+      <button onclick="cerrarConfirmStock()" style="flex:1;padding:11px;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#555;">CANCELAR</button>
+      <button onclick="confirmarStock()" id="stock-modal-btn" style="flex:1;padding:11px;border:none;border-radius:8px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#fff;"></button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
