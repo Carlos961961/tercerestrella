@@ -653,8 +653,13 @@
       if (res.ok) {
         mostrarToast(`${STOCK_NOMBRES[producto]}: ${nuevoActivo ? 'activada ✓' : 'ocultada ✓'}`);
         cargarStock();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        mostrarToast(`Error: ${data.error || res.status}`);
       }
-    } catch (_) {}
+    } catch (e) {
+      mostrarToast(`Error de red: ${e.message}`);
+    }
   };
 
   // Auto-refresh cada 30 segundos

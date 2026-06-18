@@ -1163,7 +1163,7 @@
 <script>
 (async () => {
   try {
-    const res = await fetch('/api/stock-productos');
+    const res = await fetch(`/api/stock-productos?_=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return;
     const estado = await res.json();
     Object.entries(estado).forEach(([producto, activo]) => {
