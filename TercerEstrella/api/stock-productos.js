@@ -35,14 +35,18 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'No autorizado' });
     }
     try {
-      const { producto, activo } = req.body;
+      let body = req.body;
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch (_) { body = {}; }
+      }
+      const { producto, activo } = body || {};
       if (!PRODUCTOS.includes(producto)) {
-        return res.status(400).json({ error: 'Producto no válido' });
+        return res.status(400).json({ error: `Producto no válido: ${producto}` });
       }
       if (redis) await redis.set(`stock:${producto}`, String(activo));
       return res.status(200).json({ ok: true, producto, activo });
     } catch (err) {
-      return res.status(500).json({ error: 'Error interno' });
+      return res.status(500).json({ error: err.message || 'Error interno' });
     }
   }
 
