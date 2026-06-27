@@ -77,6 +77,12 @@
     .cart-btn-mp:hover{background:#f9fafb;border-color:#bbb;}
     .cart-methods{font-size:11px;color:#999;text-align:center;margin-top:8px;}
 
+    /* Cookie banner */
+    .cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#1A1A2E;color:rgba(255,255,255,0.85);padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:13px;z-index:5000;box-shadow:0 -2px 16px rgba(0,0,0,0.2);}
+    .cookie-banner a{color:#C0A24A;text-decoration:underline;}
+    .cookie-btn{background:#C0A24A;color:#1A1A2E;border:none;padding:8px 20px;border-radius:6px;font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;cursor:pointer;white-space:nowrap;}
+    @media(max-width:600px){.cookie-banner{flex-direction:column;text-align:center;gap:10px;padding:16px;}}
+
     /* Add-to-cart button on product pages */
     .btn-add-cart{width:100%;height:52px;border:2px solid #C0A24A;background:transparent;color:#C0A24A;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.12em;text-transform:uppercase;border-radius:10px;cursor:pointer;transition:background 180ms,color 180ms,transform 150ms;display:flex;align-items:center;justify-content:center;gap:10px;}
     .btn-add-cart:hover{background:#C0A24A;color:#1A1A2E;transform:scale(1.01);}
@@ -414,12 +420,22 @@
     nav.parentNode.insertBefore(banner, nav);
   }
 
+  // ===== COOKIE BANNER =====
+  function showCookieBanner() {
+    if (localStorage.getItem('te_cookies') === '1') return;
+    var banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.innerHTML = 'Usamos cookies para mejorar tu experiencia. <a href="privacidad.html">Más info</a> <button class="cookie-btn" onclick="this.parentElement.remove();localStorage.setItem(\'te_cookies\',\'1\')">ACEPTAR</button>';
+    document.body.appendChild(banner);
+  }
+
   // ===== INIT =====
   document.addEventListener('DOMContentLoaded', function() {
     createDrawer();
     insertBanner();
     updateBadge();
     renderDrawer();
+    showCookieBanner();
   });
 
 })();
