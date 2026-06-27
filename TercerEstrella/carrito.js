@@ -128,7 +128,7 @@
   var PRODUCTOS = {
     'tailandesa-premium': { nombre: 'Tailandesa Premium', precio: 55000, precioMP: 60000, img: 'assets/tailandesa/01-frontal.webp' },
     'nacional-adulto':    { nombre: 'Nacional Adulto',    precio: 32000, precioMP: 35000, img: 'assets/nacional-adulto/01-detalle.webp' },
-    'nacional-nino':      { nombre: 'Nacional Niño',      precio: 28000, precioMP: 30000, img: 'assets/nacional-nino/02-modelo-frente.webp' }
+    'nacional-nino':      { nombre: 'Nacional Niño',      precio: 27000, precioMP: 30000, img: 'assets/nacional-nino/02-modelo-frente.webp' }
   };
 
   // Fix image paths if we're in a subpage
