@@ -12,7 +12,7 @@ const redis = process.env.UPSTASH_REDIS_REST_URL
   : null;
 
 const PRECIOS_TRANSFERENCIA = {
-  'tailandesa-premium': 50000,
+  'tailandesa-premium': 55000,
   'nacional-adulto': 32000,
   'nacional-nino': 27000
 };
