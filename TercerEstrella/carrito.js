@@ -22,7 +22,7 @@
     @keyframes cart-bump{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
 
     /* Discount banner — top strip above nav */
-    .discount-banner{background:#C0A24A;color:#1A1A2E;text-align:center;padding:6px 40px 6px 16px;font-size:11px;font-weight:600;letter-spacing:0.04em;font-family:'Inter',sans-serif;position:fixed;top:0;left:0;right:0;z-index:1001;}
+    .discount-banner{background:#C0A24A;color:#1A1A2E;text-align:center;padding:8px 40px 8px 16px;font-size:13px;font-weight:600;letter-spacing:0.04em;font-family:'Inter',sans-serif;position:fixed;top:0;left:0;right:0;z-index:1001;}
     .discount-banner span{color:#1A1A2E;font-weight:800;}
     .discount-banner-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(26,26,46,0.5);font-size:14px;cursor:pointer;padding:4px;line-height:1;}
     .discount-banner-close:hover{color:#1A1A2E;}
