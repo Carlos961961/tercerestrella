@@ -331,7 +331,7 @@
       var nombre = document.getElementById('ct-nombre').value.trim();
       var email = document.getElementById('ct-email').value.trim();
       var wsp = document.getElementById('ct-wsp').value.trim();
-      var msg = encodeURIComponent('Hola! Acabo de transferir ' + formatPrice(total) + ' al alias tercerestrella.mp.\n\nPedido:\n' + cart.map(function(item) { return '• ' + item.nombre + ' — Talle ' + item.talle; }).join('\n') + '\n\nDatos:\n• Nombre: ' + nombre + '\n• Email: ' + email + '\n\nAdjunto el comprobante.');
+      var msg = encodeURIComponent('Hola, vengo de la página TercerEstrella. Acabo de transferir ' + formatPrice(total) + ' al alias tercerestrella.mp.\n\nPedido:\n' + cart.map(function(item) { return '• ' + item.nombre + ' — Talle ' + item.talle; }).join('\n') + '\n\nDatos:\n• Nombre: ' + nombre + '\n• Email: ' + email + '\n\nAdjunto el comprobante.');
       window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
       modal.remove();
       window.carrito.clear();

@@ -440,7 +440,7 @@
   </div>
 </footer>
 
-<a href="https://wa.me/5491134652868?text=Hola!%20Vi%20la%20camiseta%20en%20TercerEstrella%20y%20tengo%20una%20consulta%20%F0%9F%91%8B" target="_blank" rel="noopener" class="wpp-float" aria-label="WhatsApp">
+<a href="https://wa.me/5491134652868?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20TercerEstrella.%20Tengo%20una%20consulta." target="_blank" rel="noopener" class="wpp-float" aria-label="WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.6 17.6L2 22l4.5-1.5A11 11 0 1 0 20.5 3.5zM12 20a8 8 0 0 1-4-1.1l-.3-.2-2.7.9.9-2.6-.2-.3A8 8 0 1 1 12 20zm4.4-5.7c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5.1-1-.4-1.9-1.2c-.7-.6-1.2-1.4-1.3-1.6s0-.3.1-.4l.4-.4.2-.3v-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3s-.8.8-.8 2 .8 2.3.9 2.5 1.6 2.5 4 3.5c.6.2 1 .4 1.4.5.6.2 1.1.2 1.5.1.5-.1 1.4-.6 1.6-1.2.2-.5.2-1 .1-1.1z"/></svg>
 </a>
 
@@ -577,12 +577,12 @@
   function comprarWsp() {
     const talleBtn = document.querySelector('.size-btn.selected');
     if (!talleBtn) { alert('Por favor elegí un talle antes de continuar.'); return; }
-    const msg = encodeURIComponent('Hola! Me interesa la Camiseta Tailandesa Premium, talle ' + talleBtn.textContent.trim() + ', en ' + selectedPago + '. ¿Tienen stock disponible?');
+    const msg = encodeURIComponent('Hola, vengo de la página TercerEstrella. Me interesa la Camiseta Tailandesa Premium, talle ' + talleBtn.textContent.trim() + '. ¿Tienen stock?');
     window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
   }
 
   function consultarWsp() {
-    const msg = encodeURIComponent('Hola! Tengo una consulta sobre la Camiseta Tailandesa Premium.');
+    const msg = encodeURIComponent('Hola, vengo de la página TercerEstrella. Tengo una consulta sobre la Camiseta Tailandesa Premium.');
     window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
   }
 
@@ -771,7 +771,7 @@ window.addEventListener('DOMContentLoaded', function() {
       btn.disabled = false;
       return;
     }
-    const msg = encodeURIComponent(`Hola! Acabo de transferir $55.000 al alias tercerestrella.mp.\n\nDatos del pedido:\n• Nombre: ${nombre}\n• Email: ${email}\n• Producto: Tailandesa Premium\n• Talle: ${talle}\n\nAdjunto el comprobante.`);
+    const msg = encodeURIComponent(`Hola, vengo de la página TercerEstrella. Acabo de transferir $55.000 al alias tercerestrella.mp.\n\nDatos del pedido:\n• Nombre: ${nombre}\n• Email: ${email}\n• Producto: Tailandesa Premium\n• Talle: ${talle}\n\nAdjunto el comprobante.`);
     window.open(`https://wa.me/5491134652868?text=${msg}`, '_blank');
     cerrarModalTransferencia();
   });
