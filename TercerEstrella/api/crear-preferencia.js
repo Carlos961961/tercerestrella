@@ -23,7 +23,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tercerestrella.ar@gmail.com';
 const EMAIL_FROM = process.env.EMAIL_FROM || 'TercerEstrella <onboarding@resend.dev>';
 
 const PRODUCTOS = {
-  'tailandesa-premium': { title: 'Camiseta Tailandesa Premium', unit_price: 60000 },
+  'tailandesa-premium': { title: 'Camiseta Tailandesa Premium', unit_price: 55000 },
   'nacional-adulto':    { title: 'Camiseta Nacional Adulto',    unit_price: 35000 },
   'nacional-nino':      { title: 'Camiseta Nacional Niño',      unit_price: 30000 }
 };
