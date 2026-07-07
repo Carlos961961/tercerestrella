@@ -17,7 +17,7 @@ function esc(str) {
 }
 
 const PRECIOS_TRANSFERENCIA = {
-  'tailandesa-premium': 50000,
+  'tailandesa-premium': 45000,
   'nacional-adulto': 32000,
   'nacional-nino': 27000
 };

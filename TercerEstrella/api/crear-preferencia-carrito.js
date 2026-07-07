@@ -14,7 +14,7 @@ function esc(str) {
 }
 
 const PRODUCTOS = {
-  'tailandesa-premium': { title: 'Camiseta Tailandesa Premium', unit_price: 55000 },
+  'tailandesa-premium': { title: 'Camiseta Tailandesa Premium', unit_price: 50000 },
   'nacional-adulto':    { title: 'Camiseta Nacional Adulto',    unit_price: 35000 },
   'nacional-nino':      { title: 'Camiseta Nacional Niño',      unit_price: 30000 }
 };
