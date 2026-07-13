@@ -545,21 +545,37 @@
               <th>Producto</th>
               <th>Talle</th>
               <th>Estado</th>
-              <th>Recordatorio</th>
+              <th>Seguimiento</th>
             </tr>
           </thead>
           <tbody>
-            ${items.map(l => `
+            ${items.map(l => {
+              const nombreProducto = escapeHtml(NOMBRES_PRODUCTO[l.producto] || l.producto);
+              const talle = escapeHtml(l.talle || '');
+              const nombre = escapeHtml(l.nombre || '');
+              const num = '54' + (l.whatsapp||'').replace(/\D/g,'');
+              const msgWA = encodeURIComponent(
+                `Hola ${l.nombre || ''}! 👋 Te escribimos de TercerEstrella.\n\n` +
+                `Vimos que te interesaste por la ${NOMBRES_PRODUCTO[l.producto] || l.producto}` +
+                (l.talle ? ` (talle ${l.talle})` : '') +
+                ` pero no completaste tu compra.\n\n` +
+                `¿Tenés alguna duda sobre talles, envíos o formas de pago? Estamos para ayudarte 💪\n\n` +
+                `👉 https://tercerestrella.com.ar`
+              );
+              const btnWA = l.whatsapp
+                ? `<a href="https://wa.me/${num}?text=${msgWA}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:#25D366;color:#fff;text-decoration:none;font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;white-space:nowrap;">📲 Recordar</a>`
+                : '—';
+              return `
               <tr data-nombre="${escapeHtml((l.nombre||'').toLowerCase())}" data-email="${escapeHtml((l.email||'').toLowerCase())}" data-producto="${escapeHtml(l.producto||'')}" data-estado="${l.convertido ? 'convertido' : 'pendiente'}">
                 <td style="white-space:nowrap;">${new Date(l.created_at).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
-                <td><strong>${escapeHtml(l.nombre || '-')}</strong><br><span style="color:#999;font-size:12px;">${escapeHtml(l.email || '')}</span></td>
-                <td><a href="https://wa.me/54${(l.whatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${escapeHtml(l.whatsapp || '-')}</a></td>
-                <td><span class="producto-tag">${escapeHtml(NOMBRES_PRODUCTO[l.producto] || l.producto)}</span></td>
-                <td style="text-align:center;font-weight:700;">${escapeHtml(l.talle || '-')}</td>
+                <td><strong>${nombre}</strong><br><span style="color:#999;font-size:12px;">${escapeHtml(l.email || '')}</span></td>
+                <td><a href="https://wa.me/${num}" target="_blank" style="color:#25D366;text-decoration:none;white-space:nowrap;">📱 ${escapeHtml(l.whatsapp || '-')}</a></td>
+                <td><span class="producto-tag">${nombreProducto}</span></td>
+                <td style="text-align:center;font-weight:700;">${talle || '-'}</td>
                 <td style="text-align:center;">${l.convertido ? '<span class="badge badge-convertido">Compró</span>' : '<span class="badge badge-lead">Pendiente</span>'}</td>
-                <td style="text-align:center;">${l.email_recordatorio_enviado ? '✅ Enviado' : '—'}</td>
-              </tr>
-            `).join('')}
+                <td style="text-align:center;">${l.convertido ? '✅' : btnWA}</td>
+              </tr>`;
+            }).join('')}
           </tbody>
         </table>
       </div>
