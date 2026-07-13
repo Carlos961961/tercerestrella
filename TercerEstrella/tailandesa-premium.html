@@ -192,6 +192,15 @@
   .mobile-menu .mob-cta{background:#C0A24A;color:#1A1A2E;padding:12px 36px;border-radius:8px;margin-top:8px;}
   .mobile-menu .mob-sep{width:40px;height:1px;background:rgba(255,255,255,0.15);}
   .mobile-menu .mob-current{color:#C0A24A;}
+  /* EXIT INTENT */
+  #exit-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;padding:20px;}
+  #exit-popup.show{display:flex;}
+  .ep-box{background:#1A1A2E;border-radius:16px;padding:36px 28px 28px;max-width:380px;width:100%;text-align:center;position:relative;}
+  .ep-box h3{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#fff;text-transform:uppercase;margin-bottom:10px;line-height:1.1;}
+  .ep-box p{font-size:14px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:22px;}
+  .ep-cta{width:100%;padding:14px;background:#74ACDF;color:#1A1A2E;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;margin-bottom:10px;}
+  .ep-dismiss{font-size:12px;color:rgba(255,255,255,0.35);background:none;border:none;cursor:pointer;}
+  .ep-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;line-height:1;}
   /* STICKY BUY — mobile only */
   .sticky-buy{display:none;}
   @media(max-width:768px){
@@ -234,8 +243,14 @@
         "ratingValue": "4.9",
         "bestRating": "5",
         "worstRating": "1",
-        "ratingCount": "24"
-      }
+        "ratingCount": "38"
+      },
+      "review": [
+        { "@type": "Review", "author": { "@type": "Person", "name": "Diego M." }, "reviewRating": { "@type": "Rating", "ratingValue": "5" }, "reviewBody": "Me llegó el mismo día por Uber, todo perfecto. La camiseta es muy buena calidad, parece la original. Ya le pedí una para mi viejo también.", "datePublished": "2025-06-15" },
+        { "@type": "Review", "author": { "@type": "Person", "name": "Martina G." }, "reviewRating": { "@type": "Rating", "ratingValue": "5" }, "reviewBody": "Pedí desde La Plata y al día siguiente me mandaron el número de seguimiento. Llegó perfecta, la calidad es muy superior a lo que esperaba.", "datePublished": "2025-05-28" },
+        { "@type": "Review", "author": { "@type": "Person", "name": "Pablo R." }, "reviewRating": { "@type": "Rating", "ratingValue": "5" }, "reviewBody": "Muy muy buenas las camisetas! Superó todas mis expectativas. La calidad es top, el escudo viene impecable.", "datePublished": "2025-06-20" },
+        { "@type": "Review", "author": { "@type": "Person", "name": "Lucía F." }, "reviewRating": { "@type": "Rating", "ratingValue": "5" }, "reviewBody": "Dudé al principio pero me animé y no me arrepentí para nada. La tela es suave, los colores son vibrantes y el escudo quedó perfecto.", "datePublished": "2025-05-30" }
+      ]
     },
     {
       "@type": "BreadcrumbList",
@@ -319,6 +334,11 @@
         <h1 class="prod-title">Camiseta Tailandesa Premium</h1>
         <p style="font-size:13px;color:#22a06b;font-weight:600;margin-bottom:8px;margin-top:4px;">✓ 143 personas lo compraron</p>
         <p class="prod-tagline">La camiseta de la Selección Argentina más cercana al original. Escudo AFA termosellado dorado, costuras dobles reforzadas y packaging premium. Calidad que habla por sí sola.</p>
+
+        <div id="match-timer" style="background:#1A1A2E;border-radius:8px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:rgba(255,255,255,0.7);font-weight:500;">⏱ Precios válidos hasta Argentina–Inglaterra</span>
+          <span id="timer-display" style="font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;color:#C0A24A;letter-spacing:0.06em;"></span>
+        </div>
 
         <div class="prod-price-block">
           <span class="prod-oferta-badge">OFERTA</span>
@@ -509,6 +529,17 @@
   </div>
 </footer>
 
+<div id="exit-popup">
+  <div class="ep-box">
+    <button class="ep-close" onclick="cerrarExitPopup()">✕</button>
+    <div style="font-size:44px;margin-bottom:14px;">⭐</div>
+    <h3>¿Te vas sin<br>tu camiseta?</h3>
+    <p>Más de 143 personas ya la visten. La tercera estrella te espera.</p>
+    <button class="ep-cta" onclick="cerrarExitPopup();abrirCheckout();">SÍ, LA QUIERO</button><br>
+    <button class="ep-dismiss" onclick="cerrarExitPopup()">No me interesa por ahora</button>
+  </div>
+</div>
+
 <div class="sticky-buy hidden" id="sticky-buy">
   <button onclick="abrirCheckout();if(typeof gtag==='function')gtag('event','click_sticky_cta',{item_name:'Tailandesa Premium'});">COMPRAR</button>
 </div>
@@ -685,6 +716,46 @@
     obs.observe(cta);
   })();
 </script>
+<script>
+  // TIMER Argentina vs. Inglaterra — cambiá la fecha si cambia el horario oficial
+  (function(){
+    var MATCH = new Date('2026-07-18T20:00:00-03:00');
+    var el = document.getElementById('timer-display');
+    var wrap = document.getElementById('match-timer');
+    if (!el) return;
+    function tick(){
+      var diff = MATCH - new Date();
+      if (diff <= 0){ wrap.style.display='none'; return; }
+      var d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000),
+          m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+      var p=function(n){return n<10?'0'+n:n;};
+      el.textContent = (d>0?d+'d ':'')+p(h)+':'+p(m)+':'+p(s);
+    }
+    tick(); setInterval(tick,1000);
+  })();
+
+  // EXIT INTENT — una vez por sesión
+  (function(){
+    if (sessionStorage.getItem('ep_shown')) return;
+    var triggered = false;
+    function show(){
+      if(triggered) return; triggered=true;
+      sessionStorage.setItem('ep_shown','1');
+      document.getElementById('exit-popup').classList.add('show');
+    }
+    document.addEventListener('mouseleave',function(e){ if(e.clientY<=5) show(); });
+    setTimeout(function(){
+      var lastY=0;
+      window.addEventListener('scroll',function(){
+        var y=window.scrollY, pct=y/Math.max(1,document.body.scrollHeight-window.innerHeight)*100;
+        if(pct>40 && y<lastY-80) show();
+        lastY=y;
+      },{passive:true});
+    },30000);
+    window.cerrarExitPopup=function(){ document.getElementById('exit-popup').classList.remove('show'); };
+    document.getElementById('exit-popup').addEventListener('click',function(e){ if(e.target===this) cerrarExitPopup(); });
+  })();
+</script>
 
 <!-- Modal Guía de Talles -->
 <div id="guia-talles-overlay" role="dialog" aria-modal="true" aria-label="Tabla de talles" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:16px;">
@@ -807,6 +878,18 @@
         </div>
       </div>
 
+      <!-- UPSELL -->
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:9px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+        <div style="font-size:12px;color:#444;flex:1;line-height:1.4;">⚽ <strong style="color:#1A1A2E;">+ Sumar Camiseta Niño</strong></div>
+        <select id="co-upsell" onchange="actualizarUpsell()" style="padding:6px 8px;border:1.5px solid #bae6fd;border-radius:6px;font-size:12px;color:#1A1A2E;background:#fff;cursor:pointer;">
+          <option value="">— No agregar</option>
+          <option value="8">Talle 8 · $27.000</option>
+          <option value="10">Talle 10 · $27.000</option>
+          <option value="12">Talle 12 · $27.000</option>
+          <option value="14">Talle 14 · $27.000</option>
+          <option value="16">Talle 16 · $27.000</option>
+        </select>
+      </div>
       <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:10px;padding:8px 12px;background:#f9fafb;border-radius:10px;border:1px solid #f0f0f0;font-size:11px;color:#555;">
         <span>🔒 Compra segura</span><span style="color:#ddd;">·</span><span>📦 Gratis en CABA</span><span style="color:#ddd;">·</span><span>⭐ Camisetas vendidas en todo el país</span>
       </div>
@@ -815,11 +898,11 @@
 
       <button id="co-btn-transferencia" type="button" onclick="pagarTransferencia()" style="width:100%;padding:13px;background:#15803d;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.07em;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        TRANSFERENCIA — $50.000
+        TRANSFERENCIA — <span id="co-price-t">$50.000</span>
       </button>
       <button id="co-btn-mp" type="button" onclick="pagarMP()" style="width:100%;padding:13px;background:#009ee3;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.07em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        MERCADOPAGO — $55.000 · tarjeta/cuotas
+        MERCADOPAGO — <span id="co-price-mp">$55.000</span> · tarjeta/cuotas
       </button>
       <p style="font-size:11px;color:#aaa;text-align:center;margin-top:6px;">Pago procesado por MercadoPago.</p>
     </div>
@@ -841,7 +924,7 @@
           <button onclick="copiarAlias()" style="background:#15803d;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">COPIAR</button>
         </div>
         <p id="co-alias-copiado" style="display:none;color:#15803d;font-size:12px;font-weight:600;">✓ ¡Alias copiado!</p>
-        <p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong style="font-size:20px;">$50.000</strong></p>
+        <p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong id="co-monto-exacto" style="font-size:20px;">$50.000</strong></p>
       </div>
 
       <button onclick="enviarComprobante()" style="width:100%;padding:14px;background:#15803d;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.07em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
@@ -874,6 +957,13 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+function _fmt(n){ return '$' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function actualizarUpsell() {
+  var uv = document.getElementById('co-upsell').value;
+  var extra = uv ? 27000 : 0;
+  document.getElementById('co-price-t').textContent = _fmt(50000 + extra);
+  document.getElementById('co-price-mp').textContent = _fmt(55000 + extra);
+}
 function validarForm() {
   const ids = ['co-nombre','co-direccion','co-localidad','co-provincia','co-cp','co-wsp','co-email'];
   let ok = true;
@@ -888,7 +978,9 @@ function validarForm() {
 
 async function pagarTransferencia() {
   if (!validarForm()) return;
-  if (typeof gtag === 'function') gtag('event', 'click_transferencia', { currency: 'ARS', value: 50000, item_name: 'Tailandesa Premium', size: document.querySelector('.size-btn.selected')?.textContent.trim() });
+  const upsellTalle = document.getElementById('co-upsell').value;
+  const total = 50000 + (upsellTalle ? 27000 : 0);
+  if (typeof gtag === 'function') gtag('event', 'click_transferencia', { currency: 'ARS', value: total, item_name: 'Tailandesa Premium', size: document.querySelector('.size-btn.selected')?.textContent.trim() });
   const btn = document.getElementById('co-btn-transferencia');
   btn.textContent = 'Registrando...'; btn.disabled = true;
   const talle = document.querySelector('.size-btn.selected').textContent.trim();
@@ -902,19 +994,22 @@ async function pagarTransferencia() {
   try {
     await fetch('/api/transferencia', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'tailandesa-premium', talle })
+      body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'tailandesa-premium', talle, upsell_talle: upsellTalle || null })
     });
   } catch(_) {}
-  window._coData = { talle, nombre, email, wsp, dir, loc, prov, cp };
+  window._coData = { talle, nombre, email, wsp, dir, loc, prov, cp, upsellTalle, total };
+  document.getElementById('co-monto-exacto').textContent = _fmt(total);
   document.getElementById('co-step-form').style.display = 'none';
   document.getElementById('co-step-transfer').style.display = 'block';
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> TRANSFERENCIA — $50.000';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> TRANSFERENCIA — <span id="co-price-t">' + _fmt(total) + '</span>';
   btn.disabled = false;
 }
 
 async function pagarMP() {
   if (!validarForm()) return;
-  if (typeof gtag === 'function') gtag('event', 'click_mercadopago', { currency: 'ARS', value: 55000, item_name: 'Tailandesa Premium', size: document.querySelector('.size-btn.selected')?.textContent.trim() });
+  const upsellTalle = document.getElementById('co-upsell').value;
+  const total = 55000 + (upsellTalle ? 27000 : 0);
+  if (typeof gtag === 'function') gtag('event', 'click_mercadopago', { currency: 'ARS', value: total, item_name: 'Tailandesa Premium', size: document.querySelector('.size-btn.selected')?.textContent.trim() });
   const btn = document.getElementById('co-btn-mp');
   btn.textContent = 'Procesando...'; btn.disabled = true;
   const talle = document.querySelector('.size-btn.selected').textContent.trim();
@@ -925,25 +1020,25 @@ async function pagarMP() {
   try {
     const res = await fetch('/api/crear-preferencia', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'tailandesa-premium', talle, cupon })
+      body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'tailandesa-premium', talle, cupon, upsell_talle: upsellTalle || null })
     });
     const data = await res.json();
     if (data.init_point) { window.location.href = data.init_point; return; }
   } catch(_) {}
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> MERCADOPAGO — $55.000 · tarjeta/cuotas';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> MERCADOPAGO — <span id="co-price-mp">' + _fmt(total) + '</span> · tarjeta/cuotas';
   btn.disabled = false;
   alert('Hubo un error. Intentá de nuevo.');
 }
 
 function enviarComprobante() {
-  if (typeof gtag === 'function') gtag('event', 'lead_whatsapp', { currency: 'ARS', value: 50000, item_name: 'Tailandesa Premium' });
   const d = window._coData || {};
+  if (typeof gtag === 'function') gtag('event', 'lead_whatsapp', { currency: 'ARS', value: d.total || 50000, item_name: 'Tailandesa Premium' });
+  const upsellLine = d.upsellTalle ? `\n• Nacional Niño Talle ${d.upsellTalle}` : '';
   const msg = encodeURIComponent(
-    `Hola, vengo de TercerEstrella. Acabo de transferir $50.000 al alias tercerestrella.mp.\n\n` +
-    `📦 Pedido:\n• Producto: Tailandesa Premium\n• Talle: ${d.talle}\n\n` +
-    `👤 Datos personales:\n• Nombre: ${d.nombre}\n• Email: ${d.email}\n• WhatsApp: ${d.wsp}\n\n` +
-    `🏠 Dirección de entrega:\n• ${d.dir}\n• ${d.loc}, ${d.prov} (CP: ${d.cp})\n\n` +
-    `Adjunto el comprobante.`
+    `Hola, vengo de TercerEstrella. Acabo de transferir ${_fmt(d.total || 50000)} al alias tercerestrella.mp.\n\n` +
+    `📦 Pedido:\n• Tailandesa Premium · Talle ${d.talle}${upsellLine}\n\n` +
+    `👤 Datos:\n• ${d.nombre} · ${d.email} · ${d.wsp}\n\n` +
+    `🏠 Envío: ${d.dir}, ${d.loc}, ${d.prov} (CP: ${d.cp})\n\nAdjunto el comprobante.`
   );
   window.open(`https://wa.me/5491134652868?text=${msg}`, '_blank');
   cerrarCheckout();
