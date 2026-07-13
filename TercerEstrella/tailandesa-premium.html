@@ -333,16 +333,30 @@
         <div class="size-section">
           <div class="size-label"><span>Talle</span></div>
           <div class="size-row">
-            <div class="sizes">
-              <button class="size-btn" onclick="selectSize(this)" data-pecho="53" data-largo="75" data-manga="21">S</button>
-              <button class="size-btn" onclick="selectSize(this)" data-pecho="54" data-largo="77" data-manga="22">M</button>
-              <button class="size-btn" onclick="selectSize(this)" data-pecho="57" data-largo="79" data-manga="23">L</button>
-              <button class="size-btn" onclick="selectSize(this)" data-pecho="60" data-largo="81" data-manga="24">XL</button>
-              <button class="size-btn" onclick="selectSize(this)" data-pecho="64" data-largo="83" data-manga="25">XXL</button>
+            <div class="sizes" style="align-items:flex-start;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                <button class="size-btn" onclick="selectSize(this)" data-pecho="53" data-largo="75" data-manga="21">S</button>
+                <span style="font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;">Últimas 10</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                <button class="size-btn" onclick="selectSize(this)" data-pecho="54" data-largo="77" data-manga="22">M</button>
+                <span style="font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;">Últimas 9</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                <button class="size-btn" onclick="selectSize(this)" data-pecho="57" data-largo="79" data-manga="23">L</button>
+                <span style="font-size:10px;background:#C0A24A;color:#fff;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap;">★ Más pedido</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                <button class="size-btn" onclick="selectSize(this)" data-pecho="60" data-largo="81" data-manga="24">XL</button>
+                <span style="font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;">Últimas 9</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                <button class="size-btn" onclick="selectSize(this)" data-pecho="64" data-largo="83" data-manga="25">XXL</button>
+                <span style="font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;">Últimas 10</span>
+              </div>
             </div>
-            <div class="size-medidas" id="sizeMedidas"></div>
           </div>
-          <button type="button" onclick="abrirGuiaTalles()" style="margin-top:8px;background:none;border:none;color:#0A3D7C;font-size:13px;font-weight:600;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:4px;">📏 ¿No sabés tu talle? <span style="text-decoration:underline;">Ver tabla →</span></button>
+          <button type="button" onclick="abrirGuiaTalles()" style="width:100%;margin-top:14px;padding:12px 16px;background:#fff;border:2px solid #0A3D7C;color:#0A3D7C;font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">📏 VER TABLA DE TALLES</button>
         </div>
 
         <div class="cta-block">
@@ -561,9 +575,6 @@
   function selectSize(btn) {
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    const medidas = document.getElementById('sizeMedidas');
-    medidas.innerHTML = `<span><strong>${btn.dataset.pecho} cm</strong><small>Pecho</small></span><span><strong>${btn.dataset.largo} cm</strong><small>Largo</small></span><span><strong>${btn.dataset.manga} cm</strong><small>Manga</small></span>`;
-    medidas.classList.add('visible');
   }
 
   function abrirGuiaTalles() {
