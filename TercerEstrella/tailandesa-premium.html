@@ -331,7 +331,7 @@
 
 
         <div class="size-section">
-          <div class="size-label"><span>Talle</span><span class="size-hint">Tocá un talle para ver sus medidas</span></div>
+          <div class="size-label"><span>Talle</span><button type="button" onclick="abrirGuiaTalles()" style="background:none;border:none;color:#0A3D7C;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0;">📏 Ver tabla de talles</button></div>
           <div class="size-row">
             <div class="sizes">
               <button class="size-btn" onclick="selectSize(this)" data-pecho="52–54" data-largo="74–76" data-manga="20–21">S</button>
@@ -565,6 +565,18 @@
     medidas.classList.add('visible');
   }
 
+  function abrirGuiaTalles() {
+    document.getElementById('guia-talles-overlay').style.display = 'flex';
+  }
+  function cerrarGuiaTalles() {
+    document.getElementById('guia-talles-overlay').style.display = 'none';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('guia-talles-overlay').addEventListener('click', function(e) {
+      if (e.target === this) cerrarGuiaTalles();
+    });
+  });
+
   let selectedPago = '1 pago — $50.000';
   function selectPago(btn) {
     document.querySelectorAll('.pay-opt').forEach(b => b.classList.remove('selected'));
@@ -661,6 +673,58 @@
 </script>
 <script src="stats.js"></script>
 <script src="carrito.js"></script>
+
+<!-- Modal Guía de Talles -->
+<div id="guia-talles-overlay" role="dialog" aria-modal="true" aria-label="Tabla de talles" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:100%;position:relative;">
+    <button onclick="cerrarGuiaTalles()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#666;">✕</button>
+    <h3 style="font-family:'Oswald',sans-serif;font-size:20px;color:#1A1A2E;margin-bottom:4px;">Tabla de talles — Tailandesa Premium</h3>
+    <p style="font-size:12px;color:#999;margin-bottom:18px;">Medidas en centímetros</p>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="background:#f5f5f5;">
+          <th style="padding:10px 12px;text-align:left;font-family:'Oswald',sans-serif;font-size:13px;color:#1A1A2E;border-radius:6px 0 0 6px;">Talle</th>
+          <th style="padding:10px 12px;text-align:center;font-family:'Oswald',sans-serif;font-size:13px;color:#1A1A2E;">Pecho</th>
+          <th style="padding:10px 12px;text-align:center;font-family:'Oswald',sans-serif;font-size:13px;color:#1A1A2E;">Largo</th>
+          <th style="padding:10px 12px;text-align:center;font-family:'Oswald',sans-serif;font-size:13px;color:#1A1A2E;border-radius:0 6px 6px 0;">Manga</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #f0f0f0;">
+          <td style="padding:10px 12px;font-weight:700;color:#1A1A2E;">S</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">52–54 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">74–76 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">20–21 cm</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f0f0f0;background:#fafafa;">
+          <td style="padding:10px 12px;font-weight:700;color:#1A1A2E;">M</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">53–55 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">76–78 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">21–22 cm</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f0f0f0;">
+          <td style="padding:10px 12px;font-weight:700;color:#1A1A2E;">L</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">56–58 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">78–80 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">22–23 cm</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f0f0f0;background:#fafafa;">
+          <td style="padding:10px 12px;font-weight:700;color:#1A1A2E;">XL</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">59–61 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">80–82 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">23–24 cm</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;font-weight:700;color:#1A1A2E;">XXL</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">63–65 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">82–84 cm</td>
+          <td style="padding:10px 12px;text-align:center;color:#444;">24–25 cm</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:#aaa;margin-top:14px;">¿Tenés dudas? Escribinos por WhatsApp y te ayudamos a elegir.</p>
+  </div>
+</div>
 
 <!-- Modal MercadoPago -->
 <div id="mp-modal-overlay" role="dialog" aria-modal="true" aria-label="Pagar con MercadoPago" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:16px;">
