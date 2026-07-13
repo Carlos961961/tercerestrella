@@ -334,11 +334,11 @@
           <div class="size-label"><span>Talle</span><span class="size-hint">Tocá un talle para ver sus medidas</span></div>
           <div class="size-row">
             <div class="sizes">
-              <button class="size-btn" onclick="selectSize(this)" data-busto="96" data-largo="71">S</button>
-              <button class="size-btn" onclick="selectSize(this)" data-busto="102" data-largo="73">M</button>
-              <button class="size-btn" onclick="selectSize(this)" data-busto="106" data-largo="75">L</button>
-              <button class="size-btn" onclick="selectSize(this)" data-busto="114" data-largo="77">XL</button>
-              <button class="size-btn" onclick="selectSize(this)" data-busto="120" data-largo="79">XXL</button>
+              <button class="size-btn" onclick="selectSize(this)" data-pecho="52–54" data-largo="74–76" data-manga="20–21">S</button>
+              <button class="size-btn" onclick="selectSize(this)" data-pecho="53–55" data-largo="76–78" data-manga="21–22">M</button>
+              <button class="size-btn" onclick="selectSize(this)" data-pecho="56–58" data-largo="78–80" data-manga="22–23">L</button>
+              <button class="size-btn" onclick="selectSize(this)" data-pecho="59–61" data-largo="80–82" data-manga="23–24">XL</button>
+              <button class="size-btn" onclick="selectSize(this)" data-pecho="63–65" data-largo="82–84" data-manga="24–25">XXL</button>
             </div>
             <div class="size-medidas" id="sizeMedidas"></div>
           </div>
@@ -561,7 +561,7 @@
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     const medidas = document.getElementById('sizeMedidas');
-    medidas.innerHTML = `<span><strong>${btn.dataset.busto} cm</strong><small>Busto</small></span><span><strong>${btn.dataset.largo} cm</strong><small>Largo</small></span>`;
+    medidas.innerHTML = `<span><strong>${btn.dataset.pecho} cm</strong><small>Pecho</small></span><span><strong>${btn.dataset.largo} cm</strong><small>Largo</small></span><span><strong>${btn.dataset.manga} cm</strong><small>Manga</small></span>`;
     medidas.classList.add('visible');
   }
 
