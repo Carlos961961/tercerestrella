@@ -452,7 +452,7 @@
   </div>
 </footer>
 
-<a href="https://wa.me/5491134652868?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20TercerEstrella.%20Tengo%20una%20consulta." target="_blank" rel="noopener" class="wpp-float" aria-label="WhatsApp">
+<a href="https://wa.me/5491134652868?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20TercerEstrella.%20Tengo%20una%20consulta." target="_blank" rel="noopener" class="wpp-float" aria-label="WhatsApp" onclick="if(typeof gtag==='function') gtag('event','click_whatsapp',{location:'floating_button',page:'tailandesa'})">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.6 17.6L2 22l4.5-1.5A11 11 0 1 0 20.5 3.5zM12 20a8 8 0 0 1-4-1.1l-.3-.2-2.7.9.9-2.6-.2-.3A8 8 0 1 1 12 20zm4.4-5.7c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5.1-1-.4-1.9-1.2c-.7-.6-1.2-1.4-1.3-1.6s0-.3.1-.4l.4-.4.2-.3v-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3s-.8.8-.8 2 .8 2.3.9 2.5 1.6 2.5 4 3.5c.6.2 1 .4 1.4.5.6.2 1.1.2 1.5.1.5-.1 1.4-.6 1.6-1.2.2-.5.2-1 .1-1.1z"/></svg>
 </a>
 
@@ -574,6 +574,7 @@
   function selectSize(btn) {
     document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    if (typeof gtag === 'function') gtag('event', 'select_size', { item_id: 'tailandesa-premium', item_name: 'Tailandesa Premium', size: btn.textContent.trim() });
   }
 
   function abrirGuiaTalles() {
@@ -586,81 +587,9 @@
     document.getElementById('guia-talles-overlay').addEventListener('click', function(e) {
       if (e.target === this) cerrarGuiaTalles();
     });
+    if (typeof gtag === 'function') gtag('event', 'view_product', { item_id: 'tailandesa-premium', item_name: 'Tailandesa Premium', currency: 'ARS', value: 50000 });
   });
 
-  let selectedPago = '1 pago — $50.000';
-  function selectPago(btn) {
-    document.querySelectorAll('.pay-opt').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    selectedPago = btn.getAttribute('onclick').match(/'([^']+)'\)/)[1];
-  }
-
-  function comprarWsp() {
-    const talleBtn = document.querySelector('.size-btn.selected');
-    if (!talleBtn) { alert('Por favor elegí un talle antes de continuar.'); return; }
-    const msg = encodeURIComponent('Hola, vengo de la página TercerEstrella. Me interesa la Camiseta Tailandesa Premium, talle ' + talleBtn.textContent.trim() + '. ¿Tienen stock?');
-    window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
-  }
-
-  function consultarWsp() {
-    const msg = encodeURIComponent('Hola, vengo de la página TercerEstrella. Tengo una consulta sobre la Camiseta Tailandesa Premium.');
-    window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
-  }
-
-  function abrirModalMP() {
-    const talleBtn = document.querySelector('.size-btn.selected');
-    if (!talleBtn) { alert('Por favor elegí un talle antes de continuar.'); return; }
-    document.getElementById('mp-modal-overlay').style.display = 'flex';
-  }
-
-  function cerrarModalMP() {
-    document.getElementById('mp-modal-overlay').style.display = 'none';
-  }
-
-  window.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('mp-modal-overlay').addEventListener('click', function(e) {
-      if (e.target === this) cerrarModalMP();
-    });
-  });
-
-  document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('mp-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const talleBtn = document.querySelector('.size-btn.selected');
-    const btn = document.getElementById('mp-btn');
-    btn.disabled = true;
-    btn.textContent = 'Procesando...';
-
-    const payload = {
-      producto: 'tailandesa-premium',
-      talle: talleBtn.textContent.trim(),
-      nombre: document.getElementById('mp-nombre').value.trim(),
-      email: document.getElementById('mp-email').value.trim(),
-      whatsapp: document.getElementById('mp-wsp').value.trim(),
-      cupon: document.getElementById('mp-cupon').value.trim().toUpperCase() || null
-    };
-
-    try {
-      const res = await fetch('/api/crear-preferencia', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (data.init_point) {
-        window.location.href = data.init_point;
-      } else {
-        alert(data.error || 'Error al procesar el pago. Intentá por WhatsApp.');
-        btn.disabled = false;
-        btn.textContent = 'Ir a pagar';
-      }
-    } catch(err) {
-      alert('Error de conexión. Intentá por WhatsApp.');
-      btn.disabled = false;
-      btn.textContent = 'Ir a pagar';
-    }
-  });
-  }); // end DOMContentLoaded
 
   document.querySelectorAll('.nav-dropdown').forEach(function(el) {
     el.addEventListener('mouseenter', function() { el.classList.add('is-open'); });
@@ -804,6 +733,11 @@
         <p id="co-cupon-msg" style="display:none;margin-top:5px;font-size:12px;"></p>
       </div>
 
+      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;padding:12px 14px;background:#f9fafb;border-radius:10px;border:1px solid #f0f0f0;">
+        <div style="font-size:12px;color:#555;display:flex;align-items:center;gap:7px;"><span>🔒</span> Compra segura — MercadoPago y transferencia bancaria</div>
+        <div style="font-size:12px;color:#555;display:flex;align-items:center;gap:7px;"><span>📦</span> Envío a todo el país · gratis en CABA</div>
+        <div style="font-size:12px;color:#555;display:flex;align-items:center;gap:7px;"><span>⭐</span> Camisetas vendidas en todo el país</div>
+      </div>
       <div style="border-top:1px solid #f0f0f0;margin-bottom:14px;"></div>
       <p style="font-size:12px;font-weight:600;color:#888;text-align:center;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.05em;">¿Cómo querés pagar?</p>
 
@@ -815,6 +749,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         MERCADOPAGO — $55.000 · tarjeta/cuotas
       </button>
+      <p style="font-size:11px;color:#aaa;text-align:center;margin-top:6px;">Pago procesado por MercadoPago.</p>
     </div>
 
     <!-- PASO 2: CONFIRMACIÓN TRANSFERENCIA -->
@@ -851,7 +786,9 @@ function abrirCheckout() {
     alert('Por favor seleccioná un talle primero.');
     return;
   }
-  document.getElementById('co-talle-display').textContent = document.querySelector('.size-btn.selected').textContent.trim();
+  const talle = document.querySelector('.size-btn.selected').textContent.trim();
+  if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'ARS', value: 50000, items: [{ item_id: 'tailandesa-premium', item_name: 'Tailandesa Premium', item_variant: talle, price: 50000, quantity: 1 }] });
+  document.getElementById('co-talle-display').textContent = talle;
   document.getElementById('co-step-form').style.display = 'block';
   document.getElementById('co-step-transfer').style.display = 'none';
   document.getElementById('checkout-overlay').style.display = 'flex';
@@ -879,6 +816,7 @@ function validarForm() {
 
 async function pagarTransferencia() {
   if (!validarForm()) return;
+  if (typeof gtag === 'function') gtag('event', 'click_transferencia', { currency: 'ARS', value: 50000, item_name: 'Tailandesa Premium', size: document.querySelector('.size-btn.selected')?.textContent.trim() });
   const btn = document.getElementById('co-btn-transferencia');
   btn.textContent = 'Registrando...'; btn.disabled = true;
   const talle = document.querySelector('.size-btn.selected').textContent.trim();
@@ -904,6 +842,7 @@ async function pagarTransferencia() {
 
 async function pagarMP() {
   if (!validarForm()) return;
+  if (typeof gtag === 'function') gtag('event', 'click_mercadopago', { currency: 'ARS', value: 55000, item_name: 'Tailandesa Premium', size: document.querySelector('.size-btn.selected')?.textContent.trim() });
   const btn = document.getElementById('co-btn-mp');
   btn.textContent = 'Procesando...'; btn.disabled = true;
   const talle = document.querySelector('.size-btn.selected').textContent.trim();
@@ -925,6 +864,7 @@ async function pagarMP() {
 }
 
 function enviarComprobante() {
+  if (typeof gtag === 'function') gtag('event', 'lead_whatsapp', { currency: 'ARS', value: 50000, item_name: 'Tailandesa Premium' });
   const d = window._coData || {};
   const msg = encodeURIComponent(
     `Hola, vengo de TercerEstrella. Acabo de transferir $50.000 al alias tercerestrella.mp.\n\n` +
@@ -939,6 +879,7 @@ function enviarComprobante() {
 
 function copiarAlias() {
   navigator.clipboard.writeText('tercerestrella.mp').then(() => {
+    if (typeof gtag === 'function') gtag('event', 'copy_alias', { item_name: 'Tailandesa Premium', method: 'clipboard' });
     const el = document.getElementById('co-alias-copiado');
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 2000);

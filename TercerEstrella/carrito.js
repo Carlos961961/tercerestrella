@@ -132,7 +132,7 @@
 
   // ===== PRODUCT DATA =====
   var PRODUCTOS = {
-    'tailandesa-premium': { nombre: 'Tailandesa Premium', precio: 45000, precioMP: 50000, img: 'assets/tailandesa/01-frontal.webp' },
+    'tailandesa-premium': { nombre: 'Tailandesa Premium', precio: 50000, precioMP: 55000, img: 'assets/tailandesa/01-frontal.webp' },
     'nacional-adulto':    { nombre: 'Nacional Adulto',    precio: 32000, precioMP: 35000, img: 'assets/nacional-adulto/01-detalle.webp' },
     'nacional-nino':      { nombre: 'Nacional Niño',      precio: 27000, precioMP: 30000, img: 'assets/nacional-nino/02-modelo-frente.webp' }
   };
@@ -151,6 +151,7 @@
       var cart = getCart();
       cart.push({ id: productoId, nombre: p.nombre, talle: talle, precio: p.precio, precioMP: p.precioMP, img: p.img });
       saveCart(cart);
+      if (typeof gtag === 'function') gtag('event', 'add_to_cart', { currency: 'ARS', value: p.precio, items: [{ item_id: productoId, item_name: p.nombre, item_variant: talle, price: p.precio, quantity: 1 }] });
       updateBadge();
       renderDrawer();
       openDrawer();
@@ -277,128 +278,10 @@
       fhtml += '<div class="cart-summary-row discount"><span>Descuento ' + d.label + ' (' + d.pct + '%)</span><span>-' + formatPrice(ahorro) + '</span></div>';
     }
     fhtml += '<div class="cart-summary-row total"><span>Total transferencia</span><span>' + formatPrice(totalTransf) + '</span></div>';
-    fhtml += '<button class="cart-btn-transf" onclick="checkoutTransferencia()">TRANSFERENCIA — ' + formatPrice(totalTransf) + '</button>';
-    fhtml += '<button class="cart-btn-mp" onclick="checkoutMP()">MERCADOPAGO — ' + formatPrice(totalMP) + '</button>';
-    fhtml += '<p class="cart-methods">Pagá en cuotas con tu tarjeta vía MercadoPago</p>';
+    fhtml += '<button class="cart-btn-transf" onclick="window.location.href=\'checkout.html\'">FINALIZAR COMPRA — ' + formatPrice(totalTransf) + '</button>';
+    fhtml += '<p class="cart-methods">Con tarjeta vía MercadoPago: ' + formatPrice(totalMP) + ' · Elegís al pagar</p>';
     footerEl.innerHTML = fhtml;
   }
-
-  // ===== CHECKOUT =====
-  window.checkoutTransferencia = function() {
-    var cart = getCart();
-    if (cart.length === 0) return;
-    var total = getTotal();
-    var d = getDiscountInfo();
-
-    var itemsList = cart.map(function(item) { return item.nombre + ' (Talle ' + item.talle + ')'; }).join(', ');
-    var descTxt = d ? ' con ' + d.pct + '% de descuento por ' + d.label : '';
-
-    // Create modal
-    var existing = document.getElementById('cart-transfer-modal');
-    if (existing) existing.remove();
-
-    var modal = document.createElement('div');
-    modal.id = 'cart-transfer-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
-    modal.innerHTML = '<div style="background:#fff;border-radius:16px;padding:32px;max-width:440px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">' +
-      '<button onclick="document.getElementById(\'cart-transfer-modal\').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#666;">✕</button>' +
-      '<h3 style="font-family:\'Oswald\',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:4px;">Pagar por transferencia</h3>' +
-      '<p style="font-size:13px;color:#15803d;font-weight:600;margin-bottom:16px;">Total' + descTxt + '</p>' +
-      '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px;margin-bottom:16px;text-align:center;">' +
-        '<p style="font-size:11px;color:#166534;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Alias de destino</p>' +
-        '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;">' +
-          '<span style="font-family:\'Oswald\',sans-serif;font-size:24px;font-weight:700;color:#15803d;">tercerestrella.mp</span>' +
-          '<button onclick="navigator.clipboard.writeText(\'tercerestrella.mp\')" style="background:#15803d;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">COPIAR</button>' +
-        '</div>' +
-        '<p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong style="font-size:20px;">' + formatPrice(total) + '</strong></p>' +
-      '</div>' +
-      '<p style="font-size:12px;color:#888;margin-bottom:16px;">' + itemsList + '</p>' +
-      '<p style="font-size:13px;color:#666;margin-bottom:16px;">Completá tus datos y hacé la transferencia. Te abrimos WhatsApp para enviar el comprobante.</p>' +
-      '<form id="cart-transfer-form">' +
-        '<div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Nombre completo</label><input id="ct-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;box-sizing:border-box;" /></div>' +
-        '<div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Email</label><input id="ct-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;box-sizing:border-box;" /></div>' +
-        '<div style="margin-bottom:20px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label><input id="ct-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;box-sizing:border-box;" /></div>' +
-        '<button type="submit" style="width:100%;padding:14px;background:#15803d;color:#fff;border:none;border-radius:10px;font-family:\'Oswald\',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.08em;cursor:pointer;">YA TRANSFERÍ — ENVIAR POR WHATSAPP</button>' +
-      '</form>' +
-    '</div>';
-
-    document.body.appendChild(modal);
-    modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
-    closeDrawer();
-
-    document.getElementById('cart-transfer-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var nombre = document.getElementById('ct-nombre').value.trim();
-      var email = document.getElementById('ct-email').value.trim();
-      var wsp = document.getElementById('ct-wsp').value.trim();
-      var msg = encodeURIComponent('Hola, vengo de la página TercerEstrella. Acabo de transferir ' + formatPrice(total) + ' al alias tercerestrella.mp.\n\nPedido:\n' + cart.map(function(item) { return '• ' + item.nombre + ' — Talle ' + item.talle; }).join('\n') + '\n\nDatos:\n• Nombre: ' + nombre + '\n• Email: ' + email + '\n\nAdjunto el comprobante.');
-      window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
-      modal.remove();
-      window.carrito.clear();
-    });
-  };
-
-  window.checkoutMP = function() {
-    var cart = getCart();
-    if (cart.length === 0) return;
-    var d = getDiscountInfo();
-    var totalMP = getMPTotal();
-
-    var existing = document.getElementById('cart-mp-modal');
-    if (existing) existing.remove();
-
-    var modal = document.createElement('div');
-    modal.id = 'cart-mp-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
-    modal.innerHTML = '<div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:100%;position:relative;">' +
-      '<button onclick="document.getElementById(\'cart-mp-modal\').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#666;">✕</button>' +
-      '<h3 style="font-family:\'Oswald\',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:6px;">Completá tus datos</h3>' +
-      '<p style="font-size:14px;color:#666;margin-bottom:20px;">Total: <strong>' + formatPrice(totalMP) + '</strong>' + (d ? ' (' + d.pct + '% OFF)' : '') + '</p>' +
-      '<form id="cart-mp-form">' +
-        '<div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Nombre completo</label><input id="cm-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;box-sizing:border-box;" /></div>' +
-        '<div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Email</label><input id="cm-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;box-sizing:border-box;" /></div>' +
-        '<div style="margin-bottom:20px;"><label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label><input id="cm-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;box-sizing:border-box;" /></div>' +
-        '<button id="cm-btn" type="submit" style="width:100%;padding:14px;background:#009EE3;color:#fff;border:none;border-radius:10px;font-family:\'Oswald\',sans-serif;font-weight:700;font-size:16px;letter-spacing:0.08em;cursor:pointer;">Ir a pagar con MercadoPago</button>' +
-      '</form>' +
-    '</div>';
-
-    document.body.appendChild(modal);
-    modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
-    closeDrawer();
-
-    document.getElementById('cart-mp-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      var btn = document.getElementById('cm-btn');
-      btn.disabled = true;
-      btn.textContent = 'Procesando...';
-      try {
-        var res = await fetch('/api/crear-preferencia-carrito', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            items: cart.map(function(item) { return { id: item.id, talle: item.talle }; }),
-            descuento: d ? d.pct : 0,
-            nombre: document.getElementById('cm-nombre').value.trim(),
-            email: document.getElementById('cm-email').value.trim(),
-            whatsapp: document.getElementById('cm-wsp').value.trim()
-          })
-        });
-        var data = await res.json();
-        if (data.init_point) {
-          window.carrito.clear();
-          window.location.href = data.init_point;
-        } else {
-          alert(data.error || 'Error al procesar. Intentá por WhatsApp.');
-          btn.disabled = false;
-          btn.textContent = 'Ir a pagar con MercadoPago';
-        }
-      } catch(err) {
-        alert('Error de conexión. Intentá por WhatsApp.');
-        btn.disabled = false;
-        btn.textContent = 'Ir a pagar con MercadoPago';
-      }
-    });
-  };
 
   // ===== ADD TO CART FROM PRODUCT PAGES =====
   window.agregarAlCarrito = function(productoId) {

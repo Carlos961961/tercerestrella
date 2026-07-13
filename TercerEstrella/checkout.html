@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Completar pedido — TercerEstrella</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WH83FYE0XQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-WH83FYE0XQ');
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f5f5f5; color: #1A1A2E; min-height: 100vh; }
+
+    /* Header */
+    .checkout-header { background: #1A1A2E; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .checkout-header a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 6px; transition: color 180ms; }
+    .checkout-header a:hover { color: #fff; }
+    .checkout-header-brand { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700; color: #C0A24A; letter-spacing: 0.08em; }
+
+    /* Layout */
+    .checkout-wrap { max-width: 480px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    /* Card */
+    .checkout-card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+    h2 { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: #1A1A2E; margin-bottom: 4px; }
+    .checkout-subtitle { font-size: 13px; color: #888; margin-bottom: 20px; }
+
+    /* Cart summary */
+    .cart-summary { margin-bottom: 18px; border: 1px solid #f0f0f0; border-radius: 10px; overflow: hidden; }
+    .cart-summary-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #f5f5f5; }
+    .cart-summary-item:last-child { border-bottom: none; }
+    .cart-summary-img { width: 48px; height: 48px; border-radius: 6px; object-fit: contain; background: #f9fafb; flex-shrink: 0; }
+    .cart-summary-info { flex: 1; }
+    .cart-summary-name { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: #1A1A2E; }
+    .cart-summary-talle { font-size: 12px; color: #888; margin-top: 2px; }
+    .cart-summary-price { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; color: #1A1A2E; }
+
+    /* Discount row */
+    .cart-discount-row { display: flex; justify-content: space-between; font-size: 13px; color: #15803d; font-weight: 600; padding: 8px 14px; background: #f0fdf4; }
+
+    /* Price comparison */
+    .price-compare { display: flex; border: 1.5px solid #e0e7ff; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+    .price-compare-col { flex: 1; padding: 12px 10px; text-align: center; background: #f8f9ff; }
+    .price-compare-col + .price-compare-col { border-left: 1px solid #e0e7ff; }
+    .price-compare-label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .price-compare-amount { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; }
+    .price-compare-amount.transf { color: #15803d; }
+    .price-compare-amount.mp { color: #009ee3; }
+    .price-compare-desc { font-size: 10px; color: #888; margin-top: 2px; }
+
+    /* Form */
+    .form-group { margin-bottom: 11px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: #1A1A2E; display: block; margin-bottom: 3px; }
+    .form-group label span { font-weight: 400; color: #999; }
+    .form-group input { width: 100%; padding: 9px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; transition: border-color 150ms; }
+    .form-group input:focus { border-color: #0A3D7C; }
+    .form-group input.error { border-color: #dc2626; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 11px; }
+    .form-row .form-group { margin-bottom: 0; }
+
+    /* Coupon */
+    .coupon-row { display: flex; gap: 8px; }
+    .coupon-row input { flex: 1; }
+    .btn-coupon { padding: 9px 14px; background: #f0f0f0; border: 1.5px solid #ddd; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; color: #1A1A2E; font-family: 'Inter', sans-serif; }
+    .btn-coupon:hover { background: #e8e8e8; }
+    #coupon-msg { font-size: 12px; margin-top: 5px; display: none; }
+
+    /* Trust items */
+    .trust-block { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; padding: 12px 14px; background: #f9fafb; border-radius: 10px; border: 1px solid #f0f0f0; }
+    .trust-line { font-size: 12px; color: #555; display: flex; align-items: center; gap: 7px; }
+
+    /* Separator */
+    .pay-sep { border: none; border-top: 1px solid #f0f0f0; margin-bottom: 14px; }
+    .pay-label { font-size: 12px; font-weight: 600; color: #888; text-align: center; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Payment buttons */
+    .btn-transf { width: 100%; padding: 13px; background: #15803d; color: #fff; border: none; border-radius: 10px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.07em; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 180ms; }
+    .btn-transf:hover { background: #166534; }
+    .btn-transf:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-mp-pay { width: 100%; padding: 13px; background: #009ee3; color: #fff; border: none; border-radius: 10px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.07em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 180ms; }
+    .btn-mp-pay:hover { background: #0080c0; }
+    .btn-mp-pay:disabled { opacity: 0.6; cursor: not-allowed; }
+    .pay-note { font-size: 11px; color: #aaa; text-align: center; margin-top: 6px; }
+
+    /* Transfer step */
+    .transfer-header { text-align: center; margin-bottom: 20px; }
+    .transfer-icon { width: 52px; height: 52px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+    .transfer-icon svg { width: 26px; height: 26px; }
+    .transfer-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #1A1A2E; margin-bottom: 4px; }
+    .transfer-sub { font-size: 13px; color: #666; }
+    .alias-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 18px; margin-bottom: 18px; text-align: center; }
+    .alias-label { font-size: 11px; color: #166534; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .alias-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
+    .alias-text { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: #15803d; letter-spacing: 0.04em; }
+    .btn-copy { background: #15803d; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+    #alias-copiado { display: none; color: #15803d; font-size: 12px; font-weight: 600; margin-top: 4px; }
+    .alias-monto { font-size: 14px; color: #166534; margin-top: 8px; }
+    .alias-monto strong { font-size: 20px; }
+    .btn-wsp-comprobante { width: 100%; padding: 14px; background: #15803d; color: #fff; border: none; border-radius: 10px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.07em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-wsp-comprobante:hover { background: #166534; }
+
+    /* Empty state */
+    .empty-cart { text-align: center; padding: 60px 24px; }
+    .empty-cart p { font-size: 16px; color: #888; margin-bottom: 20px; }
+    .btn-back { display: inline-block; padding: 12px 28px; background: #0A3D7C; color: #fff; border-radius: 8px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header class="checkout-header">
+  <a href="javascript:history.back()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Seguir comprando
+  </a>
+  <span class="checkout-header-brand">TercerEstrella</span>
+</header>
+
+<div class="checkout-wrap">
+
+  <!-- EMPTY STATE -->
+  <div id="step-empty" class="checkout-card empty-cart" style="display:none;">
+    <p>Tu carrito está vacío.</p>
+    <a href="index.html" class="btn-back">VER CAMISETAS</a>
+  </div>
+
+  <!-- STEP 1: FORM -->
+  <div id="step-form" class="checkout-card" style="display:none;">
+    <h2>Completá tu pedido</h2>
+    <p class="checkout-subtitle" id="co-subtitle"></p>
+
+    <!-- Cart items summary -->
+    <div class="cart-summary" id="cart-summary"></div>
+
+    <!-- Price comparison -->
+    <div class="price-compare" id="price-compare">
+      <div class="price-compare-col">
+        <div class="price-compare-label">Transferencia</div>
+        <div class="price-compare-amount transf" id="pc-transf">—</div>
+        <div class="price-compare-desc">precio especial</div>
+      </div>
+      <div class="price-compare-col">
+        <div class="price-compare-label">MercadoPago</div>
+        <div class="price-compare-amount mp" id="pc-mp">—</div>
+        <div class="price-compare-desc">tarjeta / cuotas</div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-group">
+      <label>Nombre completo</label>
+      <input id="co-nombre" type="text" required placeholder="Juan García" />
+    </div>
+    <div class="form-group">
+      <label>Dirección</label>
+      <input id="co-direccion" type="text" required placeholder="Av. Corrientes 1234, piso 2" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Localidad</label>
+        <input id="co-localidad" type="text" required placeholder="Buenos Aires" />
+      </div>
+      <div class="form-group">
+        <label>Provincia</label>
+        <input id="co-provincia" type="text" required placeholder="CABA" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Código postal</label>
+        <input id="co-cp" type="text" required placeholder="1043" />
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input id="co-wsp" type="tel" required placeholder="11 1234-5678" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input id="co-email" type="email" required placeholder="tu@email.com" />
+    </div>
+    <div class="form-group" style="margin-bottom:18px;">
+      <label>Código de descuento <span>(opcional)</span></label>
+      <div class="coupon-row">
+        <input id="co-cupon" type="text" placeholder="Ej: HINCHA10" oninput="this.value=this.value.toUpperCase()" />
+        <button type="button" class="btn-coupon" onclick="aplicarCupon()">Aplicar</button>
+      </div>
+      <p id="coupon-msg"></p>
+    </div>
+
+    <!-- Trust -->
+    <div class="trust-block">
+      <div class="trust-line"><span>🔒</span> Compra segura — MercadoPago y transferencia bancaria</div>
+      <div class="trust-line"><span>📦</span> Envío a todo el país · gratis en CABA</div>
+      <div class="trust-line"><span>⭐</span> Camisetas vendidas en todo el país</div>
+    </div>
+
+    <hr class="pay-sep" />
+    <p class="pay-label">¿Cómo querés pagar?</p>
+
+    <button class="btn-transf" id="btn-transf" type="button" onclick="pagarTransferencia()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span id="btn-transf-label">TRANSFERENCIA</span>
+    </button>
+    <button class="btn-mp-pay" id="btn-mp" type="button" onclick="pagarMP()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      <span id="btn-mp-label">MERCADOPAGO</span>
+    </button>
+    <p class="pay-note">Pago procesado por MercadoPago.</p>
+  </div>
+
+  <!-- STEP 2: TRANSFER CONFIRMATION -->
+  <div id="step-transfer" class="checkout-card" style="display:none;">
+    <div class="transfer-header">
+      <div class="transfer-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3 class="transfer-title">¡Casi listo!</h3>
+      <p class="transfer-sub">Hacé la transferencia y mandanos el comprobante por WhatsApp.</p>
+    </div>
+
+    <div class="alias-box">
+      <p class="alias-label">Alias de destino</p>
+      <div class="alias-row">
+        <span class="alias-text">tercerestrella.mp</span>
+        <button class="btn-copy" onclick="copiarAlias()">COPIAR</button>
+      </div>
+      <p id="alias-copiado">✓ ¡Alias copiado!</p>
+      <p class="alias-monto">Monto exacto: <strong id="transfer-monto">—</strong></p>
+    </div>
+
+    <button class="btn-wsp-comprobante" onclick="enviarComprobante()">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.998 0C5.372 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.824L.044 23.339a.75.75 0 00.918.918l5.516-1.48A11.942 11.942 0 0011.998 24C18.625 24 24 18.627 24 12S18.625 0 11.998 0zm0 21.75a9.696 9.696 0 01-4.951-1.354l-.355-.211-3.676.986.99-3.614-.231-.372A9.699 9.699 0 012.25 12c0-5.375 4.374-9.75 9.748-9.75S21.75 6.625 21.75 12s-4.376 9.75-9.752 9.75z"/></svg>
+      YA TRANSFERÍ — ENVIAR COMPROBANTE
+    </button>
+  </div>
+
+</div>
+
+<script>
+  var STORAGE_KEY = 'te_carrito';
+  var DESCUENTOS = [
+    { min: 6, pct: 15, label: '6+ prendas' },
+    { min: 3, pct: 10, label: '3–5 prendas' },
+    { min: 2, pct: 5,  label: '2 prendas' }
+  ];
+  var _cuponAplicado = '';
+  var _coData = {};
+
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(_) { return []; }
+  }
+  function getDiscountInfo(count) {
+    for (var i = 0; i < DESCUENTOS.length; i++) {
+      if (count >= DESCUENTOS[i].min) return DESCUENTOS[i];
+    }
+    return null;
+  }
+  function fmt(n) { return '$' + n.toLocaleString('es-AR'); }
+
+  function calcTotals(cart) {
+    var d = getDiscountInfo(cart.length);
+    var sub = cart.reduce(function(s, it) { return s + it.precio; }, 0);
+    var subMP = cart.reduce(function(s, it) { return s + (it.precioMP || it.precio); }, 0);
+    var pct = d ? d.pct / 100 : 0;
+    var transf = Math.round(sub * (1 - pct));
+    var mp = Math.round(subMP * (1 - pct));
+    return { sub: sub, transf: transf, mp: mp, d: d };
+  }
+
+  function init() {
+    var cart = getCart();
+    if (cart.length === 0) {
+      document.getElementById('step-empty').style.display = 'block';
+      return;
+    }
+
+    var t = calcTotals(cart);
+
+    // Subtitle
+    var count = cart.length;
+    document.getElementById('co-subtitle').textContent = count + (count === 1 ? ' prenda' : ' prendas');
+
+    // Cart summary
+    var html = '';
+    cart.forEach(function(item) {
+      html += '<div class="cart-summary-item">' +
+        '<img class="cart-summary-img" src="' + item.img + '" alt="' + item.nombre + '" />' +
+        '<div class="cart-summary-info">' +
+          '<div class="cart-summary-name">' + item.nombre + '</div>' +
+          '<div class="cart-summary-talle">Talle: ' + item.talle + '</div>' +
+        '</div>' +
+        '<div class="cart-summary-price">' + fmt(item.precio) + '</div>' +
+      '</div>';
+    });
+    if (t.d) {
+      html += '<div class="cart-discount-row"><span>Descuento ' + t.d.label + ' (' + t.d.pct + '% OFF)</span><span>-' + fmt(t.sub - t.transf) + '</span></div>';
+    }
+    document.getElementById('cart-summary').innerHTML = html;
+
+    // Price comparison
+    document.getElementById('pc-transf').textContent = fmt(t.transf);
+    document.getElementById('pc-mp').textContent = fmt(t.mp);
+
+    // Button labels
+    document.getElementById('btn-transf-label').textContent = 'TRANSFERENCIA — ' + fmt(t.transf);
+    document.getElementById('btn-mp-label').textContent = 'MERCADOPAGO — ' + fmt(t.mp) + ' · tarjeta/cuotas';
+
+    // Transfer amount
+    document.getElementById('transfer-monto').textContent = fmt(t.transf);
+
+    document.getElementById('step-form').style.display = 'block';
+
+    // GA4
+    if (typeof gtag === 'function') {
+      gtag('event', 'begin_checkout', {
+        currency: 'ARS',
+        value: t.transf,
+        items: cart.map(function(it) { return { item_id: it.id, item_name: it.nombre, item_variant: it.talle, price: it.precio, quantity: 1 }; })
+      });
+    }
+  }
+
+  function aplicarCupon() {
+    var val = document.getElementById('co-cupon').value.trim().toUpperCase();
+    var msg = document.getElementById('coupon-msg');
+    msg.style.display = 'block';
+    if (val === 'HINCHA10') {
+      _cuponAplicado = val;
+      msg.style.color = '#1a7a3a';
+      msg.textContent = '✓ 10% de descuento aplicado con MercadoPago';
+    } else if (val === '') {
+      _cuponAplicado = '';
+      msg.style.display = 'none';
+    } else {
+      _cuponAplicado = '';
+      msg.style.color = '#c0392b';
+      msg.textContent = '✗ Código inválido';
+    }
+  }
+
+  function validarForm() {
+    var ids = ['co-nombre', 'co-direccion', 'co-localidad', 'co-provincia', 'co-cp', 'co-wsp', 'co-email'];
+    var ok = true;
+    ids.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+      else el.classList.remove('error');
+    });
+    if (!ok) { document.querySelector('.error').focus(); }
+    return ok;
+  }
+
+  async function pagarTransferencia() {
+    if (!validarForm()) return;
+    var cart = getCart();
+    var t = calcTotals(cart);
+    var btn = document.getElementById('btn-transf');
+    btn.disabled = true;
+    document.getElementById('btn-transf-label').textContent = 'Registrando...';
+
+    _coData = {
+      nombre:    document.getElementById('co-nombre').value.trim(),
+      email:     document.getElementById('co-email').value.trim(),
+      wsp:       document.getElementById('co-wsp').value.trim(),
+      dir:       document.getElementById('co-direccion').value.trim(),
+      loc:       document.getElementById('co-localidad').value.trim(),
+      prov:      document.getElementById('co-provincia').value.trim(),
+      cp:        document.getElementById('co-cp').value.trim(),
+      totalTransf: t.transf,
+      cart:      cart
+    };
+
+    if (typeof gtag === 'function') {
+      gtag('event', 'click_transferencia', {
+        currency: 'ARS', value: t.transf,
+        items: cart.map(function(it) { return { item_id: it.id, item_name: it.nombre, item_variant: it.talle }; })
+      });
+    }
+
+    try {
+      await fetch('/api/transferencia', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: _coData.nombre, email: _coData.email, whatsapp: _coData.wsp,
+          producto: 'carrito',
+          talle: cart.map(function(it) { return it.nombre + ' T' + it.talle; }).join(', ')
+        })
+      });
+    } catch(_) {}
+
+    document.getElementById('step-form').style.display = 'none';
+    document.getElementById('step-transfer').style.display = 'block';
+    window.scrollTo(0, 0);
+    btn.disabled = false;
+    document.getElementById('btn-transf-label').textContent = 'TRANSFERENCIA — ' + fmt(t.transf);
+  }
+
+  async function pagarMP() {
+    if (!validarForm()) return;
+    var cart = getCart();
+    var t = calcTotals(cart);
+    var d = t.d;
+    var btn = document.getElementById('btn-mp');
+    btn.disabled = true;
+    document.getElementById('btn-mp-label').textContent = 'Procesando...';
+
+    if (typeof gtag === 'function') {
+      gtag('event', 'click_mercadopago', {
+        currency: 'ARS', value: t.mp,
+        items: cart.map(function(it) { return { item_id: it.id, item_name: it.nombre, item_variant: it.talle }; })
+      });
+    }
+
+    try {
+      var res = await fetch('/api/crear-preferencia-carrito', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items:     cart.map(function(it) { return { id: it.id, talle: it.talle }; }),
+          descuento: d ? d.pct : 0,
+          cupon:     _cuponAplicado,
+          nombre:    document.getElementById('co-nombre').value.trim(),
+          email:     document.getElementById('co-email').value.trim(),
+          whatsapp:  document.getElementById('co-wsp').value.trim()
+        })
+      });
+      var data = await res.json();
+      if (data.init_point) {
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.href = data.init_point;
+        return;
+      }
+    } catch(_) {}
+
+    btn.disabled = false;
+    document.getElementById('btn-mp-label').textContent = 'MERCADOPAGO — ' + fmt(t.mp) + ' · tarjeta/cuotas';
+    alert('Hubo un error. Intentá de nuevo o pagá por transferencia.');
+  }
+
+  function copiarAlias() {
+    navigator.clipboard.writeText('tercerestrella.mp').then(function() {
+      if (typeof gtag === 'function') gtag('event', 'copy_alias', { method: 'clipboard', page: 'checkout' });
+      var el = document.getElementById('alias-copiado');
+      el.style.display = 'block';
+      setTimeout(function() { el.style.display = 'none'; }, 2000);
+    });
+  }
+
+  function enviarComprobante() {
+    if (typeof gtag === 'function') {
+      gtag('event', 'lead_whatsapp', { currency: 'ARS', value: _coData.totalTransf, item_name: 'carrito' });
+    }
+    var d = _coData;
+    var itemsTxt = (d.cart || []).map(function(it) { return '• ' + it.nombre + ' — Talle ' + it.talle; }).join('\n');
+    var msg = encodeURIComponent(
+      'Hola, vengo de TercerEstrella. Acabo de transferir ' + fmt(d.totalTransf) + ' al alias tercerestrella.mp.\n\n' +
+      '📦 Pedido:\n' + itemsTxt + '\n\n' +
+      '👤 Datos personales:\n• Nombre: ' + d.nombre + '\n• Email: ' + d.email + '\n• WhatsApp: ' + d.wsp + '\n\n' +
+      '🏠 Dirección de entrega:\n• ' + d.dir + '\n• ' + d.loc + ', ' + d.prov + ' (CP: ' + d.cp + ')\n\n' +
+      'Adjunto el comprobante.'
+    );
+    window.open('https://wa.me/5491134652868?text=' + msg, '_blank');
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  init();
+</script>
+</body>
+</html>

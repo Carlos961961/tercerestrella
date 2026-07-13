@@ -167,6 +167,7 @@
       <button class="tab" onclick="showTab('leads', this)">Leads <span class="tab-badge" id="badge-leads">0</span></button>
       <button class="tab" onclick="showTab('inscripciones', this)">Sorteo <span class="tab-badge" id="badge-inscripciones">0</span></button>
       <button class="tab" onclick="showTab('testimonios', this)">Reseñas <span class="tab-badge" id="badge-testimonios">0</span></button>
+      <button class="tab" onclick="showTab('cro', this)">📊 CRO</button>
     </div>
 
     <div class="section active" id="tab-ventas">
@@ -223,6 +224,10 @@
 
     <div class="section" id="tab-testimonios">
       <div id="lista-testimonios"><div class="empty">Cargando...</div></div>
+    </div>
+
+    <div class="section" id="tab-cro">
+      <div id="cro-content"><div class="empty">Cargando...</div></div>
     </div>
 
   </div>
@@ -301,6 +306,7 @@
     document.getElementById('last-update').textContent = 'hace 0 min';
 
     renderStats(data);
+    renderFunnel(data);
     renderSorteo(data);
     renderVentas(data.ventas || []);
     renderLeads(data.leads || []);
@@ -340,6 +346,117 @@
     document.getElementById('badge-leads').textContent = s.leads_pendientes || 0;
     document.getElementById('badge-inscripciones').textContent = s.inscripciones_total || 0;
     document.getElementById('badge-testimonios').textContent = s.testimonios_pendientes || 0;
+  }
+
+  function renderFunnel(data) {
+    const s = data.stats || {};
+    const leadsTotal = totales.leads || 0;
+    const ventas = s.ventas_total || 0;
+    const leadsPendientes = s.leads_pendientes || 0;
+    const leadsConvertidos = leadsTotal - leadsPendientes;
+    const tasaConv = leadsTotal > 0 ? ((ventas / leadsTotal) * 100).toFixed(1) : '—';
+    const pctLeadsConv = leadsTotal > 0 ? Math.round((leadsConvertidos / leadsTotal) * 100) : 0;
+    const pctVentas = leadsTotal > 0 ? Math.round((ventas / leadsTotal) * 100) : 0;
+
+    const GA4_LINK = 'https://analytics.google.com/analytics/web/#/p467070965/reports/explorer';
+
+    document.getElementById('cro-content').innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;">
+        <div class="stat-card" style="border-top:3px solid #74ACDF;">
+          <div class="stat-num" style="color:#74ACDF;">${leadsTotal}</div>
+          <div class="stat-label">Checkouts iniciados</div>
+          <div style="font-size:11px;color:#aaa;margin-top:4px;">Leads en Supabase</div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #C0A24A;">
+          <div class="stat-num" style="color:#C0A24A;">${leadsConvertidos}</div>
+          <div class="stat-label">Leads convertidos</div>
+          <div style="font-size:11px;color:#aaa;margin-top:4px;">${pctLeadsConv}% de los iniciados</div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #22c55e;">
+          <div class="stat-num" style="color:#22c55e;">${ventas}</div>
+          <div class="stat-label">Ventas confirmadas</div>
+          <div style="font-size:11px;color:#aaa;margin-top:4px;">${pctVentas}% de los leads</div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #0A3D7C;">
+          <div class="stat-num" style="color:#0A3D7C;">${tasaConv}%</div>
+          <div class="stat-label">Tasa de conversión</div>
+          <div style="font-size:11px;color:#aaa;margin-top:4px;">Lead → Venta</div>
+        </div>
+      </div>
+
+      <!-- FUNNEL VISUAL -->
+      <div class="card" style="margin-bottom:20px;">
+        <div style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:0.08em;color:#1A1A2E;margin-bottom:16px;">EMBUDO DE CONVERSIÓN</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="background:#74ACDF;color:#fff;padding:14px 20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;">
+            <span>👁 Vieron producto <small style="font-weight:400;opacity:0.8;">(ver en GA4)</small></span>
+            <a href="${GA4_LINK}" target="_blank" style="color:#fff;font-size:11px;background:rgba(255,255,255,0.2);padding:4px 10px;border-radius:4px;text-decoration:none;">GA4 →</a>
+          </div>
+          <div style="margin-left:20px;font-size:11px;color:#aaa;padding:2px 0;">↓ view_product · select_size</div>
+          <div style="background:#C0A24A;color:#1A1A2E;padding:14px 20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;">
+            <span>🛒 Iniciaron checkout</span>
+            <span style="font-family:'Oswald',sans-serif;font-size:20px;">${leadsTotal}</span>
+          </div>
+          <div style="margin-left:20px;font-size:11px;color:#aaa;padding:2px 0;">↓ begin_checkout</div>
+          <div style="background:#0A3D7C;color:#fff;padding:14px 20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;">
+            <span>💳 Eligieron método de pago <small style="font-weight:400;opacity:0.7;">(ver en GA4)</small></span>
+            <a href="${GA4_LINK}" target="_blank" style="color:#fff;font-size:11px;background:rgba(255,255,255,0.2);padding:4px 10px;border-radius:4px;text-decoration:none;">GA4 →</a>
+          </div>
+          <div style="margin-left:20px;font-size:11px;color:#aaa;padding:2px 0;">↓ click_transferencia · click_mercadopago · copy_alias</div>
+          <div style="background:#15803d;color:#fff;padding:14px 20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;">
+            <span>✅ Compraron / enviaron comprobante</span>
+            <span style="font-family:'Oswald',sans-serif;font-size:20px;">${ventas} vtas · ${leadsConvertidos} leads conv.</span>
+          </div>
+          <div style="margin-left:20px;font-size:11px;color:#aaa;padding:2px 0;">↓ lead_whatsapp · purchase (MP webhook)</div>
+        </div>
+      </div>
+
+      <!-- EVENTOS GA4 -->
+      <div class="card" style="margin-bottom:20px;">
+        <div style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:0.08em;color:#1A1A2E;margin-bottom:14px;">EVENTOS GA4 CONFIGURADOS</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid #f0f0f0;">
+              <th style="text-align:left;padding:7px 8px;color:#666;font-weight:600;">Evento</th>
+              <th style="text-align:left;padding:7px 8px;color:#666;font-weight:600;">Dónde se dispara</th>
+              <th style="text-align:center;padding:7px 8px;color:#666;font-weight:600;">Conversión clave</th>
+              <th style="padding:7px 8px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${[
+              { evento: 'view_product', desc: 'Entra a página de producto', key: false },
+              { evento: 'select_size', desc: 'Toca un talle', key: false },
+              { evento: 'add_to_cart', desc: 'Agrega al carrito', key: false },
+              { evento: 'begin_checkout', desc: 'Abre el modal de compra', key: true },
+              { evento: 'click_transferencia', desc: 'Elige pagar por transferencia', key: true },
+              { evento: 'click_mercadopago', desc: 'Elige pagar con MP', key: true },
+              { evento: 'copy_alias', desc: 'Copia el alias bancario', key: false },
+              { evento: 'lead_whatsapp', desc: 'Envía comprobante por WA', key: true },
+              { evento: 'click_whatsapp', desc: 'Toca cualquier botón WA', key: false },
+            ].map(e => `
+              <tr style="border-bottom:1px solid #f0f0f0;">
+                <td style="padding:8px 8px;"><code style="background:#f0f0f0;padding:2px 7px;border-radius:4px;font-size:12px;">${e.evento}</code></td>
+                <td style="padding:8px 8px;color:#555;">${e.desc}</td>
+                <td style="padding:8px 8px;text-align:center;">${e.key ? '<span style="color:#22c55e;font-weight:700;">⭐ Sí</span>' : '<span style="color:#ccc;">—</span>'}</td>
+                <td style="padding:8px 8px;text-align:right;"><a href="${GA4_LINK}" target="_blank" style="font-size:11px;color:#0A3D7C;text-decoration:none;font-weight:600;">Ver →</a></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:12px;padding:10px 14px;background:#fff8e1;border-radius:8px;font-size:12px;color:#7c5c00;">
+          ⚠️ <strong>Pendiente manual en GA4:</strong> Marcá como "Evento clave" los 4 marcados con ⭐ en <a href="${GA4_LINK}" target="_blank" style="color:#0A3D7C;">Analytics → Admin → Eventos</a>
+        </div>
+      </div>
+
+      <!-- LINK GA4 -->
+      <div style="text-align:center;padding:8px 0;">
+        <a href="${GA4_LINK}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#0A3D7C;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.08em;">
+          Ver todos los eventos en Google Analytics →
+        </a>
+        <p style="font-size:12px;color:#aaa;margin-top:8px;">ID de propiedad: G-WH83FYE0XQ</p>
+      </div>
+    `;
   }
 
   function renderStats(data) {

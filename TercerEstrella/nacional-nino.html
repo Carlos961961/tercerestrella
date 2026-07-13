@@ -457,7 +457,10 @@
   function resetAuto() { stopAuto(); startAuto(); }
   startAuto();
   document.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') changeImg(-1); if (e.key === 'ArrowRight') changeImg(1); });
-  function selectSize(btn) { document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof gtag === 'function') gtag('event', 'view_product', { item_id: 'nacional-nino', item_name: 'Nacional Niño', currency: 'ARS', value: 27000 });
+  });
+  function selectSize(btn) { document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); if (typeof gtag === 'function') gtag('event', 'select_size', { item_id: 'nacional-nino', item_name: 'Nacional Niño', size: btn.textContent.trim() }); }
 
   let selectedPago = '1 pago — $23.000';
   function selectPago(btn) {
@@ -481,6 +484,7 @@
   function abrirModalMP() {
     const talleBtn = document.querySelector('.size-btn.selected');
     if (!talleBtn) { alert('Por favor elegí un talle antes de continuar.'); return; }
+    if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'ARS', value: 30000, items: [{ item_id: 'nacional-nino', item_name: 'Nacional Niño', item_variant: talleBtn.textContent.trim(), price: 30000, quantity: 1 }] });
     document.getElementById('mp-modal-overlay').style.display = 'flex';
   }
 
@@ -495,6 +499,7 @@
     document.getElementById('mp-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const talleBtn = document.querySelector('.size-btn.selected');
+      if (typeof gtag === 'function') gtag('event', 'click_mercadopago', { currency: 'ARS', value: 30000, item_name: 'Nacional Niño', size: talleBtn?.textContent.trim() });
       const btn = document.getElementById('mp-btn');
       btn.disabled = true;
       btn.textContent = 'Procesando...';
@@ -602,6 +607,7 @@ function aplicarCupon() {
 <script>
 function copiarAlias() {
   navigator.clipboard.writeText('tercerestrella.mp').then(() => {
+    if (typeof gtag === 'function') gtag('event', 'copy_alias', { item_name: 'Nacional Niño', method: 'clipboard' });
     const el = document.getElementById('tr-alias-copiado');
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 2000);
@@ -609,6 +615,7 @@ function copiarAlias() {
 }
 function abrirModalTransferencia() {
   if (!document.querySelector('.size-btn.selected')) { alert('Por favor seleccioná un talle primero.'); return; }
+  if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'ARS', value: 27000, items: [{ item_id: 'nacional-nino', item_name: 'Nacional Niño', item_variant: document.querySelector('.size-btn.selected').textContent.trim(), price: 27000, quantity: 1 }] });
   document.getElementById('transfer-modal-overlay').style.display = 'flex';
 }
 function cerrarModalTransferencia() {
@@ -624,6 +631,7 @@ window.addEventListener('DOMContentLoaded', function() {
     btn.textContent = 'Enviando...';
     btn.disabled = true;
     const talle = document.querySelector('.size-btn.selected')?.textContent?.trim();
+    if (typeof gtag === 'function') { gtag('event', 'click_transferencia', { currency: 'ARS', value: 27000, item_name: 'Nacional Niño', size: talle }); gtag('event', 'lead_whatsapp', { currency: 'ARS', value: 27000, item_name: 'Nacional Niño' }); }
     const nombre = document.getElementById('tr-nombre').value.trim();
     const email = document.getElementById('tr-email').value.trim();
     const wsp = document.getElementById('tr-wsp').value.trim();
