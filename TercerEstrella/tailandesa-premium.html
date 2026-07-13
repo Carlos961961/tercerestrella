@@ -360,10 +360,10 @@
 
         <div class="cta-block">
           <button type="button" onclick="abrirGuiaTalles()" style="width:100%;padding:12px 16px;background:#fff;border:2px solid #0A3D7C;color:#0A3D7C;font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">📏 VER TABLA DE TALLES</button>
-          <button class="btn-transferencia" onclick="abrirModalTransferencia()">
+          <button class="btn-transferencia" onclick="abrirCheckout()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;flex-shrink:0"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> TRANSFERENCIA — $50.000
           </button>
-          <button class="btn-comprar" onclick="abrirModalMP()">
+          <button class="btn-comprar" onclick="abrirCheckout()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
             PAGAR CON MERCADOPAGO — $55.000
           </button>
@@ -737,127 +737,221 @@
   </div>
 </div>
 
-<!-- Modal MercadoPago -->
-<div id="mp-modal-overlay" role="dialog" aria-modal="true" aria-label="Pagar con MercadoPago" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:100%;position:relative;">
-    <button onclick="cerrarModalMP()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#666;">✕</button>
-    <h3 style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:6px;">Completá tus datos</h3>
-    <p style="font-size:14px;color:#666;margin-bottom:20px;">Para procesar tu pago y enviarte el código del sorteo.</p>
-    <form id="mp-form">
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Nombre completo</label>
-        <input id="mp-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
-      </div>
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Email</label>
-        <input id="mp-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
-      </div>
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label>
-        <input id="mp-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
-      </div>
-      <div style="margin-bottom:20px;">
-        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Código de descuento <span style="font-weight:400;color:#999;">(opcional)</span></label>
-        <div style="display:flex;gap:8px;">
-          <input id="mp-cupon" type="text" placeholder="Ej: HINCHA10" style="flex:1;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()" />
-          <button type="button" onclick="aplicarCupon()" style="padding:10px 16px;background:#f0f0f0;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;color:#1A1A2E;">Aplicar</button>
-        </div>
-        <div id="mp-cupon-msg" style="margin-top:6px;font-size:13px;display:none;"></div>
-      </div>
-      <button id="mp-btn" type="submit" style="width:100%;padding:14px;background:#009EE3;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;letter-spacing:0.08em;cursor:pointer;">Ir a pagar con MercadoPago</button>
-    </form>
-  </div>
-</div>
-<div id="transfer-modal-overlay" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:16px;padding:32px;max-width:440px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
-    <button onclick="cerrarModalTransferencia()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#666;">✕</button>
-    <h3 style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:4px;">Pagar por transferencia</h3>
-    <p style="font-size:13px;color:#15803d;font-weight:600;margin-bottom:20px;">Precio especial por transferencia</p>
+<!-- Checkout unificado -->
+<div id="checkout-overlay" role="dialog" aria-modal="true" aria-label="Checkout" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:16px;overflow-y:auto;">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:440px;width:100%;position:relative;max-height:92vh;overflow-y:auto;margin:auto;">
+    <button onclick="cerrarCheckout()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#666;z-index:1;">✕</button>
 
-    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px;margin-bottom:20px;text-align:center;">
-      <p style="font-size:11px;color:#166534;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Alias de destino</p>
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;">
-        <span style="font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#15803d;letter-spacing:0.04em;">tercerestrella.mp</span>
-        <button onclick="copiarAlias()" style="background:#15803d;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">COPIAR</button>
+    <!-- PASO 1: FORMULARIO -->
+    <div id="co-step-form">
+      <h3 style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:2px;">Completá tu pedido</h3>
+      <p style="font-size:13px;color:#888;margin-bottom:16px;">Tailandesa Premium — Talle <strong id="co-talle-display" style="color:#1A1A2E;"></strong></p>
+
+      <!-- Comparador de precios siempre visible -->
+      <div style="display:flex;border:1.5px solid #e0e7ff;border-radius:10px;overflow:hidden;margin-bottom:20px;">
+        <div style="flex:1;padding:12px 10px;text-align:center;background:#f8f9ff;">
+          <div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Transferencia</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#15803d;">$50.000</div>
+          <div style="font-size:10px;color:#888;margin-top:2px;">precio especial</div>
+        </div>
+        <div style="width:1px;background:#e0e7ff;"></div>
+        <div style="flex:1;padding:12px 10px;text-align:center;background:#f8f9ff;">
+          <div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">MercadoPago</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#009ee3;">$55.000</div>
+          <div style="font-size:10px;color:#888;margin-top:2px;">tarjeta / cuotas</div>
+        </div>
       </div>
-      <p id="tr-alias-copiado" style="display:none;color:#15803d;font-size:12px;font-weight:600;">✓ ¡Alias copiado!</p>
-      <p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong style="font-size:18px;">$50.000</strong></p>
+
+      <!-- Campos -->
+      <div style="margin-bottom:11px;">
+        <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">Nombre completo</label>
+        <input id="co-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;" />
+      </div>
+      <div style="margin-bottom:11px;">
+        <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">Dirección</label>
+        <input id="co-direccion" type="text" required placeholder="Av. Corrientes 1234, piso 2" style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px;">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">Localidad</label>
+          <input id="co-localidad" type="text" required placeholder="Buenos Aires" style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">Provincia</label>
+          <input id="co-provincia" type="text" required placeholder="CABA" style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px;">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">Código postal</label>
+          <input id="co-cp" type="text" required placeholder="1043" style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">WhatsApp</label>
+          <input id="co-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+      </div>
+      <div style="margin-bottom:11px;">
+        <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">Email</label>
+        <input id="co-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box;" />
+      </div>
+      <div style="margin-bottom:18px;">
+        <label style="font-size:12px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:3px;">Código de descuento <span style="font-weight:400;color:#999;">(opcional)</span></label>
+        <div style="display:flex;gap:8px;">
+          <input id="co-cupon" type="text" placeholder="Ej: HINCHA10" style="flex:1;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()" />
+          <button type="button" onclick="aplicarCuponCheckout()" style="padding:9px 14px;background:#f0f0f0;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;color:#1A1A2E;">Aplicar</button>
+        </div>
+        <p id="co-cupon-msg" style="display:none;margin-top:5px;font-size:12px;"></p>
+      </div>
+
+      <div style="border-top:1px solid #f0f0f0;margin-bottom:14px;"></div>
+      <p style="font-size:12px;font-weight:600;color:#888;text-align:center;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.05em;">¿Cómo querés pagar?</p>
+
+      <button id="co-btn-transferencia" type="button" onclick="pagarTransferencia()" style="width:100%;padding:13px;background:#15803d;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.07em;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        TRANSFERENCIA — $50.000
+      </button>
+      <button id="co-btn-mp" type="button" onclick="pagarMP()" style="width:100%;padding:13px;background:#009ee3;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.07em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        MERCADOPAGO — $55.000 · tarjeta/cuotas
+      </button>
     </div>
 
-    <p style="font-size:13px;color:#666;margin-bottom:16px;">Completá tus datos y hacé la transferencia. Después te abrimos WhatsApp para que nos mandes el comprobante.</p>
-    <form id="transfer-form">
-      <div style="margin-bottom:12px;">
-        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Nombre completo</label>
-        <input id="tr-nombre" type="text" required placeholder="Juan García" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
+    <!-- PASO 2: CONFIRMACIÓN TRANSFERENCIA -->
+    <div id="co-step-transfer" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:52px;height:52px;background:#f0fdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" style="width:26px;height:26px;"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h3 style="font-family:'Oswald',sans-serif;font-size:22px;color:#1A1A2E;margin-bottom:4px;">¡Casi listo!</h3>
+        <p style="font-size:13px;color:#666;">Hacé la transferencia y mandanos el comprobante por WhatsApp.</p>
       </div>
-      <div style="margin-bottom:12px;">
-        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">Email</label>
-        <input id="tr-email" type="email" required placeholder="tu@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
+
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px;margin-bottom:18px;text-align:center;">
+        <p style="font-size:11px;color:#166534;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Alias de destino</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#15803d;letter-spacing:0.04em;">tercerestrella.mp</span>
+          <button onclick="copiarAlias()" style="background:#15803d;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">COPIAR</button>
+        </div>
+        <p id="co-alias-copiado" style="display:none;color:#15803d;font-size:12px;font-weight:600;">✓ ¡Alias copiado!</p>
+        <p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong style="font-size:20px;">$50.000</strong></p>
       </div>
-      <div style="margin-bottom:20px;">
-        <label style="font-size:13px;font-weight:600;color:#1A1A2E;display:block;margin-bottom:4px;">WhatsApp</label>
-        <input id="tr-wsp" type="tel" required placeholder="11 1234-5678" style="width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;outline:none;" />
-      </div>
-      <button id="transfer-btn" type="submit" style="width:100%;padding:14px;background:#15803d;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.08em;cursor:pointer;">YA TRANSFERÍ — ENVIAR POR WHATSAPP</button>
-    </form>
+
+      <button onclick="enviarComprobante()" style="width:100%;padding:14px;background:#15803d;color:#fff;border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.07em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.998 0C5.372 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.824L.044 23.339a.75.75 0 00.918.918l5.516-1.48A11.942 11.942 0 0011.998 24C18.625 24 24 18.627 24 12S18.625 0 11.998 0zm0 21.75a9.696 9.696 0 01-4.951-1.354l-.355-.211-3.676.986.99-3.614-.231-.372A9.699 9.699 0 012.25 12c0-5.375 4.374-9.75 9.748-9.75S21.75 6.625 21.75 12s-4.376 9.75-9.752 9.75z"/></svg>
+        YA TRANSFERÍ — ENVIAR COMPROBANTE
+      </button>
+    </div>
   </div>
 </div>
+
 <script>
+function abrirCheckout() {
+  if (!document.querySelector('.size-btn.selected')) {
+    alert('Por favor seleccioná un talle primero.');
+    return;
+  }
+  document.getElementById('co-talle-display').textContent = document.querySelector('.size-btn.selected').textContent.trim();
+  document.getElementById('co-step-form').style.display = 'block';
+  document.getElementById('co-step-transfer').style.display = 'none';
+  document.getElementById('checkout-overlay').style.display = 'flex';
+}
+function cerrarCheckout() {
+  document.getElementById('checkout-overlay').style.display = 'none';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('checkout-overlay').addEventListener('click', function(e) {
+    if (e.target === this) cerrarCheckout();
+  });
+});
+
+function validarForm() {
+  const ids = ['co-nombre','co-direccion','co-localidad','co-provincia','co-cp','co-wsp','co-email'];
+  let ok = true;
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.style.borderColor = '#dc2626'; ok = false; }
+    else el.style.borderColor = '#ddd';
+  });
+  if (!ok) { document.getElementById('co-step-form').querySelector('input[style*="dc2626"]')?.focus(); }
+  return ok;
+}
+
+async function pagarTransferencia() {
+  if (!validarForm()) return;
+  const btn = document.getElementById('co-btn-transferencia');
+  btn.textContent = 'Registrando...'; btn.disabled = true;
+  const talle = document.querySelector('.size-btn.selected').textContent.trim();
+  const nombre = document.getElementById('co-nombre').value.trim();
+  const email  = document.getElementById('co-email').value.trim();
+  const wsp    = document.getElementById('co-wsp').value.trim();
+  const dir    = document.getElementById('co-direccion').value.trim();
+  const loc    = document.getElementById('co-localidad').value.trim();
+  const prov   = document.getElementById('co-provincia').value.trim();
+  const cp     = document.getElementById('co-cp').value.trim();
+  try {
+    await fetch('/api/transferencia', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'tailandesa-premium', talle })
+    });
+  } catch(_) {}
+  window._coData = { talle, nombre, email, wsp, dir, loc, prov, cp };
+  document.getElementById('co-step-form').style.display = 'none';
+  document.getElementById('co-step-transfer').style.display = 'block';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> TRANSFERENCIA — $50.000';
+  btn.disabled = false;
+}
+
+async function pagarMP() {
+  if (!validarForm()) return;
+  const btn = document.getElementById('co-btn-mp');
+  btn.textContent = 'Procesando...'; btn.disabled = true;
+  const talle = document.querySelector('.size-btn.selected').textContent.trim();
+  const nombre = document.getElementById('co-nombre').value.trim();
+  const email  = document.getElementById('co-email').value.trim();
+  const wsp    = document.getElementById('co-wsp').value.trim();
+  const cupon  = document.getElementById('co-cupon').value.trim();
+  try {
+    const res = await fetch('/api/crear-preferencia', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'tailandesa-premium', talle, cupon })
+    });
+    const data = await res.json();
+    if (data.init_point) { window.location.href = data.init_point; return; }
+  } catch(_) {}
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> MERCADOPAGO — $55.000 · tarjeta/cuotas';
+  btn.disabled = false;
+  alert('Hubo un error. Intentá de nuevo.');
+}
+
+function enviarComprobante() {
+  const d = window._coData || {};
+  const msg = encodeURIComponent(
+    `Hola, vengo de TercerEstrella. Acabo de transferir $50.000 al alias tercerestrella.mp.\n\n` +
+    `📦 Pedido:\n• Producto: Tailandesa Premium\n• Talle: ${d.talle}\n\n` +
+    `👤 Datos personales:\n• Nombre: ${d.nombre}\n• Email: ${d.email}\n• WhatsApp: ${d.wsp}\n\n` +
+    `🏠 Dirección de entrega:\n• ${d.dir}\n• ${d.loc}, ${d.prov} (CP: ${d.cp})\n\n` +
+    `Adjunto el comprobante.`
+  );
+  window.open(`https://wa.me/5491134652868?text=${msg}`, '_blank');
+  cerrarCheckout();
+}
+
 function copiarAlias() {
   navigator.clipboard.writeText('tercerestrella.mp').then(() => {
-    const el = document.getElementById('tr-alias-copiado');
+    const el = document.getElementById('co-alias-copiado');
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 2000);
   });
 }
-function abrirModalTransferencia() {
-  if (!document.querySelector('.size-btn.selected')) { alert('Por favor seleccioná un talle primero.'); return; }
-  document.getElementById('transfer-modal-overlay').style.display = 'flex';
-}
-function cerrarModalTransferencia() {
-  document.getElementById('transfer-modal-overlay').style.display = 'none';
-}
-window.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('transfer-modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModalTransferencia();
-  });
-  document.getElementById('transfer-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('transfer-btn');
-    btn.textContent = 'Enviando...';
-    btn.disabled = true;
-    const talle = document.querySelector('.size-btn.selected')?.textContent?.trim();
-    const nombre = document.getElementById('tr-nombre').value.trim();
-    const email = document.getElementById('tr-email').value.trim();
-    const wsp = document.getElementById('tr-wsp').value.trim();
-    let ok = false;
-    try {
-      const apiRes = await fetch('/api/transferencia', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, email, whatsapp: wsp, producto: 'tailandesa-premium', talle })
-      });
-      ok = apiRes.ok;
-    } catch(err) {}
-    if (!ok) {
-      btn.textContent = 'Error al registrar. Intentá de nuevo.';
-      btn.disabled = false;
-      return;
-    }
-    const msg = encodeURIComponent(`Hola, vengo de la página TercerEstrella. Acabo de transferir $50.000 al alias tercerestrella.mp.\n\nDatos del pedido:\n• Nombre: ${nombre}\n• Email: ${email}\n• Producto: Tailandesa Premium\n• Talle: ${talle}\n\nAdjunto el comprobante.`);
-    window.open(`https://wa.me/5491134652868?text=${msg}`, '_blank');
-    cerrarModalTransferencia();
-  });
-});
-</script>
-<script>
-function aplicarCupon() {
-  const val = document.getElementById('mp-cupon').value.trim().toUpperCase();
-  const msg = document.getElementById('mp-cupon-msg');
+
+function aplicarCuponCheckout() {
+  const val = document.getElementById('co-cupon').value.trim().toUpperCase();
+  const msg = document.getElementById('co-cupon-msg');
   msg.style.display = 'block';
   if (val === 'HINCHA10') {
     msg.style.color = '#1a7a3a';
-    msg.textContent = '✓ 10% de descuento aplicado';
+    msg.textContent = '✓ 10% de descuento aplicado con MercadoPago';
   } else if (val === '') {
     msg.style.display = 'none';
   } else {
