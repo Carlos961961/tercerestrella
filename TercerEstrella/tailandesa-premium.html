@@ -314,10 +314,10 @@
 
         <div class="prod-price-block">
           <span class="prod-oferta-badge">OFERTA</span>
-          <span class="prod-price-old">$50.000</span>
-          <span class="prod-price">$45.000</span>
+          <span class="prod-price-old">$55.000</span>
+          <span class="prod-price">$50.000</span>
         </div>
-        <p class="prod-price-note">Precio por transferencia · con MercadoPago $50.000</p>
+        <p class="prod-price-note">Precio por transferencia · con MercadoPago $55.000 · pagá con tarjeta o en cuotas</p>
 
         <div class="similarity-bar">
           <div class="similarity-label">
@@ -346,11 +346,11 @@
 
         <div class="cta-block">
           <button class="btn-transferencia" onclick="abrirModalTransferencia()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;flex-shrink:0"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> TRANSFERENCIA — $45.000
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;flex-shrink:0"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> TRANSFERENCIA — $50.000
           </button>
           <button class="btn-comprar" onclick="abrirModalMP()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-            PAGAR CON MERCADOPAGO — $50.000
+            PAGAR CON MERCADOPAGO — $55.000
           </button>
           <p style="font-size:12px;color:#888;text-align:center;margin-top:-4px;">Pagá en cuotas con tu tarjeta vía MercadoPago</p>
           <button class="btn-add-cart" onclick="agregarAlCarrito('tailandesa-premium')">
@@ -363,10 +363,6 @@
           <div class="trust-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             Envío gratis CABA · 3–5 días
-          </div>
-          <div class="trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            30 días devolución
           </div>
         </div>
 
@@ -432,7 +428,7 @@
         </a>
         <p>La camiseta de la pasión, al precio que merecés.</p>
       </div>
-      <div><h4>Tienda</h4><ul><li><a href="index.html#productos">Productos</a></li><li><a href="index.html#info">Envíos y devoluciones</a></li><li><a href="index.html#contacto">Contacto</a></li></ul></div>
+      <div><h4>Tienda</h4><ul><li><a href="index.html#productos">Productos</a></li><li><a href="index.html#info">Envíos</a></li><li><a href="index.html#contacto">Contacto</a></li></ul></div>
       <div><h4>Legal</h4><ul><li><a href="privacidad.html">Privacidad</a></li><li><a href="terminos.html">Términos</a></li></ul></div>
     </div>
     <div class="legal">
@@ -569,7 +565,7 @@
     medidas.classList.add('visible');
   }
 
-  let selectedPago = '1 pago — $45.000';
+  let selectedPago = '1 pago — $50.000';
   function selectPago(btn) {
     document.querySelectorAll('.pay-opt').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
@@ -710,7 +706,7 @@
         <button onclick="copiarAlias()" style="background:#15803d;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">COPIAR</button>
       </div>
       <p id="tr-alias-copiado" style="display:none;color:#15803d;font-size:12px;font-weight:600;">✓ ¡Alias copiado!</p>
-      <p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong style="font-size:18px;">$45.000</strong></p>
+      <p style="font-size:14px;color:#166534;margin-top:8px;">Monto exacto: <strong style="font-size:18px;">$50.000</strong></p>
     </div>
 
     <p style="font-size:13px;color:#666;margin-bottom:16px;">Completá tus datos y hacé la transferencia. Después te abrimos WhatsApp para que nos mandes el comprobante.</p>
@@ -773,7 +769,7 @@ window.addEventListener('DOMContentLoaded', function() {
       btn.disabled = false;
       return;
     }
-    const msg = encodeURIComponent(`Hola, vengo de la página TercerEstrella. Acabo de transferir $45.000 al alias tercerestrella.mp.\n\nDatos del pedido:\n• Nombre: ${nombre}\n• Email: ${email}\n• Producto: Tailandesa Premium\n• Talle: ${talle}\n\nAdjunto el comprobante.`);
+    const msg = encodeURIComponent(`Hola, vengo de la página TercerEstrella. Acabo de transferir $50.000 al alias tercerestrella.mp.\n\nDatos del pedido:\n• Nombre: ${nombre}\n• Email: ${email}\n• Producto: Tailandesa Premium\n• Talle: ${talle}\n\nAdjunto el comprobante.`);
     window.open(`https://wa.me/5491134652868?text=${msg}`, '_blank');
     cerrarModalTransferencia();
   });
