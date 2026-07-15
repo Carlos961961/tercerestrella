@@ -536,7 +536,7 @@
 
   function abrirModalMP() {
     const talleBtn = document.querySelector('.size-btn.selected');
-    if (!talleBtn) { if (typeof showTalleError === 'function') showTalleError(); return; }
+    if (!talleBtn) { alert('Por favor elegí un talle antes de continuar.'); return; }
     if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'ARS', value: 30000, items: [{ item_id: 'nacional-nino', item_name: 'Nacional Niño', item_variant: talleBtn.textContent.trim(), price: 30000, quantity: 1 }] });
     document.getElementById('mp-modal-overlay').style.display = 'flex';
   }
@@ -667,7 +667,7 @@ function copiarAlias() {
   });
 }
 function abrirModalTransferencia() {
-  if (!document.querySelector('.size-btn.selected')) { if (typeof showTalleError === 'function') showTalleError(); return; }
+  if (!document.querySelector('.size-btn.selected')) { alert('Por favor elegí un talle antes de continuar.'); return; }
   if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'ARS', value: 27000, items: [{ item_id: 'nacional-nino', item_name: 'Nacional Niño', item_variant: document.querySelector('.size-btn.selected').textContent.trim(), price: 27000, quantity: 1 }] });
   document.getElementById('transfer-modal-overlay').style.display = 'flex';
 }

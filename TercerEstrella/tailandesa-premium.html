@@ -938,7 +938,7 @@ function scrollToPago() {
 }
 function abrirCheckout() {
   if (!document.querySelector('.size-btn.selected')) {
-    if (typeof showTalleError === 'function') showTalleError();
+    alert('Por favor elegí un talle antes de continuar.');
     return;
   }
   const talle = document.querySelector('.size-btn.selected').textContent.trim();
