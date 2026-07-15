@@ -98,10 +98,6 @@
   .prod-price-note { font-size: 13px; color: var(--texto-tenue); margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--gris-borde); }
   .prod-shipping { font-size: 13px; color: #22a06b; font-weight: 600; }
   .size-section { margin-bottom: 28px; }
-  .talle-error { display:none; color:#dc2626; font-size:13px; font-weight:600; padding:8px 12px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; margin-top:10px; }
-  .talle-error.visible { display:block; }
-  .talle-error { display:none; color:#dc2626; font-size:13px; font-weight:600; padding:8px 12px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; margin-top:10px; }
-  .talle-error.visible { display:block; }
   .size-label { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-tenue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; justify-content: space-between; }
   .tabla-talles-inline { display: none; background: #fff; border: 1.5px solid var(--gris-borde); color: var(--texto); font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.04em; height: 44px; padding: 0 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; align-self: flex-start; align-items: center; gap: 6px; transition: border-color 200ms, color 200ms; }
   .tabla-talles-inline:hover { border-color: #0A3D7C; color: #0A3D7C; }
@@ -390,7 +386,7 @@
             </div>
             <button type="button" onclick="abrirGuiaTalles()" class="tabla-talles-inline">📏 VER TABLA DE TALLES</button>
           </div>
-          <div id="talle-error" class="talle-error">⚠ Seleccioná un talle para continuar</div>
+
         </div>
 
 
@@ -937,19 +933,12 @@
 </div>
 
 <script>
-function mostrarErrorTalle() {
-  var el = document.getElementById('talle-error');
-  if (!el) return;
-  el.classList.add('visible');
-  clearTimeout(el._t);
-  el._t = setTimeout(function() { el.classList.remove('visible'); }, 2500);
-}
 function scrollToPago() {
   document.querySelector('.cta-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 function abrirCheckout() {
   if (!document.querySelector('.size-btn.selected')) {
-    mostrarErrorTalle();
+    if (typeof showTalleError === 'function') showTalleError();
     return;
   }
   const talle = document.querySelector('.size-btn.selected').textContent.trim();

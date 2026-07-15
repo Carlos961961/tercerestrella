@@ -224,9 +224,20 @@
   function showToast(msg) {
     var t = document.getElementById('cart-toast');
     t.textContent = '✓ ' + msg + ' agregado';
+    t.style.background = '';
     t.classList.add('show');
     setTimeout(function() { t.classList.remove('show'); }, 2500);
   }
+  function showTalleError() {
+    var t = document.getElementById('cart-toast');
+    if (!t) return;
+    t.textContent = '⚠ Seleccioná un talle para continuar';
+    t.style.background = '#dc2626';
+    t.classList.add('show');
+    clearTimeout(t._et);
+    t._et = setTimeout(function() { t.classList.remove('show'); t.style.background = ''; }, 2500);
+  }
+  window.showTalleError = showTalleError;
 
   function renderDrawer() {
     var cart = getCart();
@@ -305,7 +316,7 @@
   window.agregarAlCarrito = function(productoId) {
     var talleBtn = document.querySelector('.size-btn.selected');
     if (!talleBtn) {
-      alert('Por favor elegí un talle antes de agregar al carrito.');
+      showTalleError();
       return;
     }
     carrito.add(productoId, talleBtn.textContent.trim());
