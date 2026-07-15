@@ -22,10 +22,9 @@
     @keyframes cart-bump{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
 
     /* Discount banner — top strip above nav */
-    .discount-banner{background:#C0A24A;color:#1A1A2E;text-align:center;padding:8px 40px 8px 16px;font-size:13px;font-weight:600;letter-spacing:0.04em;font-family:'Inter',sans-serif;position:fixed;top:0;left:0;right:0;z-index:1001;}
+    .discount-banner{background:#C0A24A;color:#1A1A2E;text-align:center;padding:7px 16px;font-size:13px;font-weight:600;letter-spacing:0.04em;font-family:'Inter',sans-serif;position:fixed;top:0;left:0;right:0;z-index:1001;line-height:1.3;}
     .discount-banner span{color:#1A1A2E;font-weight:800;}
-    .discount-banner-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(26,26,46,0.5);font-size:14px;cursor:pointer;padding:4px;line-height:1;}
-    .discount-banner-close:hover{color:#1A1A2E;}
+    @media(max-width:600px){.discount-banner{font-size:11px;letter-spacing:0.01em;padding:6px 12px;}}
     .discount-banner ~ .nav{top:28px !important;}
     .discount-banner ~ .nav ~ .breadcrumb{padding-top:116px !important;}
     .discount-banner ~ .nav ~ .mobile-menu{top:28px !important;}
@@ -318,8 +317,18 @@
     if (!nav) return;
     var banner = document.createElement('div');
     banner.className = 'discount-banner';
-    banner.innerHTML = 'Llevá 2 → <span>5% OFF</span> · Llevá 3+ → <span>10% OFF</span> · Llevá 6+ → <span>15% OFF</span><button class="discount-banner-close" onclick="this.parentElement.remove()">✕</button>';
+    banner.innerHTML = 'Llevá 2 → <span>5% OFF</span> · Llevá 3+ → <span>10% OFF</span> · Llevá 6+ → <span>15% OFF</span>';
     nav.parentNode.insertBefore(banner, nav);
+    function adjustNav() {
+      var h = banner.offsetHeight;
+      nav.style.setProperty('top', h + 'px', 'important');
+      var mob = document.querySelector('.mobile-menu');
+      if (mob) mob.style.setProperty('top', h + 'px', 'important');
+      var bc = document.querySelector('.breadcrumb');
+      if (bc) bc.style.setProperty('padding-top', (h + nav.offsetHeight) + 'px', 'important');
+    }
+    setTimeout(adjustNav, 0);
+    window.addEventListener('resize', adjustNav);
   }
 
   // ===== COOKIE BANNER =====
