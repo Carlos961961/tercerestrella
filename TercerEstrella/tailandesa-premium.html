@@ -541,7 +541,7 @@
 </div>
 
 <div class="sticky-buy hidden" id="sticky-buy">
-  <button onclick="abrirCheckout();if(typeof gtag==='function')gtag('event','click_sticky_cta',{item_name:'Tailandesa Premium'});">COMPRAR</button>
+  <button onclick="scrollToPago();if(typeof gtag==='function')gtag('event','click_sticky_cta',{item_name:'Tailandesa Premium'});">COMPRAR</button>
 </div>
 
 
@@ -941,9 +941,11 @@ function mostrarErrorTalle() {
   var el = document.getElementById('talle-error');
   if (!el) return;
   el.classList.add('visible');
-  document.querySelector('.size-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
   clearTimeout(el._t);
   el._t = setTimeout(function() { el.classList.remove('visible'); }, 2500);
+}
+function scrollToPago() {
+  document.querySelector('.cta-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 function abrirCheckout() {
   if (!document.querySelector('.size-btn.selected')) {

@@ -540,7 +540,6 @@
     var el = document.getElementById('talle-error');
     if (!el) return;
     el.classList.add('visible');
-    document.querySelector('.size-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
     clearTimeout(el._t);
     el._t = setTimeout(function() { el.classList.remove('visible'); }, 2500);
   }
