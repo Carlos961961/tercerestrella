@@ -104,7 +104,8 @@
   .similarity-fill { height: 100%; width: 96%; background: linear-gradient(90deg, var(--celeste), var(--dorado)); border-radius: 999px; }
   .size-section { margin-bottom: 28px; }
   .size-label { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-tenue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; justify-content: space-between; }
-  .tabla-talles-inline { display: none; background: #fff; border: 2px solid #0A3D7C; color: #0A3D7C; font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 6px; cursor: pointer; padding: 5px 12px; align-items: center; gap: 5px; white-space: nowrap; }
+  .tabla-talles-inline { display: none; background: #fff; border: 1.5px solid var(--gris-borde); color: var(--texto); font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.04em; height: 44px; padding: 0 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; align-self: flex-start; align-items: center; gap: 6px; transition: border-color 200ms, color 200ms; }
+  .tabla-talles-inline:hover { border-color: #0A3D7C; color: #0A3D7C; }
   @media(min-width:769px) { .tabla-talles-inline { display: flex; } .btn-guia-talles { display: none !important; } }
   .size-hint { font-size: 12px; font-weight: 400; font-style: italic; letter-spacing: normal; text-transform: none; }
   .size-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
@@ -372,10 +373,7 @@
 
 
         <div class="size-section">
-          <div class="size-label">
-            <span>Talle</span>
-            <button type="button" onclick="abrirGuiaTalles()" class="tabla-talles-inline">📏 Ver tabla de talles</button>
-          </div>
+          <div class="size-label"><span>Talle</span></div>
           <div class="size-row">
             <div class="sizes" style="align-items:flex-start;">
               <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
@@ -399,6 +397,7 @@
                 <span style="font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;">Últimas 10</span>
               </div>
             </div>
+            <button type="button" onclick="abrirGuiaTalles()" class="tabla-talles-inline">📏 VER TABLA DE TALLES</button>
           </div>
         </div>
 
