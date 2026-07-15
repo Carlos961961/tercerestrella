@@ -657,12 +657,12 @@
     var now = new Date();
     var doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
     var ALL = [
-      { av:'assets/testimonios/av-1.webp', name:'Martín G.',    loc:'Buenos Aires · Marzo 2025', q:'Llegó en 3 días, impecable. El escudo bordado, el talle perfecto. Muy conforme con la compra.' },
-      { av:'assets/testimonios/av-2.webp', name:'Diego M.',     loc:'Rosario · Abril 2025',      q:'Compré en otro lugar antes y no tiene comparación. Esta tiene otra calidad, el cuello tejido se nota mucho.' },
-      { av:'assets/testimonios/av-3.webp', name:'Florencia R.', loc:'Buenos Aires · Mayo 2025',  q:'La compré para mi hermano y quedó re contento. El bordado está muy bien hecho y el talle le quedó justo.' },
-      { av:'assets/testimonios/av-4.webp', name:'Carlos B.',    loc:'Tucumán · Abril 2025',      q:'No esperaba tanta calidad por este precio. El bordado y la tela son de otra categoría.' },
-      { av:'assets/testimonios/av-5.webp', name:'Valentina S.', loc:'Córdoba · Mayo 2025',       q:'La pedí de regalo para mi novio y quedó muy contento. La tela es cómoda y el talle le quedó justo.' },
-      { av:'assets/testimonios/av-6.webp', name:'Rodrigo P.',   loc:'Santa Fe · Junio 2025',     q:'Ya compré tres. Siempre llegan rápido y en buen estado. No compro en otro lado.' },
+      { av:'assets/testimonios/av-1.webp', name:'Martín G.',    loc:'Buenos Aires · Julio 2026',  q:'Llegó en 3 días, impecable. El escudo bordado, el talle perfecto. Muy conforme con la compra.' },
+      { av:'assets/testimonios/av-2.webp', name:'Diego M.',     loc:'Rosario · Julio 2026',       q:'Compré en otro lugar antes y no tiene comparación. Esta tiene otra calidad, el cuello tejido se nota mucho.' },
+      { av:'assets/testimonios/av-3.webp', name:'Florencia R.', loc:'Buenos Aires · Junio 2026',  q:'La compré para mi hermano y quedó re contento. El bordado está muy bien hecho y el talle le quedó justo.' },
+      { av:'assets/testimonios/av-4.webp', name:'Carlos B.',    loc:'Tucumán · Junio 2026',       q:'No esperaba tanta calidad por este precio. El bordado y la tela son de otra categoría.' },
+      { av:'assets/testimonios/av-5.webp', name:'Valentina S.', loc:'Córdoba · Julio 2026',       q:'La pedí de regalo para mi novio y quedó muy contento. La tela es cómoda y el talle le quedó justo.' },
+      { av:'assets/testimonios/av-6.webp', name:'Rodrigo P.',   loc:'Santa Fe · Junio 2026',      q:'Ya compré tres. Siempre llegan rápido y en buen estado. No compro en otro lado.' },
     ];
     var set = doy % 2 === 0 ? ALL.slice(0, 3) : ALL.slice(3);
     var html = '<div style="display:flex;flex-direction:column;gap:10px;">';
