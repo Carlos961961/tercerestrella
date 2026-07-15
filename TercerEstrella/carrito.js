@@ -91,6 +91,11 @@
     /* Toast for "agregado" */
     .cart-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:6000;opacity:0;pointer-events:none;transition:opacity 300ms,transform 300ms;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
     .cart-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* Social proof toast */
+    .sp-toast{position:fixed;bottom:80px;left:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 14px;box-shadow:0 4px 20px rgba(0,0,0,0.12);font-size:13px;color:#1A1A2E;z-index:8000;max-width:260px;display:flex;align-items:center;gap:10px;transform:translateX(calc(-100% - 16px));transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);line-height:1.4;pointer-events:none;}
+    .sp-toast.visible{transform:translateX(0);}
+    .sp-toast-icon{font-size:20px;flex-shrink:0;}
   `;
   document.head.appendChild(css);
 
@@ -263,6 +268,20 @@
       html += '<div class="cart-upsell gold">✓ 10% OFF aplicado · Con 6+ prendas obtenés <strong>15% OFF</strong></div>';
     } else if (count >= 6) {
       html += '<div class="cart-upsell gold">✓ 15% OFF aplicado — ¡máximo descuento!</div>';
+    }
+
+    // Product upsell: suggest Nacional Niño when Tailandesa in cart but no Niño
+    var hasTaillandesa = cart.some(function(it){ return it.id === 'tailandesa-premium'; });
+    var hasNino = cart.some(function(it){ return it.id === 'nacional-nino'; });
+    if (hasTaillandesa && !hasNino) {
+      html += '<div class="cart-upsell" style="display:flex;align-items:center;gap:10px;text-align:left;">' +
+        '<img src="assets/nacional-nino/02-modelo-frente.webp" style="width:40px;height:40px;border-radius:6px;object-fit:contain;background:#f5f5f5;flex-shrink:0;" />' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:12px;font-weight:700;color:#166534;">¿Para el/la nene también?</div>' +
+          '<div style="font-size:11px;color:#888;margin-top:1px;">Camiseta Nacional Niño · $27.000</div>' +
+        '</div>' +
+        '<a href="nacional-nino.html" style="flex-shrink:0;background:#0A3D7C;color:#fff;font-family:\'Oswald\',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:6px 10px;border-radius:7px;text-decoration:none;white-space:nowrap;">VER →</a>' +
+      '</div>';
     }
 
     itemsEl.innerHTML = html;
@@ -564,5 +583,62 @@
     renderDrawer();
     showCookieBanner();
   });
+
+  // ===== SOCIAL PROOF TOAST =====
+  (function() {
+    var SETS = [
+      [
+        { icon:'🛒', name:'Martín',    city:'Rosario',        talle:'L'   },
+        { icon:'⭐', name:'Sofía',     city:'Palermo',        talle:'S'   },
+        { icon:'🛒', name:'Diego',     city:'Córdoba',        talle:'XL'  },
+        { icon:'⭐', name:'Valentina', city:'La Plata',       talle:'M'   },
+      ],
+      [
+        { icon:'🛒', name:'Pablo',     city:'Mar del Plata',  talle:'L'   },
+        { icon:'⭐', name:'Lucía',     city:'Mendoza',        talle:'XS'  },
+        { icon:'🛒', name:'Rodrigo',   city:'CABA',           talle:'XXL' },
+        { icon:'⭐', name:'Camila',    city:'Tucumán',        talle:'M'   },
+      ],
+      [
+        { icon:'🛒', name:'Facundo',   city:'Neuquén',        talle:'XL'  },
+        { icon:'⭐', name:'Florencia', city:'Salta',          talle:'S'   },
+        { icon:'🛒', name:'Nicolás',   city:'Santa Fe',       talle:'L'   },
+        { icon:'⭐', name:'Romina',    city:'Bahía Blanca',   talle:'M'   },
+      ],
+    ];
+
+    // Pick set by day-of-year, entry by 2-hour block within the day
+    var now  = new Date();
+    var doy  = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    var set  = SETS[doy % 3];
+    var slot = Math.floor(now.getHours() / 2) % 4; // changes every 2 hrs
+
+    // "hace X hs" varies by minutes elapsed within the 2-hour block (1–3 hs)
+    var minsInBlock = now.getMinutes() + (now.getHours() % 2) * 60;
+    var hrsAgo = minsInBlock < 30 ? 1 : minsInBlock < 80 ? 2 : 3;
+
+    var sp = document.createElement('div');
+    sp.className = 'sp-toast';
+    sp.innerHTML = '<div class="sp-toast-icon"></div><div class="sp-toast-body" style="line-height:1.4;"></div>';
+    document.body.appendChild(sp);
+
+    // Within the session, cycle through the 4 entries starting at the active slot
+    var shown = 0;
+    function showNext() {
+      var ev = set[(slot + shown) % 4];
+      sp.querySelector('.sp-toast-icon').textContent = ev.icon;
+      sp.querySelector('.sp-toast-body').innerHTML =
+        '<strong>' + ev.name + ' de ' + ev.city + '</strong><br>' +
+        '<span style="color:#666;font-size:11px;">compró talle ' + ev.talle + ' hace ' + hrsAgo + ' hs</span>';
+      sp.classList.add('visible');
+      shown++;
+      setTimeout(function() { sp.classList.remove('visible'); }, 4500);
+    }
+
+    setTimeout(function() {
+      showNext();
+      setInterval(showNext, 45000);
+    }, 10000);
+  })();
 
 })();
