@@ -103,7 +103,9 @@
   .similarity-track { height: 6px; background: var(--gris-borde); border-radius: 999px; overflow: hidden; }
   .similarity-fill { height: 100%; width: 96%; background: linear-gradient(90deg, var(--celeste), var(--dorado)); border-radius: 999px; }
   .size-section { margin-bottom: 28px; }
-  .size-label { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-tenue); margin-bottom: 12px; display: flex; align-items: baseline; gap: 8px; }
+  .size-label { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-tenue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+  .tabla-talles-inline { display: none; background: none; border: none; cursor: pointer; font-size: 12px; font-weight: 600; color: #0A3D7C; letter-spacing: 0.02em; text-transform: none; padding: 0; font-family: 'Inter', sans-serif; text-decoration: underline; text-underline-offset: 2px; }
+  @media(min-width:769px) { .tabla-talles-inline { display: inline; } .btn-guia-talles { display: none !important; } }
   .size-hint { font-size: 12px; font-weight: 400; font-style: italic; letter-spacing: normal; text-transform: none; }
   .size-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
   .sizes { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -370,7 +372,10 @@
 
 
         <div class="size-section">
-          <div class="size-label"><span>Talle</span></div>
+          <div class="size-label">
+            <span>Talle</span>
+            <button type="button" onclick="abrirGuiaTalles()" class="tabla-talles-inline">📏 Ver tabla de talles</button>
+          </div>
           <div class="size-row">
             <div class="sizes" style="align-items:flex-start;">
               <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
@@ -399,7 +404,7 @@
 
 
         <div class="cta-block">
-          <button type="button" onclick="abrirGuiaTalles()" style="width:100%;padding:12px 16px;background:#fff;border:2px solid #0A3D7C;color:#0A3D7C;font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">📏 VER TABLA DE TALLES</button>
+          <button type="button" onclick="abrirGuiaTalles()" class="btn-guia-talles" style="width:100%;padding:12px 16px;background:#fff;border:2px solid #0A3D7C;color:#0A3D7C;font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">📏 VER TABLA DE TALLES</button>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <button class="btn-transferencia" onclick="abrirCheckout()">
               <span>TRANSFERENCIA</span>
